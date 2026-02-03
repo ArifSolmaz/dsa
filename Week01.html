@@ -6,6 +6,20 @@
     <title>Week 01: Foundations &amp; Big O | DSA Course</title>
     <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
     <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <script type="module">
+        // Wait for PyScript to be ready
+        const pyReady = new Promise((resolve) => {
+            const check = setInterval(() => {
+                if (typeof pyscript !== 'undefined' && pyscript.interpreter) {
+                    clearInterval(check);
+                    resolve();
+                }
+            }, 100);
+            // Timeout after 15 seconds
+            setTimeout(() => { clearInterval(check); resolve(); }, 15000);
+        });
+        window.pyReady = pyReady;
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -2016,26 +2030,46 @@ print("\nCheck the docstrings above for your Big O answers.")</textarea>
             const outputEl = document.getElementById('output' + codeId);
             const code = codeEl.value;
             outputEl.classList.add('show');
-            outputEl.textContent = 'Running...';
+            outputEl.textContent = 'Loading Python...';
             
             try {
-                const escaped = code.replace(/\\/g, '\\\\').replace(/"""/g, '\\"\\"\\"');
-                const result = await pyscript.interpreter.runPython(`
+                // Wait for PyScript/Pyodide to be ready
+                if (!window.pyodideReady) {
+                    if (typeof loadPyodide === 'undefined') {
+                        // Load Pyodide directly as fallback
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
+                        document.head.appendChild(script);
+                        await new Promise((resolve, reject) => {
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            setTimeout(reject, 10000);
+                        });
+                    }
+                    outputEl.textContent = 'Initializing Python (first run may take a moment)...';
+                    window.pyodide = await loadPyodide();
+                    window.pyodideReady = true;
+                }
+                
+                outputEl.textContent = 'Running...';
+                
+                // Capture stdout
+                window.pyodide.runPython(`
 import sys
 from io import StringIO
-_code = """` + escaped + `"""
-_old_stdout = sys.stdout
 sys.stdout = StringIO()
-try:
-    exec(_code)
-    _output = sys.stdout.getvalue()
-except Exception as e:
-    _output = f"Error: {e}"
-finally:
-    sys.stdout = _old_stdout
-_output
 `);
-                outputEl.textContent = result || '(no output)';
+                
+                try {
+                    window.pyodide.runPython(code);
+                } catch (pyErr) {
+                    outputEl.textContent = 'Error: ' + pyErr.message;
+                    return;
+                }
+                
+                const output = window.pyodide.runPython('sys.stdout.getvalue()');
+                outputEl.textContent = output || '(no output)';
+                
             } catch(e) {
                 outputEl.textContent = 'Error: ' + e.message;
             }
