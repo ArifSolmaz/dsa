@@ -1972,7 +1972,7 @@ _output
             status.textContent = 'Submitting...';
             status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
             
-            fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbzyyvKZRtR7_m05hlB7V-BCBJN3OcOBLjVTFNJ5zNcZFxsOoJMLHLvdUVk4SSqDjtXi/exec', {
                 method: 'POST',
                 mode: 'cors',
                 headers: { 'Content-Type': 'application/json' },
@@ -1984,7 +1984,7 @@ _output
                 status.style.cssText = 'display:block;background:rgba(' + (res.success ? '74,222,128' : '239,68,68') + ',0.2);color:' + (res.success ? '#4ade80' : '#fca5a5');
             })
             .catch(() => {
-                fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+                fetch('https://script.google.com/macros/s/AKfycbzyyvKZRtR7_m05hlB7V-BCBJN3OcOBLjVTFNJ5zNcZFxsOoJMLHLvdUVk4SSqDjtXi/exec', {
                     method: 'POST', mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
