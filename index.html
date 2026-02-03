@@ -350,5 +350,50 @@
     
     buildWeekCards();
     </script>
+
+    <script>
+    // Auto-redirect to current week's page (only on first visit)
+    function getCurrentWeek() {
+        const now = new Date();
+        
+        for (const item of weeks) {
+            if (item.week === 'break') continue;
+            
+            const start = new Date(item.start + 'T00:00:00');
+            const end = new Date(item.end + 'T23:59:59');
+            
+            if (now >= start && now <= end) {
+                return item.file;
+            }
+        }
+        return null;
+    }
+    
+    // Check conditions
+    const urlParams = new URLSearchParams(window.location.search);
+    const noRedirect = urlParams.get('home') === 'true';
+    const hasVisited = sessionStorage.getItem('dsa_visited');
+    const cameFromWeek = document.referrer.includes('Week');
+    
+    // Only redirect if: first visit AND no ?home=true AND didn't come from a week page
+    if (!noRedirect && !hasVisited && !cameFromWeek) {
+        const currentWeekFile = getCurrentWeek();
+        if (currentWeekFile) {
+            sessionStorage.setItem('dsa_visited', 'true');
+            
+            const msg = document.createElement('div');
+            msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a2e;color:white;padding:30px 50px;border-radius:10px;font-family:system-ui;text-align:center;z-index:9999;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
+            msg.innerHTML = '<div style="font-size:1.2rem;margin-bottom:10px;">Redirecting to this week\'s content...</div><div style="color:#a78bfa;">' + currentWeekFile.replace('.html','').replace('Week','Week ') + '</div>';
+            document.body.appendChild(msg);
+            
+            setTimeout(() => {
+                window.location.href = currentWeekFile;
+            }, 1500);
+        }
+    }
+    
+    // Mark as visited when viewing homepage
+    sessionStorage.setItem('dsa_visited', 'true');
+    </script>
 </body>
 </html>
