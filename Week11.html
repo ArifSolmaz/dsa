@@ -2060,21 +2060,43 @@ sys.stdout = StringIO()
             status.textContent = 'Submitting...';
             status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
             
-            fetch('https://script.google.com/macros/s/AKfycbzyyvKZRtR7_m05hlB7V-BCBJN3OcOBLjVTFNJ5zNcZFxsOoJMLHLvdUVk4SSqDjtXi/exec', {
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbzyyvKZRtR7_m05hlB7V-BCBJN3OcOBLjVTFNJ5zNcZFxsOoJMLHLvdUVk4SSqDjtXi/exec';
+            
+            fetch(scriptUrl, {
                 method: 'POST',
                 mode: 'cors',
-                headers: { 'Content-Type': 'application/json' },
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(data)
             })
-            .then(r => r.json())
+            .then(response => response.json())
             .then(res => {
-                status.textContent = res.success ? 'Submitted successfully!' : res.message;
-                status.style.cssText = 'display:block;background:rgba(' + (res.success ? '74,222,128' : '239,68,68') + ',0.2);color:' + (res.success ? '#4ade80' : '#fca5a5');
+                if (res.success) {
+                    status.textContent = 'Submitted successfully!';
+                    status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80';
+                } else {
+                    status.textContent = res.message || 'Submission failed. Please try again.';
+                    status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                }
             })
-            .catch((error) => {
-                status.textContent = 'Connection error. Please try again.';
-                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
-                console.error('Submit error:', error);
+            .catch(error => {
+                console.error('Fetch error:', error);
+                // Fallback: try no-cors mode (won't get response but will send data)
+                fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(data)
+                })
+                .then(() => {
+                    status.textContent = 'Request sent. Check your email for confirmation.';
+                    status.style.cssText = 'display:block;background:rgba(251,191,36,0.2);color:#fbbf24';
+                })
+                .catch(() => {
+                    status.textContent = 'Connection error. Please try again.';
+                    status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                });
             });
         }
     </script>
