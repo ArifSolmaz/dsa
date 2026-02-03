@@ -1,0 +1,2501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 08: Hash Tables | DSA Course</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 19px;
+            background: #faf9f7;
+            color: #2c2c2c; 
+            line-height: 1.8;
+        }
+        
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .topbar .title { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 500; }
+        .topbar a { font-family: system-ui, sans-serif; color: white; text-decoration: none; font-size: 0.85rem; padding: 6px 14px; background: rgba(255,255,255,0.1); border-radius: 5px; }
+        .topbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .book { max-width: 750px; margin: 0 auto; padding: 60px 40px 100px; }
+        
+        .chapter-header { text-align: center; padding: 50px 0 60px; border-bottom: 1px solid #ddd; margin-bottom: 50px; }
+        .chapter-num { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: #7c3aed; margin-bottom: 15px; }
+        .chapter-header h1 { font-size: 2.8rem; font-weight: 600; color: #1a1a2e; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .chapter-header .subtitle { font-style: italic; color: #666; font-size: 1.1rem; }
+        
+        h2 { font-size: 1.6rem; font-weight: 600; color: #1a1a2e; margin: 60px 0 25px; padding-top: 30px; border-top: 1px solid #e5e5e5; }
+        h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+        h3 { font-size: 1.25rem; font-weight: 600; color: #333; margin: 40px 0 15px; }
+        h4 { font-size: 1.05rem; font-weight: 600; color: #555; margin: 30px 0 12px; }
+        
+        p { margin: 0 0 20px; text-align: justify; hyphens: auto; }
+        ul, ol { margin: 20px 0 25px 30px; }
+        li { margin: 10px 0; }
+        
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: #f0eeeb; padding: 2px 6px; border-radius: 3px; color: #7c3aed; }
+        .term { font-weight: 600; color: #1a1a2e; }
+        
+        .definition { background: #f8f7f5; border-left: 4px solid #7c3aed; padding: 20px 25px; margin: 30px 0; }
+        .definition-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 8px; font-weight: 600; }
+        .definition p { margin: 0; }
+        
+        .margin-note { background: #fffbeb; border: 1px solid #fcd34d; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .margin-note::before { content: "💡 "; }
+        
+        .important { background: #fef2f2; border: 1px solid #fca5a5; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .important::before { content: "⚠️ "; }
+        
+        .example { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; padding: 25px; margin: 30px 0; }
+        .example-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 15px; font-weight: 600; }
+        
+        .code-figure { margin: 35px 0; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background: #1e1e2e; }
+        .code-figure-header { background: #28283c; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
+        .code-figure-label { font-family: system-ui, sans-serif; font-size: 0.75rem; color: #a0a0b0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .code-figure-run { font-family: system-ui, sans-serif; background: #7c3aed; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
+        .code-figure-run:hover { background: #6d28d9; }
+        .code-figure textarea { width: 100%; min-height: 100px; padding: 18px; background: #1e1e2e; color: #e0e0e0; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; }
+        .code-figure textarea:focus { outline: none; }
+        .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; }
+        .code-figure-output.show { display: block; }
+        .code-figure-caption { background: #f8f8f8; padding: 12px 18px; font-size: 0.85rem; color: #666; border-top: 1px solid #e0e0e0; }
+        .code-figure-caption strong { color: #333; }
+        
+        .summary { background: linear-gradient(135deg, #7c3aed10, #7c3aed05); border: 1px solid #7c3aed30; border-radius: 8px; padding: 25px 30px; margin: 40px 0; }
+        .summary-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 12px; font-weight: 600; }
+        .summary ul { margin: 0; }
+        
+        .exercise { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 25px 30px; margin: 40px 0 20px; }
+        .exercise-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #16a34a; margin-bottom: 12px; font-weight: 600; }
+        .exercise p { margin: 0; }
+        .exercise .answer { margin-top: 12px; font-size: 0.9rem; color: #166534; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 0.95rem; }
+        th, td { border: 1px solid #ddd; padding: 12px 15px; text-align: left; }
+        th { background: #f5f5f5; font-weight: 600; }
+        
+        .submit-section { background: #1a1a2e; color: white; padding: 40px; border-radius: 10px; margin-top: 60px; }
+        .submit-section h2 { color: white; border: none; margin: 0 0 20px; padding: 0; font-size: 1.4rem; }
+        .submit-section p { color: #a0a0b0; text-align: left; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-family: system-ui, sans-serif; font-size: 0.85rem; color: #a0a0b0; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: white; font-size: 1rem; font-family: system-ui, sans-serif; }
+        .form-group input:focus { outline: none; border-color: #7c3aed; }
+        .submit-btn { background: #7c3aed; color: white; border: none; padding: 14px 30px; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; font-family: system-ui, sans-serif; margin-top: 10px; }
+        .submit-btn:hover { background: #6d28d9; }
+        .submit-status { margin-top: 15px; padding: 12px; border-radius: 5px; display: none; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+        .hp { position: absolute; left: -9999px; }
+        
+        .toc { background: #f8f7f5; padding: 30px 35px; margin: 0 0 50px; border-radius: 6px; }
+        .toc-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 15px; }
+        .toc ol { margin: 0; padding-left: 20px; }
+        .toc li { margin: 8px 0; }
+        .toc a { color: #7c3aed; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        
+        @media (max-width: 600px) {
+            .book { padding: 30px 20px; }
+            .chapter-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.4rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="topbar">
+        <span class="title">Data Structures &amp; Algorithms</span>
+        <a href="index.html">← Course Home</a>
+    </nav>
+    
+    <main class="book">
+        <header class="chapter-header">
+            <div class="chapter-num">Week Eight</div>
+            <h1>Hash Tables</h1>
+            <p class="subtitle">Constant-time lookup with key-value mapping</p>
+        </header>
+        
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <ol>
+                <li><a href="#intro">Introduction to Hashing</a></li>
+                <li><a href="#hash-functions">Hash Functions</a></li>
+                <li><a href="#collisions">Collision Resolution</a></li>
+                <li><a href="#chaining">Separate Chaining</a></li>
+                <li><a href="#open-addressing">Open Addressing</a></li>
+                <li><a href="#load-factor">Load Factor and Resizing</a></li>
+                <li><a href="#implementation">Hash Table Implementation</a></li>
+                <li><a href="#python-dict">Python's dict and set</a></li>
+                <li><a href="#applications">Hash Table Applications</a></li>
+                <li><a href="#patterns">Common Patterns</a></li>
+                <li><a href="#pitfalls">Common Pitfalls</a></li>
+                <li><a href="#exercises">Exercises</a></li>
+            </ol>
+        </nav>
+
+        <!-- ============================================== -->
+        <!-- SECTION 1: INTRODUCTION TO HASHING -->
+        <!-- ============================================== -->
+        <section id="intro">
+            <h2>1. Introduction to Hashing</h2>
+            
+            <p>We've seen that arrays offer O(1) access by index, but O(n) search by value. Binary search trees provide O(log n) for all operations. Can we do better? <span class="term">Hash tables</span> achieve O(1) average-case for insert, delete, and search—the best of both worlds.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">hash table</span> (also called hash map) is a data structure that maps keys to values using a <span class="term">hash function</span>. The hash function converts a key into an array index, enabling direct access to the stored value. When two keys map to the same index (a <span class="term">collision</span>), special techniques resolve the conflict.</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">Hash Table Concept</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+Key         Hash Function    Index    Value
+─────────────────────────────────────────────
+"apple"  →  hash("apple")  →  2   →  "red"
+"banana" →  hash("banana") →  5   →  "yellow"
+"cherry" →  hash("cherry") →  2   →  COLLISION!
+
+Array (buckets):
+[0]  empty
+[1]  empty
+[2]  "apple" → "red"  →  "cherry" → "dark red"
+[3]  empty
+[4]  empty
+[5]  "banana" → "yellow"
+[6]  empty
+                </pre>
+            </div>
+            
+            <h3>Why Hash Tables?</h3>
+            
+            <table>
+                <tr>
+                    <th>Operation</th>
+                    <th>Array</th>
+                    <th>BST</th>
+                    <th>Hash Table</th>
+                </tr>
+                <tr>
+                    <td>Search by key</td>
+                    <td>O(n)</td>
+                    <td>O(log n)</td>
+                    <td>O(1)*</td>
+                </tr>
+                <tr>
+                    <td>Insert</td>
+                    <td>O(1) / O(n)</td>
+                    <td>O(log n)</td>
+                    <td>O(1)*</td>
+                </tr>
+                <tr>
+                    <td>Delete</td>
+                    <td>O(n)</td>
+                    <td>O(log n)</td>
+                    <td>O(1)*</td>
+                </tr>
+                <tr>
+                    <td>Ordered traversal</td>
+                    <td>O(n log n)</td>
+                    <td>O(n)</td>
+                    <td>O(n log n)</td>
+                </tr>
+            </table>
+            <p><em>* Average case. Worst case is O(n) with many collisions.</em></p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.1 — Hash Table vs Other Structures</span>
+                    <button class="code-figure-run" onclick="runCode('code1')">▶ Run</button>
+                </div>
+                <textarea id="code1" spellcheck="false">import time
+
+# Compare search performance
+n = 100000
+data = list(range(n))
+target = n - 1  # Worst case for linear search
+
+# List search - O(n)
+start = time.perf_counter()
+for _ in range(100):
+    _ = target in data
+list_time = time.perf_counter() - start
+
+# Set search (hash-based) - O(1)
+data_set = set(data)
+start = time.perf_counter()
+for _ in range(100):
+    _ = target in data_set
+set_time = time.perf_counter() - start
+
+# Dict search (hash-based) - O(1)
+data_dict = {x: x for x in data}
+start = time.perf_counter()
+for _ in range(100):
+    _ = target in data_dict
+dict_time = time.perf_counter() - start
+
+print(f"Searching for {target} in {n} elements (100 times):")
+print(f"  List:  {list_time*1000:.2f} ms")
+print(f"  Set:   {set_time*1000:.2f} ms")
+print(f"  Dict:  {dict_time*1000:.2f} ms")
+print(f"\nHash-based speedup: {list_time/set_time:.0f}x")</textarea>
+                <div class="code-figure-output" id="outputcode1"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.1:</strong> Hash-based structures (set, dict) provide dramatic speedup for membership testing.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 2: HASH FUNCTIONS -->
+        <!-- ============================================== -->
+        <section id="hash-functions">
+            <h2>2. Hash Functions</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">hash function</span> takes a key of arbitrary size and produces a fixed-size integer (the hash code). A good hash function is: (1) deterministic—same input always gives same output, (2) uniform—distributes keys evenly across buckets, (3) efficient—computes quickly.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.2 — Simple Hash Functions</span>
+                    <button class="code-figure-run" onclick="runCode('code2')">▶ Run</button>
+                </div>
+                <textarea id="code2" spellcheck="false">def hash_simple(key, table_size):
+    """Sum of ASCII values mod table_size."""
+    return sum(ord(c) for c in str(key)) % table_size
+
+def hash_polynomial(key, table_size, base=31):
+    """
+    Polynomial rolling hash - better distribution.
+    hash = s[0]*base^(n-1) + s[1]*base^(n-2) + ... + s[n-1]
+    """
+    h = 0
+    for c in str(key):
+        h = (h * base + ord(c)) % table_size
+    return h
+
+def hash_djb2(key, table_size):
+    """DJB2 hash - widely used string hash."""
+    h = 5381
+    for c in str(key):
+        h = ((h << 5) + h) + ord(c)  # h * 33 + c
+    return h % table_size
+
+# Test hash functions
+table_size = 10
+keys = ["apple", "banana", "cherry", "date", "elderberry"]
+
+print(f"Table size: {table_size}\n")
+print(f"{'Key':<12} {'Simple':>8} {'Poly':>8} {'DJB2':>8}")
+print("-" * 40)
+for key in keys:
+    print(f"{key:<12} {hash_simple(key, table_size):>8} "
+          f"{hash_polynomial(key, table_size):>8} "
+          f"{hash_djb2(key, table_size):>8}")</textarea>
+                <div class="code-figure-output" id="outputcode2"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.2:</strong> Different hash functions produce different distributions. Polynomial hashes consider character position.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.3 — Python's Built-in hash()</span>
+                    <button class="code-figure-run" onclick="runCode('code3')">▶ Run</button>
+                </div>
+                <textarea id="code3" spellcheck="false"># Python's hash() function
+print("Python hash() examples:")
+print(f"  hash('hello') = {hash('hello')}")
+print(f"  hash(42) = {hash(42)}")
+print(f"  hash((1, 2, 3)) = {hash((1, 2, 3))}")
+print(f"  hash(3.14) = {hash(3.14)}")
+
+# Same value always gives same hash (within a session)
+print(f"\nConsistency: hash('test') == hash('test'): {hash('test') == hash('test')}")
+
+# Converting hash to table index
+table_size = 16
+key = "mykey"
+index = hash(key) % table_size
+print(f"\nKey '{key}' -> hash {hash(key)} -> index {index} (table size {table_size})")
+
+# Note: Lists are not hashable (mutable)
+try:
+    hash([1, 2, 3])
+except TypeError as e:
+    print(f"\nError: {e}")
+    print("Lists are mutable, so they can't be hashed")</textarea>
+                <div class="code-figure-output" id="outputcode3"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.3:</strong> Python's hash() works on immutable types. Use modulo to convert to table index.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.4 — Hash Distribution Analysis</span>
+                    <button class="code-figure-run" onclick="runCode('code4')">▶ Run</button>
+                </div>
+                <textarea id="code4" spellcheck="false">def analyze_distribution(hash_func, keys, table_size):
+    """Analyze how evenly keys are distributed."""
+    buckets = [0] * table_size
+    for key in keys:
+        idx = hash_func(key, table_size)
+        buckets[idx] += 1
+    
+    # Calculate statistics
+    avg = len(keys) / table_size
+    variance = sum((b - avg) ** 2 for b in buckets) / table_size
+    max_bucket = max(buckets)
+    empty_buckets = buckets.count(0)
+    
+    return {
+        'variance': variance,
+        'max_bucket': max_bucket,
+        'empty': empty_buckets,
+        'distribution': buckets
+    }
+
+def hash_simple(key, size):
+    return sum(ord(c) for c in str(key)) % size
+
+def hash_polynomial(key, size):
+    h = 0
+    for c in str(key):
+        h = (h * 31 + ord(c)) % size
+    return h
+
+# Test with similar keys (worst case for simple hash)
+keys = [f"key{i}" for i in range(100)]
+table_size = 20
+
+print("Distribution analysis for 100 keys in 20 buckets:\n")
+
+for name, func in [("Simple", hash_simple), ("Polynomial", hash_polynomial)]:
+    stats = analyze_distribution(func, keys, table_size)
+    print(f"{name} hash:")
+    print(f"  Variance: {stats['variance']:.2f}")
+    print(f"  Max bucket size: {stats['max_bucket']}")
+    print(f"  Empty buckets: {stats['empty']}")
+    print(f"  Distribution: {stats['distribution'][:10]}...")
+    print()</textarea>
+                <div class="code-figure-output" id="outputcode4"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.4:</strong> Good hash functions minimize variance and empty buckets. Polynomial hash performs better on similar keys.
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                A hash function doesn't need to be cryptographically secure for hash tables. Speed and uniform distribution matter more than collision resistance for security purposes.
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 3: COLLISION RESOLUTION -->
+        <!-- ============================================== -->
+        <section id="collisions">
+            <h2>3. Collision Resolution</h2>
+            
+            <p>Since hash functions map a potentially infinite set of keys to a finite set of indices, collisions are inevitable. There are two main strategies:</p>
+            
+            <div class="definition">
+                <div class="definition-title">Collision Resolution Strategies</div>
+                <p>
+                <strong>Separate Chaining:</strong> Each bucket stores a linked list (or other collection) of all entries that hash to that index.<br>
+                <strong>Open Addressing:</strong> When a collision occurs, probe for the next empty slot according to a probing sequence.
+                </p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">Collision Resolution Comparison</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+Insert keys A, B, C where hash(A) = hash(B) = hash(C) = 2
+
+Separate Chaining:            Open Addressing (Linear):
+[0] empty                     [0] empty
+[1] empty                     [1] empty
+[2] A → B → C                 [2] A
+[3] empty                     [3] B  (probed from 2)
+[4] empty                     [4] C  (probed from 3)
+
+Chaining: unlimited per bucket, uses extra memory
+Open addressing: all in array, better cache performance
+                </pre>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.5 — Collision Demonstration</span>
+                    <button class="code-figure-run" onclick="runCode('code5')">▶ Run</button>
+                </div>
+                <textarea id="code5" spellcheck="false">def simple_hash(key, size):
+    return sum(ord(c) for c in key) % size
+
+# Find keys that collide
+table_size = 10
+
+# These all have the same character sum
+colliding_keys = ["abc", "bca", "cab", "acb", "bac", "cba"]
+
+print(f"Table size: {table_size}")
+print(f"\nKeys with same character sum:")
+for key in colliding_keys:
+    h = simple_hash(key, table_size)
+    char_sum = sum(ord(c) for c in key)
+    print(f"  '{key}': sum={char_sum}, hash={h}")
+
+# Also common: sequential keys
+print(f"\nSequential keys (common pattern):")
+for i in range(5):
+    key = f"user{i}"
+    h = simple_hash(key, table_size)
+    print(f"  '{key}': hash={h}")
+
+print("\nThis is why we need collision resolution!")</textarea>
+                <div class="code-figure-output" id="outputcode5"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.5:</strong> Collisions are common—anagrams always collide with simple sum-based hashing.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 4: SEPARATE CHAINING -->
+        <!-- ============================================== -->
+        <section id="chaining">
+            <h2>4. Separate Chaining</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.6 — Hash Table with Chaining</span>
+                    <button class="code-figure-run" onclick="runCode('code6')">▶ Run</button>
+                </div>
+                <textarea id="code6" spellcheck="false">class HashTableChaining:
+    """Hash table using separate chaining."""
+    
+    def __init__(self, size=10):
+        self.size = size
+        self.buckets = [[] for _ in range(size)]
+        self.count = 0
+    
+    def _hash(self, key):
+        return hash(key) % self.size
+    
+    def put(self, key, value):
+        """Insert or update key-value pair."""
+        idx = self._hash(key)
+        bucket = self.buckets[idx]
+        
+        # Check if key exists (update)
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                bucket[i] = (key, value)
+                return
+        
+        # Key doesn't exist (insert)
+        bucket.append((key, value))
+        self.count += 1
+    
+    def get(self, key):
+        """Get value by key."""
+        idx = self._hash(key)
+        for k, v in self.buckets[idx]:
+            if k == key:
+                return v
+        raise KeyError(key)
+    
+    def remove(self, key):
+        """Remove key-value pair."""
+        idx = self._hash(key)
+        bucket = self.buckets[idx]
+        
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                bucket.pop(i)
+                self.count -= 1
+                return v
+        raise KeyError(key)
+    
+    def __repr__(self):
+        items = []
+        for bucket in self.buckets:
+            items.extend(bucket)
+        return f"HashTable({dict(items)})"
+
+# Test
+ht = HashTableChaining(5)
+ht.put("apple", 1)
+ht.put("banana", 2)
+ht.put("cherry", 3)
+ht.put("date", 4)
+
+print(f"Hash table: {ht}")
+print(f"get('banana'): {ht.get('banana')}")
+
+# Show internal structure
+print("\nInternal buckets:")
+for i, bucket in enumerate(ht.buckets):
+    print(f"  [{i}]: {bucket}")</textarea>
+                <div class="code-figure-output" id="outputcode6"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.6:</strong> Separate chaining stores colliding entries in a list at each bucket.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.7 — Chaining with Linked List</span>
+                    <button class="code-figure-run" onclick="runCode('code7')">▶ Run</button>
+                </div>
+                <textarea id="code7" spellcheck="false">class Node:
+    """Node for linked list in each bucket."""
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+        self.next = None
+
+class HashTableLinkedChaining:
+    """Hash table with linked list chaining."""
+    
+    def __init__(self, size=10):
+        self.size = size
+        self.buckets = [None] * size
+        self.count = 0
+    
+    def _hash(self, key):
+        return hash(key) % self.size
+    
+    def put(self, key, value):
+        idx = self._hash(key)
+        
+        # Search for existing key
+        node = self.buckets[idx]
+        while node:
+            if node.key == key:
+                node.value = value
+                return
+            node = node.next
+        
+        # Insert at head
+        new_node = Node(key, value)
+        new_node.next = self.buckets[idx]
+        self.buckets[idx] = new_node
+        self.count += 1
+    
+    def get(self, key):
+        idx = self._hash(key)
+        node = self.buckets[idx]
+        
+        while node:
+            if node.key == key:
+                return node.value
+            node = node.next
+        raise KeyError(key)
+    
+    def display_bucket(self, idx):
+        """Show chain at bucket."""
+        result = []
+        node = self.buckets[idx]
+        while node:
+            result.append(f"({node.key}:{node.value})")
+            node = node.next
+        return " -> ".join(result) if result else "empty"
+
+# Test
+ht = HashTableLinkedChaining(5)
+for word in ["cat", "dog", "rat", "bat", "ant", "cow"]:
+    ht.put(word, len(word))
+
+print("Linked list chaining:")
+for i in range(5):
+    print(f"  Bucket {i}: {ht.display_bucket(i)}")</textarea>
+                <div class="code-figure-output" id="outputcode7"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.7:</strong> Linked list chaining allows O(1) insertion at head of each chain.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 5: OPEN ADDRESSING -->
+        <!-- ============================================== -->
+        <section id="open-addressing">
+            <h2>5. Open Addressing</h2>
+            
+            <p>Open addressing stores all entries directly in the table. When a collision occurs, we <span class="term">probe</span> for the next empty slot.</p>
+            
+            <h3>Linear Probing</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.8 — Linear Probing</span>
+                    <button class="code-figure-run" onclick="runCode('code8')">▶ Run</button>
+                </div>
+                <textarea id="code8" spellcheck="false">class HashTableLinearProbing:
+    """Hash table with linear probing."""
+    
+    DELETED = object()  # Tombstone marker
+    
+    def __init__(self, size=10):
+        self.size = size
+        self.keys = [None] * size
+        self.values = [None] * size
+        self.count = 0
+    
+    def _hash(self, key):
+        return hash(key) % self.size
+    
+    def put(self, key, value):
+        if self.count >= self.size * 0.7:  # Load factor check
+            raise Exception("Table is too full")
+        
+        idx = self._hash(key)
+        
+        while self.keys[idx] is not None:
+            if self.keys[idx] == key:  # Update existing
+                self.values[idx] = value
+                return
+            if self.keys[idx] is self.DELETED:  # Reuse deleted slot
+                break
+            idx = (idx + 1) % self.size  # Linear probe
+        
+        self.keys[idx] = key
+        self.values[idx] = value
+        self.count += 1
+    
+    def get(self, key):
+        idx = self._hash(key)
+        start = idx
+        
+        while self.keys[idx] is not None:
+            if self.keys[idx] == key:
+                return self.values[idx]
+            idx = (idx + 1) % self.size
+            if idx == start:  # Full circle
+                break
+        raise KeyError(key)
+    
+    def remove(self, key):
+        idx = self._hash(key)
+        start = idx
+        
+        while self.keys[idx] is not None:
+            if self.keys[idx] == key:
+                self.keys[idx] = self.DELETED  # Tombstone
+                value = self.values[idx]
+                self.values[idx] = None
+                self.count -= 1
+                return value
+            idx = (idx + 1) % self.size
+            if idx == start:
+                break
+        raise KeyError(key)
+    
+    def display(self):
+        for i in range(self.size):
+            k = self.keys[i]
+            v = self.values[i]
+            if k is None:
+                print(f"  [{i}]: empty")
+            elif k is self.DELETED:
+                print(f"  [{i}]: DELETED")
+            else:
+                print(f"  [{i}]: {k} = {v}")
+
+# Test
+ht = HashTableLinearProbing(10)
+ht.put("apple", 1)
+ht.put("banana", 2)
+ht.put("cherry", 3)
+
+print("After insertions:")
+ht.display()
+
+print(f"\nget('banana'): {ht.get('banana')}")
+
+ht.remove("banana")
+print("\nAfter removing 'banana':")
+ht.display()</textarea>
+                <div class="code-figure-output" id="outputcode8"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.8:</strong> Linear probing checks consecutive slots. Tombstones (DELETED) preserve probe chains.
+                </div>
+            </div>
+            
+            <h3>Quadratic Probing</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.9 — Quadratic Probing</span>
+                    <button class="code-figure-run" onclick="runCode('code9')">▶ Run</button>
+                </div>
+                <textarea id="code9" spellcheck="false">class HashTableQuadraticProbing:
+    """Hash table with quadratic probing."""
+    
+    DELETED = object()
+    
+    def __init__(self, size=11):  # Prime size recommended
+        self.size = size
+        self.keys = [None] * size
+        self.values = [None] * size
+        self.count = 0
+    
+    def _hash(self, key):
+        return hash(key) % self.size
+    
+    def _probe(self, idx, i):
+        """Quadratic probe: h(k) + c1*i + c2*i^2"""
+        # Using h(k) + i^2 (simpler form)
+        return (idx + i * i) % self.size
+    
+    def put(self, key, value):
+        idx = self._hash(key)
+        
+        for i in range(self.size):
+            probe_idx = self._probe(idx, i)
+            
+            if self.keys[probe_idx] is None or self.keys[probe_idx] is self.DELETED:
+                self.keys[probe_idx] = key
+                self.values[probe_idx] = value
+                self.count += 1
+                return
+            
+            if self.keys[probe_idx] == key:
+                self.values[probe_idx] = value
+                return
+        
+        raise Exception("Table is full")
+    
+    def get(self, key):
+        idx = self._hash(key)
+        
+        for i in range(self.size):
+            probe_idx = self._probe(idx, i)
+            
+            if self.keys[probe_idx] is None:
+                break
+            if self.keys[probe_idx] == key:
+                return self.values[probe_idx]
+        
+        raise KeyError(key)
+
+# Compare linear vs quadratic probing
+print("Quadratic probing reduces clustering:")
+print("  Linear:    0, 1, 2, 3, 4, 5, ...")
+print("  Quadratic: 0, 1, 4, 9, 16, 25, ...")
+
+ht = HashTableQuadraticProbing(11)
+for word in ["cat", "act", "tac"]:  # Likely collisions
+    ht.put(word, len(word))
+
+print("\nTable contents:")
+for i in range(ht.size):
+    if ht.keys[i] and ht.keys[i] is not ht.DELETED:
+        print(f"  [{i}]: {ht.keys[i]}")</textarea>
+                <div class="code-figure-output" id="outputcode9"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.9:</strong> Quadratic probing spreads entries more evenly, reducing primary clustering.
+                </div>
+            </div>
+            
+            <h3>Double Hashing</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.10 — Double Hashing</span>
+                    <button class="code-figure-run" onclick="runCode('code10')">▶ Run</button>
+                </div>
+                <textarea id="code10" spellcheck="false">class HashTableDoubleHashing:
+    """Hash table with double hashing."""
+    
+    DELETED = object()
+    
+    def __init__(self, size=11):
+        self.size = size
+        self.keys = [None] * size
+        self.values = [None] * size
+        self.count = 0
+    
+    def _hash1(self, key):
+        """Primary hash function."""
+        return hash(key) % self.size
+    
+    def _hash2(self, key):
+        """Secondary hash function for step size."""
+        # Must never return 0, and be coprime with size
+        return 7 - (hash(key) % 7)  # Returns 1-7
+    
+    def put(self, key, value):
+        idx = self._hash1(key)
+        step = self._hash2(key)
+        
+        for i in range(self.size):
+            probe_idx = (idx + i * step) % self.size
+            
+            if self.keys[probe_idx] is None or self.keys[probe_idx] is self.DELETED:
+                self.keys[probe_idx] = key
+                self.values[probe_idx] = value
+                self.count += 1
+                return
+            
+            if self.keys[probe_idx] == key:
+                self.values[probe_idx] = value
+                return
+        
+        raise Exception("Table is full")
+    
+    def get(self, key):
+        idx = self._hash1(key)
+        step = self._hash2(key)
+        
+        for i in range(self.size):
+            probe_idx = (idx + i * step) % self.size
+            
+            if self.keys[probe_idx] is None:
+                break
+            if self.keys[probe_idx] == key:
+                return self.values[probe_idx]
+        
+        raise KeyError(key)
+
+# Test
+ht = HashTableDoubleHashing(11)
+for word in ["cat", "act", "tac", "dog", "god"]:
+    ht.put(word, len(word))
+
+print("Double hashing - each key has its own probe sequence:")
+for i in range(ht.size):
+    if ht.keys[i] and ht.keys[i] is not ht.DELETED:
+        print(f"  [{i}]: {ht.keys[i]}")</textarea>
+                <div class="code-figure-output" id="outputcode10"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.10:</strong> Double hashing uses a second hash function to determine step size, eliminating secondary clustering.
+                </div>
+            </div>
+            
+            <div class="important">
+                <strong>Open Addressing Comparison:</strong><br>
+                • <strong>Linear:</strong> Simple, good cache locality, suffers from clustering<br>
+                • <strong>Quadratic:</strong> Reduces primary clustering, may not find empty slot<br>
+                • <strong>Double Hashing:</strong> Best distribution, more computation per probe
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 6: LOAD FACTOR AND RESIZING -->
+        <!-- ============================================== -->
+        <section id="load-factor">
+            <h2>6. Load Factor and Resizing</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>The <span class="term">load factor</span> (α) is the ratio of stored entries to table size: α = n/m. Performance degrades as α increases. Typically, we resize when α exceeds a threshold (0.7 for open addressing, 1.0 for chaining).</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.11 — Load Factor Effects</span>
+                    <button class="code-figure-run" onclick="runCode('code11')">▶ Run</button>
+                </div>
+                <textarea id="code11" spellcheck="false">import time
+
+def measure_insert_time(table_size, num_items):
+    """Measure time to insert items into hash table."""
+    class SimpleHashTable:
+        def __init__(self, size):
+            self.size = size
+            self.keys = [None] * size
+            self.count = 0
+        
+        def put(self, key, value):
+            idx = hash(key) % self.size
+            probes = 0
+            while self.keys[idx] is not None:
+                if self.keys[idx] == key:
+                    return probes
+                idx = (idx + 1) % self.size
+                probes += 1
+            self.keys[idx] = key
+            self.count += 1
+            return probes
+    
+    ht = SimpleHashTable(table_size)
+    total_probes = 0
+    
+    for i in range(num_items):
+        total_probes += ht.put(f"key{i}", i)
+    
+    load_factor = num_items / table_size
+    avg_probes = total_probes / num_items
+    
+    return load_factor, avg_probes
+
+# Test at different load factors
+table_size = 1000
+print(f"Table size: {table_size}")
+print(f"{'Items':>8} {'Load Factor':>12} {'Avg Probes':>12}")
+print("-" * 35)
+
+for num_items in [100, 300, 500, 700, 900, 950]:
+    lf, ap = measure_insert_time(table_size, num_items)
+    print(f"{num_items:>8} {lf:>12.2f} {ap:>12.2f}")
+
+print("\nNotice: probes increase dramatically above 0.7 load factor")</textarea>
+                <div class="code-figure-output" id="outputcode11"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.11:</strong> Average probes increase non-linearly with load factor. Stay below 0.7 for open addressing.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.12 — Dynamic Resizing</span>
+                    <button class="code-figure-run" onclick="runCode('code12')">▶ Run</button>
+                </div>
+                <textarea id="code12" spellcheck="false">class DynamicHashTable:
+    """Hash table with automatic resizing."""
+    
+    def __init__(self, initial_size=8):
+        self.size = initial_size
+        self.buckets = [[] for _ in range(self.size)]
+        self.count = 0
+        self.resize_threshold = 0.75
+    
+    def _hash(self, key):
+        return hash(key) % self.size
+    
+    def _resize(self, new_size):
+        """Resize and rehash all entries."""
+        old_buckets = self.buckets
+        self.size = new_size
+        self.buckets = [[] for _ in range(new_size)]
+        self.count = 0
+        
+        for bucket in old_buckets:
+            for key, value in bucket:
+                self.put(key, value)
+    
+    def put(self, key, value):
+        # Check if resize needed
+        if self.count >= self.size * self.resize_threshold:
+            print(f"  Resizing: {self.size} -> {self.size * 2}")
+            self._resize(self.size * 2)
+        
+        idx = self._hash(key)
+        
+        # Update existing
+        for i, (k, v) in enumerate(self.buckets[idx]):
+            if k == key:
+                self.buckets[idx][i] = (key, value)
+                return
+        
+        # Insert new
+        self.buckets[idx].append((key, value))
+        self.count += 1
+    
+    def load_factor(self):
+        return self.count / self.size
+
+# Test automatic resizing
+ht = DynamicHashTable(initial_size=4)
+
+print("Inserting items (watching for resizes):")
+for i in range(20):
+    ht.put(f"key{i}", i)
+
+print(f"\nFinal state:")
+print(f"  Items: {ht.count}")
+print(f"  Table size: {ht.size}")
+print(f"  Load factor: {ht.load_factor():.2f}")</textarea>
+                <div class="code-figure-output" id="outputcode12"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.12:</strong> Dynamic resizing doubles table size when load factor exceeds threshold, amortizing cost over insertions.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 7: COMPLETE IMPLEMENTATION -->
+        <!-- ============================================== -->
+        <section id="implementation">
+            <h2>7. Hash Table Implementation</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.13 — Complete Hash Table</span>
+                    <button class="code-figure-run" onclick="runCode('code13')">▶ Run</button>
+                </div>
+                <textarea id="code13" spellcheck="false">class HashMap:
+    """Complete hash map with chaining and dynamic resizing."""
+    
+    def __init__(self, initial_capacity=16, load_factor=0.75):
+        self._capacity = initial_capacity
+        self._load_factor = load_factor
+        self._size = 0
+        self._buckets = [[] for _ in range(self._capacity)]
+    
+    def __setitem__(self, key, value):
+        """dict[key] = value syntax."""
+        self._put(key, value)
+    
+    def __getitem__(self, key):
+        """dict[key] syntax."""
+        return self._get(key)
+    
+    def __delitem__(self, key):
+        """del dict[key] syntax."""
+        self._remove(key)
+    
+    def __contains__(self, key):
+        """key in dict syntax."""
+        try:
+            self._get(key)
+            return True
+        except KeyError:
+            return False
+    
+    def __len__(self):
+        return self._size
+    
+    def __iter__(self):
+        """Iterate over keys."""
+        for bucket in self._buckets:
+            for key, _ in bucket:
+                yield key
+    
+    def _hash(self, key):
+        return hash(key) % self._capacity
+    
+    def _put(self, key, value):
+        if self._size >= self._capacity * self._load_factor:
+            self._resize()
+        
+        idx = self._hash(key)
+        bucket = self._buckets[idx]
+        
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                bucket[i] = (key, value)
+                return
+        
+        bucket.append((key, value))
+        self._size += 1
+    
+    def _get(self, key):
+        idx = self._hash(key)
+        for k, v in self._buckets[idx]:
+            if k == key:
+                return v
+        raise KeyError(key)
+    
+    def _remove(self, key):
+        idx = self._hash(key)
+        bucket = self._buckets[idx]
+        
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                bucket.pop(i)
+                self._size -= 1
+                return
+        raise KeyError(key)
+    
+    def _resize(self):
+        old_buckets = self._buckets
+        self._capacity *= 2
+        self._buckets = [[] for _ in range(self._capacity)]
+        self._size = 0
+        
+        for bucket in old_buckets:
+            for key, value in bucket:
+                self._put(key, value)
+    
+    def keys(self):
+        return list(self)
+    
+    def values(self):
+        return [self[k] for k in self]
+    
+    def items(self):
+        return [(k, self[k]) for k in self]
+
+# Test the implementation
+hm = HashMap()
+
+# Insert
+hm["name"] = "Alice"
+hm["age"] = 30
+hm["city"] = "Boston"
+
+print(f"HashMap contents: {dict(hm.items())}")
+print(f"hm['name'] = {hm['name']}")
+print(f"'age' in hm: {'age' in hm}")
+print(f"len(hm): {len(hm)}")
+
+# Update
+hm["age"] = 31
+print(f"After update: age = {hm['age']}")
+
+# Delete
+del hm["city"]
+print(f"After delete: {hm.keys()}")</textarea>
+                <div class="code-figure-output" id="outputcode13"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.13:</strong> Complete hash map implementation with Python dict-like interface.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.14 — HashSet Implementation</span>
+                    <button class="code-figure-run" onclick="runCode('code14')">▶ Run</button>
+                </div>
+                <textarea id="code14" spellcheck="false">class HashSet:
+    """Set implementation using hash table."""
+    
+    def __init__(self, initial_capacity=16):
+        self._capacity = initial_capacity
+        self._size = 0
+        self._buckets = [[] for _ in range(self._capacity)]
+    
+    def add(self, item):
+        """Add item to set."""
+        if item in self:
+            return
+        
+        if self._size >= self._capacity * 0.75:
+            self._resize()
+        
+        idx = hash(item) % self._capacity
+        self._buckets[idx].append(item)
+        self._size += 1
+    
+    def remove(self, item):
+        """Remove item from set."""
+        idx = hash(item) % self._capacity
+        bucket = self._buckets[idx]
+        
+        for i, x in enumerate(bucket):
+            if x == item:
+                bucket.pop(i)
+                self._size -= 1
+                return
+        raise KeyError(item)
+    
+    def __contains__(self, item):
+        idx = hash(item) % self._capacity
+        return item in self._buckets[idx]
+    
+    def __len__(self):
+        return self._size
+    
+    def __iter__(self):
+        for bucket in self._buckets:
+            for item in bucket:
+                yield item
+    
+    def _resize(self):
+        old_buckets = self._buckets
+        self._capacity *= 2
+        self._buckets = [[] for _ in range(self._capacity)]
+        self._size = 0
+        
+        for bucket in old_buckets:
+            for item in bucket:
+                self.add(item)
+    
+    def union(self, other):
+        result = HashSet()
+        for item in self:
+            result.add(item)
+        for item in other:
+            result.add(item)
+        return result
+    
+    def intersection(self, other):
+        result = HashSet()
+        for item in self:
+            if item in other:
+                result.add(item)
+        return result
+
+# Test
+s1 = HashSet()
+for x in [1, 2, 3, 4, 5]:
+    s1.add(x)
+
+s2 = HashSet()
+for x in [4, 5, 6, 7, 8]:
+    s2.add(x)
+
+print(f"Set 1: {list(s1)}")
+print(f"Set 2: {list(s2)}")
+print(f"Union: {list(s1.union(s2))}")
+print(f"Intersection: {list(s1.intersection(s2))}")</textarea>
+                <div class="code-figure-output" id="outputcode14"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.14:</strong> A HashSet is a hash table that only stores keys, no values.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 8: PYTHON'S DICT AND SET -->
+        <!-- ============================================== -->
+        <section id="python-dict">
+            <h2>8. Python's dict and set</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.15 — dict Operations</span>
+                    <button class="code-figure-run" onclick="runCode('code15')">▶ Run</button>
+                </div>
+                <textarea id="code15" spellcheck="false"># Python dict is a highly optimized hash table
+d = {}
+
+# Insert/Update - O(1)
+d["a"] = 1
+d["b"] = 2
+d["c"] = 3
+
+# Access - O(1)
+print(f"d['b'] = {d['b']}")
+
+# Check existence - O(1)
+print(f"'a' in d: {'a' in d}")
+print(f"'x' in d: {'x' in d}")
+
+# Delete - O(1)
+del d["b"]
+print(f"After delete: {d}")
+
+# Safe access with default
+print(f"d.get('x', 'default') = {d.get('x', 'default')}")
+
+# Iteration
+print(f"\nKeys: {list(d.keys())}")
+print(f"Values: {list(d.values())}")
+print(f"Items: {list(d.items())}")
+
+# Dict comprehension
+squares = {x: x**2 for x in range(5)}
+print(f"\nSquares: {squares}")
+
+# setdefault - get or set default
+counts = {}
+for char in "hello":
+    counts.setdefault(char, 0)
+    counts[char] += 1
+print(f"Character counts: {counts}")</textarea>
+                <div class="code-figure-output" id="outputcode15"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.15:</strong> Python's dict provides O(1) average-case operations with a clean interface.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.16 — set Operations</span>
+                    <button class="code-figure-run" onclick="runCode('code16')">▶ Run</button>
+                </div>
+                <textarea id="code16" spellcheck="false"># Python set is a hash table storing only keys
+s = {1, 2, 3, 4, 5}
+
+# Add - O(1)
+s.add(6)
+print(f"After add: {s}")
+
+# Remove - O(1)
+s.remove(3)  # Raises KeyError if not found
+s.discard(10)  # No error if not found
+print(f"After remove: {s}")
+
+# Membership - O(1)
+print(f"4 in s: {4 in s}")
+
+# Set operations - O(len(s) + len(t))
+a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+
+print(f"\na = {a}")
+print(f"b = {b}")
+print(f"Union (a | b): {a | b}")
+print(f"Intersection (a & b): {a & b}")
+print(f"Difference (a - b): {a - b}")
+print(f"Symmetric diff (a ^ b): {a ^ b}")
+
+# Subset/superset
+print(f"\n{{1, 2}} <= a: {{1, 2}} <= a = {({1, 2} <= a)}")
+print(f"a >= {{1, 2}}: {a >= {1, 2}}")
+
+# frozenset - immutable, hashable
+fs = frozenset([1, 2, 3])
+d = {fs: "value"}  # Can use as dict key
+print(f"\nfrozenset as key: {d}")</textarea>
+                <div class="code-figure-output" id="outputcode16"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.16:</strong> Python's set provides efficient mathematical set operations.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.17 — collections Module</span>
+                    <button class="code-figure-run" onclick="runCode('code17')">▶ Run</button>
+                </div>
+                <textarea id="code17" spellcheck="false">from collections import Counter, defaultdict, OrderedDict
+
+# Counter - count occurrences
+text = "abracadabra"
+counts = Counter(text)
+print(f"Counter('{text}'): {dict(counts)}")
+print(f"Most common 3: {counts.most_common(3)}")
+
+# defaultdict - automatic default values
+dd = defaultdict(list)  # Default is empty list
+for word in ["apple", "banana", "apricot", "blueberry"]:
+    dd[word[0]].append(word)
+print(f"\ndefaultdict: {dict(dd)}")
+
+# defaultdict with int (counts)
+word_count = defaultdict(int)
+for word in "to be or not to be".split():
+    word_count[word] += 1
+print(f"Word counts: {dict(word_count)}")
+
+# OrderedDict - remembers insertion order
+# Note: regular dict also preserves order since Python 3.7
+od = OrderedDict()
+od["first"] = 1
+od["second"] = 2
+od["third"] = 3
+print(f"\nOrderedDict: {list(od.keys())}")
+
+# Move to end
+od.move_to_end("first")
+print(f"After move_to_end: {list(od.keys())}")</textarea>
+                <div class="code-figure-output" id="outputcode17"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.17:</strong> The collections module provides specialized dict variants for common patterns.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 9: HASH TABLE APPLICATIONS -->
+        <!-- ============================================== -->
+        <section id="applications">
+            <h2>9. Hash Table Applications</h2>
+            
+            <h3>Application 1: Two Sum</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.18 — Two Sum Problem</span>
+                    <button class="code-figure-run" onclick="runCode('code18')">▶ Run</button>
+                </div>
+                <textarea id="code18" spellcheck="false">def two_sum_brute(nums, target):
+    """O(n²) - check all pairs."""
+    for i in range(len(nums)):
+        for j in range(i + 1, len(nums)):
+            if nums[i] + nums[j] == target:
+                return [i, j]
+    return []
+
+def two_sum_hash(nums, target):
+    """O(n) - use hash table to find complement."""
+    seen = {}  # value -> index
+    
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return [seen[complement], i]
+        seen[num] = i
+    
+    return []
+
+# Test
+nums = [2, 7, 11, 15]
+target = 9
+
+print(f"nums = {nums}, target = {target}")
+print(f"Two Sum (brute): {two_sum_brute(nums, target)}")
+print(f"Two Sum (hash):  {two_sum_hash(nums, target)}")
+
+# Performance comparison
+import time
+nums = list(range(10000))
+target = 19997  # Last two elements
+
+start = time.perf_counter()
+two_sum_brute(nums, target)
+brute_time = time.perf_counter() - start
+
+start = time.perf_counter()
+two_sum_hash(nums, target)
+hash_time = time.perf_counter() - start
+
+print(f"\nPerformance (10000 elements):")
+print(f"  Brute: {brute_time*1000:.2f} ms")
+print(f"  Hash:  {hash_time*1000:.4f} ms")</textarea>
+                <div class="code-figure-output" id="outputcode18"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.18:</strong> Hash table reduces Two Sum from O(n²) to O(n) by storing seen values.
+                </div>
+            </div>
+            
+            <h3>Application 2: Anagram Detection</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.19 — Anagram Problems</span>
+                    <button class="code-figure-run" onclick="runCode('code19')">▶ Run</button>
+                </div>
+                <textarea id="code19" spellcheck="false">from collections import Counter
+
+def is_anagram(s1, s2):
+    """Check if two strings are anagrams - O(n)."""
+    return Counter(s1) == Counter(s2)
+
+def group_anagrams(words):
+    """Group words that are anagrams of each other - O(n*k)."""
+    groups = {}
+    
+    for word in words:
+        # Sort characters as key (anagrams have same sorted form)
+        key = tuple(sorted(word))
+        if key not in groups:
+            groups[key] = []
+        groups[key].append(word)
+    
+    return list(groups.values())
+
+# Test anagram check
+print(f"is_anagram('listen', 'silent'): {is_anagram('listen', 'silent')}")
+print(f"is_anagram('hello', 'world'): {is_anagram('hello', 'world')}")
+
+# Test grouping
+words = ["eat", "tea", "tan", "ate", "nat", "bat"]
+print(f"\nGroup anagrams of {words}:")
+for group in group_anagrams(words):
+    print(f"  {group}")</textarea>
+                <div class="code-figure-output" id="outputcode19"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.19:</strong> Counter makes anagram detection trivial. Group by sorted tuple as key.
+                </div>
+            </div>
+            
+            <h3>Application 3: Frequency Analysis</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.20 — Top K Frequent Elements</span>
+                    <button class="code-figure-run" onclick="runCode('code20')">▶ Run</button>
+                </div>
+                <textarea id="code20" spellcheck="false">from collections import Counter
+import heapq
+
+def top_k_frequent(nums, k):
+    """Find k most frequent elements - O(n log k)."""
+    counts = Counter(nums)
+    return [item for item, count in counts.most_common(k)]
+
+def top_k_frequent_heap(nums, k):
+    """Alternative using heap - O(n log k)."""
+    counts = Counter(nums)
+    # Use min-heap of size k
+    return heapq.nlargest(k, counts.keys(), key=counts.get)
+
+# Test
+nums = [1, 1, 1, 2, 2, 3, 3, 3, 3, 4]
+k = 2
+
+print(f"nums = {nums}")
+print(f"Frequencies: {dict(Counter(nums))}")
+print(f"Top {k} frequent: {top_k_frequent(nums, k)}")
+
+# First unique character
+def first_unique_char(s):
+    """Find first non-repeating character - O(n)."""
+    counts = Counter(s)
+    for i, c in enumerate(s):
+        if counts[c] == 1:
+            return i
+    return -1
+
+s = "leetcode"
+print(f"\nFirst unique in '{s}': index {first_unique_char(s)} ('{s[first_unique_char(s)]}')")</textarea>
+                <div class="code-figure-output" id="outputcode20"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.20:</strong> Counter.most_common() efficiently finds top k frequent elements.
+                </div>
+            </div>
+            
+            <h3>Application 4: LRU Cache</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.21 — LRU Cache Implementation</span>
+                    <button class="code-figure-run" onclick="runCode('code21')">▶ Run</button>
+                </div>
+                <textarea id="code21" spellcheck="false">from collections import OrderedDict
+
+class LRUCache:
+    """
+    Least Recently Used cache with O(1) get and put.
+    Uses OrderedDict: hash table + doubly linked list.
+    """
+    
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.cache = OrderedDict()
+    
+    def get(self, key):
+        if key not in self.cache:
+            return -1
+        # Move to end (most recently used)
+        self.cache.move_to_end(key)
+        return self.cache[key]
+    
+    def put(self, key, value):
+        if key in self.cache:
+            self.cache.move_to_end(key)
+        self.cache[key] = value
+        
+        if len(self.cache) > self.capacity:
+            # Remove least recently used (first item)
+            self.cache.popitem(last=False)
+    
+    def __repr__(self):
+        return f"LRU({list(self.cache.items())})"
+
+# Test
+cache = LRUCache(3)
+cache.put("a", 1)
+cache.put("b", 2)
+cache.put("c", 3)
+print(f"After adding a,b,c: {cache}")
+
+cache.get("a")  # Access 'a', moves to end
+print(f"After accessing 'a': {cache}")
+
+cache.put("d", 4)  # Evicts 'b' (least recent)
+print(f"After adding 'd': {cache}")</textarea>
+                <div class="code-figure-output" id="outputcode21"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.21:</strong> LRU Cache uses OrderedDict for O(1) access with automatic ordering.
+                </div>
+            </div>
+            
+            <h3>Application 5: Subarray Sum Equals K</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.22 — Subarray Sum with Hash Map</span>
+                    <button class="code-figure-run" onclick="runCode('code22')">▶ Run</button>
+                </div>
+                <textarea id="code22" spellcheck="false">def subarray_sum(nums, k):
+    """
+    Count subarrays with sum equal to k - O(n).
+    Key insight: if prefix_sum[j] - prefix_sum[i] = k,
+    then subarray [i+1, j] sums to k.
+    """
+    count = 0
+    prefix_sum = 0
+    # Map: prefix_sum -> count of occurrences
+    sum_count = {0: 1}  # Empty prefix has sum 0
+    
+    for num in nums:
+        prefix_sum += num
+        
+        # Check if (prefix_sum - k) was seen before
+        if prefix_sum - k in sum_count:
+            count += sum_count[prefix_sum - k]
+        
+        # Record current prefix sum
+        sum_count[prefix_sum] = sum_count.get(prefix_sum, 0) + 1
+    
+    return count
+
+# Test
+nums = [1, 1, 1]
+k = 2
+print(f"nums = {nums}, k = {k}")
+print(f"Subarrays with sum {k}: {subarray_sum(nums, k)}")
+# [1,1] at index 0-1 and [1,1] at index 1-2
+
+nums = [1, 2, 3, -2, 5]
+k = 3
+print(f"\nnums = {nums}, k = {k}")
+print(f"Subarrays with sum {k}: {subarray_sum(nums, k)}")
+# [1,2], [3], [3,-2,5-3] - wait let's verify
+# [1,2]=3, [3]=3, [-2,5]=3 - yes, 3 subarrays</textarea>
+                <div class="code-figure-output" id="outputcode22"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.22:</strong> Prefix sum + hash map reduces subarray sum problem from O(n²) to O(n).
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 10: COMMON PATTERNS -->
+        <!-- ============================================== -->
+        <section id="patterns">
+            <h2>10. Common Patterns</h2>
+            
+            <h3>Pattern 1: Counting and Frequency</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.23 — Frequency Patterns</span>
+                    <button class="code-figure-run" onclick="runCode('code23')">▶ Run</button>
+                </div>
+                <textarea id="code23" spellcheck="false">from collections import Counter, defaultdict
+
+# Pattern: Single pass counting
+def find_duplicates(nums):
+    """Find all elements appearing more than once."""
+    counts = Counter(nums)
+    return [num for num, count in counts.items() if count > 1]
+
+# Pattern: Check if two arrays have same frequency
+def can_construct(ransomNote, magazine):
+    """Check if ransomNote can be made from magazine letters."""
+    mag_count = Counter(magazine)
+    for char in ransomNote:
+        if mag_count[char] <= 0:
+            return False
+        mag_count[char] -= 1
+    return True
+
+# Pattern: Sliding window with frequency
+def longest_substring_k_distinct(s, k):
+    """Longest substring with at most k distinct characters."""
+    char_count = defaultdict(int)
+    left = max_len = 0
+    
+    for right, char in enumerate(s):
+        char_count[char] += 1
+        
+        while len(char_count) > k:
+            char_count[s[left]] -= 1
+            if char_count[s[left]] == 0:
+                del char_count[s[left]]
+            left += 1
+        
+        max_len = max(max_len, right - left + 1)
+    
+    return max_len
+
+# Test
+print(f"Duplicates in [1,2,3,1,2]: {find_duplicates([1,2,3,1,2])}")
+print(f"Can construct 'aa' from 'aab': {can_construct('aa', 'aab')}")
+print(f"Longest substring with 2 distinct in 'eceba': {longest_substring_k_distinct('eceba', 2)}")</textarea>
+                <div class="code-figure-output" id="outputcode23"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.23:</strong> Hash maps excel at tracking frequencies for counting and sliding window problems.
+                </div>
+            </div>
+            
+            <h3>Pattern 2: Index Mapping</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.24 — Index Mapping Patterns</span>
+                    <button class="code-figure-run" onclick="runCode('code24')">▶ Run</button>
+                </div>
+                <textarea id="code24" spellcheck="false"># Pattern: Value to index mapping
+def contains_nearby_duplicate(nums, k):
+    """Check if duplicate exists within k distance."""
+    last_seen = {}  # value -> last index
+    
+    for i, num in enumerate(nums):
+        if num in last_seen and i - last_seen[num] <= k:
+            return True
+        last_seen[num] = i
+    
+    return False
+
+# Pattern: Position tracking
+def intersection(nums1, nums2):
+    """Find intersection of two arrays."""
+    return list(set(nums1) & set(nums2))
+
+# Pattern: Graph/relationship mapping
+def find_judges(n, trust):
+    """
+    Find town judge: trusted by everyone, trusts nobody.
+    trust[i] = [a, b] means a trusts b.
+    """
+    if n == 1:
+        return 1
+    
+    trust_count = {}  # person -> (trusts, trusted_by)
+    
+    for a, b in trust:
+        if a not in trust_count:
+            trust_count[a] = [0, 0]
+        if b not in trust_count:
+            trust_count[b] = [0, 0]
+        
+        trust_count[a][0] += 1  # a trusts someone
+        trust_count[b][1] += 1  # b is trusted
+    
+    for person, (trusts, trusted_by) in trust_count.items():
+        if trusts == 0 and trusted_by == n - 1:
+            return person
+    return -1
+
+print(f"Nearby duplicate [1,2,3,1], k=3: {contains_nearby_duplicate([1,2,3,1], 3)}")
+print(f"Intersection [1,2,2,1] & [2,2]: {intersection([1,2,2,1], [2,2])}")
+print(f"Judge in n=3, trust=[[1,3],[2,3]]: {find_judges(3, [[1,3],[2,3]])}")</textarea>
+                <div class="code-figure-output" id="outputcode24"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.24:</strong> Map values to indices or track relationships with hash maps.
+                </div>
+            </div>
+            
+            <h3>Pattern 3: Caching and Memoization</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.25 — Memoization with Hash Map</span>
+                    <button class="code-figure-run" onclick="runCode('code25')">▶ Run</button>
+                </div>
+                <textarea id="code25" spellcheck="false">import time
+
+# Without memoization - exponential time
+def fib_slow(n):
+    if n <= 1:
+        return n
+    return fib_slow(n-1) + fib_slow(n-2)
+
+# With memoization - linear time
+def fib_memo(n, cache=None):
+    if cache is None:
+        cache = {}
+    if n in cache:
+        return cache[n]
+    if n <= 1:
+        return n
+    cache[n] = fib_memo(n-1, cache) + fib_memo(n-2, cache)
+    return cache[n]
+
+# Using functools.lru_cache
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fib_lru(n):
+    if n <= 1:
+        return n
+    return fib_lru(n-1) + fib_lru(n-2)
+
+# Compare performance
+n = 30
+
+start = time.perf_counter()
+result1 = fib_slow(n)
+slow_time = time.perf_counter() - start
+
+start = time.perf_counter()
+result2 = fib_memo(n)
+memo_time = time.perf_counter() - start
+
+start = time.perf_counter()
+result3 = fib_lru(n)
+lru_time = time.perf_counter() - start
+
+print(f"fib({n}) = {result1}")
+print(f"\nPerformance:")
+print(f"  No memo:   {slow_time*1000:.2f} ms")
+print(f"  Manual:    {memo_time*1000:.4f} ms")
+print(f"  lru_cache: {lru_time*1000:.4f} ms")</textarea>
+                <div class="code-figure-output" id="outputcode25"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.25:</strong> Memoization with hash maps transforms exponential algorithms to polynomial.
+                </div>
+            </div>
+            
+            <h3>Pattern 4: String Matching</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.26 — Isomorphic Strings</span>
+                    <button class="code-figure-run" onclick="runCode('code26')">▶ Run</button>
+                </div>
+                <textarea id="code26" spellcheck="false">def is_isomorphic(s, t):
+    """
+    Two strings are isomorphic if characters can be mapped 1-to-1.
+    'egg' -> 'add' (e->a, g->d) YES
+    'foo' -> 'bar' (f->b, o->a, o->r) NO - o maps to both a and r
+    """
+    if len(s) != len(t):
+        return False
+    
+    s_to_t = {}  # Mapping from s chars to t chars
+    t_to_s = {}  # Mapping from t chars to s chars (for bijection)
+    
+    for c1, c2 in zip(s, t):
+        if c1 in s_to_t:
+            if s_to_t[c1] != c2:
+                return False
+        else:
+            s_to_t[c1] = c2
+        
+        if c2 in t_to_s:
+            if t_to_s[c2] != c1:
+                return False
+        else:
+            t_to_s[c2] = c1
+    
+    return True
+
+# Test cases
+test_cases = [
+    ("egg", "add"),   # True: e->a, g->d
+    ("foo", "bar"),   # False: o can't map to both a and r
+    ("paper", "title"),  # True: p->t, a->i, e->l, r->e
+    ("ab", "aa"),     # False: a and b both map to a
+]
+
+for s, t in test_cases:
+    print(f"is_isomorphic('{s}', '{t}'): {is_isomorphic(s, t)}")</textarea>
+                <div class="code-figure-output" id="outputcode26"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.26:</strong> Bijective string mapping requires checking both directions.
+                </div>
+            </div>
+            
+            <h3>Pattern 5: Rolling Hash</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.27 — Rabin-Karp String Matching</span>
+                    <button class="code-figure-run" onclick="runCode('code27')">▶ Run</button>
+                </div>
+                <textarea id="code27" spellcheck="false">def rabin_karp(text, pattern):
+    """
+    Find all occurrences of pattern in text using rolling hash.
+    Time: O(n + m) average, O(nm) worst case
+    """
+    if not pattern or len(pattern) > len(text):
+        return []
+    
+    base = 256
+    mod = 10**9 + 7
+    n, m = len(text), len(pattern)
+    
+    # Calculate hash of pattern and first window
+    pattern_hash = 0
+    window_hash = 0
+    h = pow(base, m - 1, mod)  # base^(m-1) for rolling
+    
+    for i in range(m):
+        pattern_hash = (pattern_hash * base + ord(pattern[i])) % mod
+        window_hash = (window_hash * base + ord(text[i])) % mod
+    
+    results = []
+    
+    for i in range(n - m + 1):
+        if window_hash == pattern_hash:
+            # Verify match (hash collision possible)
+            if text[i:i+m] == pattern:
+                results.append(i)
+        
+        # Roll the hash to next window
+        if i < n - m:
+            window_hash = (window_hash - ord(text[i]) * h) % mod
+            window_hash = (window_hash * base + ord(text[i + m])) % mod
+            window_hash = (window_hash + mod) % mod  # Ensure positive
+    
+    return results
+
+# Test
+text = "AABAACAADAABAAABAA"
+pattern = "AABA"
+
+positions = rabin_karp(text, pattern)
+print(f"Text: {text}")
+print(f"Pattern: {pattern}")
+print(f"Found at positions: {positions}")
+
+# Verify
+for pos in positions:
+    print(f"  text[{pos}:{pos+len(pattern)}] = '{text[pos:pos+len(pattern)]}'")</textarea>
+                <div class="code-figure-output" id="outputcode27"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.27:</strong> Rolling hash enables O(1) window hash update for efficient pattern matching.
+                </div>
+            </div>
+            
+            <h3>Pattern 6: Cycle Detection</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.28 — Happy Number</span>
+                    <button class="code-figure-run" onclick="runCode('code28')">▶ Run</button>
+                </div>
+                <textarea id="code28" spellcheck="false">def is_happy(n):
+    """
+    A happy number reaches 1 when repeatedly summing squares of digits.
+    Non-happy numbers enter a cycle. Use hash set to detect cycles.
+    """
+    def sum_of_squares(num):
+        total = 0
+        while num:
+            digit = num % 10
+            total += digit * digit
+            num //= 10
+        return total
+    
+    seen = set()
+    
+    while n != 1 and n not in seen:
+        seen.add(n)
+        n = sum_of_squares(n)
+    
+    return n == 1
+
+# Test happy numbers
+print("Testing numbers 1-20:")
+happy = [n for n in range(1, 21) if is_happy(n)]
+print(f"Happy numbers: {happy}")
+
+# Trace one example
+n = 19
+print(f"\nTrace for {n}:")
+seen = set()
+while n != 1 and n not in seen:
+    print(f"  {n} -> ", end="")
+    seen.add(n)
+    n = sum(int(d)**2 for d in str(n))
+print(f"{n} (reached 1, happy!)")</textarea>
+                <div class="code-figure-output" id="outputcode28"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.28:</strong> Hash set detects cycles in sequences by tracking visited states.
+                </div>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-title">Key Takeaways</div>
+                <ul>
+                    <li><strong>Hash tables</strong> provide O(1) average-case for insert, delete, search</li>
+                    <li><strong>Hash functions</strong> convert keys to array indices; good ones distribute uniformly</li>
+                    <li><strong>Collision resolution:</strong> chaining (lists in buckets) or open addressing (probing)</li>
+                    <li><strong>Load factor</strong> affects performance; resize when α exceeds threshold</li>
+                    <li><strong>Python:</strong> <code>dict</code> and <code>set</code> are highly optimized hash tables</li>
+                    <li><strong>Common patterns:</strong> counting, frequency, index mapping, caching</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 11: PITFALLS -->
+        <!-- ============================================== -->
+        <section id="pitfalls">
+            <h2>11. Common Pitfalls</h2>
+            
+            <h3>Pitfall 1: Using Mutable Keys</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.29 — Hashable Keys</span>
+                    <button class="code-figure-run" onclick="runCode('code29')">▶ Run</button>
+                </div>
+                <textarea id="code29" spellcheck="false"># Lists are NOT hashable (mutable)
+try:
+    d = {[1, 2]: "value"}
+except TypeError as e:
+    print(f"Error: {e}")
+
+# Tuples ARE hashable (immutable)
+d = {(1, 2): "value"}
+print(f"Tuple key works: {d}")
+
+# Sets are NOT hashable, but frozensets are
+try:
+    d = {{1, 2}: "value"}
+except TypeError as e:
+    print(f"\nError: {e}")
+
+d = {frozenset([1, 2]): "value"}
+print(f"Frozenset key works: {d}")
+
+# Custom objects need __hash__ and __eq__
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    
+    def __hash__(self):
+        return hash((self.x, self.y))
+    
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+p1, p2 = Point(1, 2), Point(1, 2)
+d = {p1: "origin"}
+print(f"\nCustom hashable object: {p1 in d, p2 in d}")</textarea>
+                <div class="code-figure-output" id="outputcode29"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.29:</strong> Only immutable (hashable) objects can be dict keys or set members.
+                </div>
+            </div>
+            
+            <h3>Pitfall 2: Modifying Dict During Iteration</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.30 — Safe Dict Modification</span>
+                    <button class="code-figure-run" onclick="runCode('code30')">▶ Run</button>
+                </div>
+                <textarea id="code30" spellcheck="false"># WRONG: Modifying dict during iteration
+d = {"a": 1, "b": 2, "c": 3}
+try:
+    for key in d:
+        if d[key] < 2:
+            del d[key]  # RuntimeError!
+except RuntimeError as e:
+    print(f"Error: {e}")
+
+# RIGHT: Iterate over copy of keys
+d = {"a": 1, "b": 2, "c": 3}
+for key in list(d.keys()):  # Create list copy
+    if d[key] < 2:
+        del d[key]
+print(f"After safe delete: {d}")
+
+# RIGHT: Create new dict with comprehension
+d = {"a": 1, "b": 2, "c": 3}
+d = {k: v for k, v in d.items() if v >= 2}
+print(f"With comprehension: {d}")
+
+# Same applies to sets
+s = {1, 2, 3, 4, 5}
+s = {x for x in s if x > 2}  # Safe
+print(f"Filtered set: {s}")</textarea>
+                <div class="code-figure-output" id="outputcode30"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.30:</strong> Never modify a dict or set while iterating. Create a copy or use comprehension.
+                </div>
+            </div>
+            
+            <h3>Pitfall 3: Hash Collision Attacks</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.31 — Hash Randomization</span>
+                    <button class="code-figure-run" onclick="runCode('code31')">▶ Run</button>
+                </div>
+                <textarea id="code31" spellcheck="false"># Python randomizes hash() for strings/bytes to prevent attacks
+# This means hash values differ between runs
+
+print("Hash values (same within this session):")
+print(f"  hash('hello') = {hash('hello')}")
+print(f"  hash('world') = {hash('world')}")
+
+print("\nNote: These values will differ in another Python session!")
+print("This is a security feature (PYTHONHASHSEED).")
+
+# Integers always hash to themselves (for small values)
+print(f"\nInteger hashes (predictable):")
+for i in [0, 1, 42, -1]:
+    print(f"  hash({i}) = {hash(i)}")
+
+# For consistent hashing across runs, use hashlib
+import hashlib
+
+def consistent_hash(key):
+    """Hash that's consistent across runs."""
+    return int(hashlib.md5(str(key).encode()).hexdigest(), 16)
+
+print(f"\nConsistent hash('hello'): {consistent_hash('hello')}")</textarea>
+                <div class="code-figure-output" id="outputcode31"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.31:</strong> Python randomizes string hashes for security. Use hashlib for cross-session consistency.
+                </div>
+            </div>
+            
+            <h3>Pitfall 4: Assuming Dict Order in Old Python</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.32 — Dict Ordering Guarantee</span>
+                    <button class="code-figure-run" onclick="runCode('code32')">▶ Run</button>
+                </div>
+                <textarea id="code32" spellcheck="false"># Since Python 3.7, dicts maintain insertion order
+d = {}
+d["first"] = 1
+d["second"] = 2
+d["third"] = 3
+
+print("Dict maintains insertion order (Python 3.7+):")
+print(f"  Keys: {list(d.keys())}")
+print(f"  Values: {list(d.values())}")
+
+# But be careful with operations that don't preserve order intent
+d = {"a": 1, "b": 2, "c": 3}
+d["a"] = 10  # Update doesn't change order
+print(f"\nAfter update 'a': {list(d.keys())}")  # Still ['a', 'b', 'c']
+
+del d["a"]
+d["a"] = 10  # Delete + insert moves to end
+print(f"After delete + insert 'a': {list(d.keys())}")  # ['b', 'c', 'a']
+
+# For explicit ordering control, use OrderedDict
+from collections import OrderedDict
+od = OrderedDict([("a", 1), ("b", 2), ("c", 3)])
+od.move_to_end("a")  # Explicit move
+print(f"\nOrderedDict after move_to_end: {list(od.keys())}")</textarea>
+                <div class="code-figure-output" id="outputcode32"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.32:</strong> Python 3.7+ dicts preserve insertion order. Delete+insert changes position.
+                </div>
+            </div>
+            
+            <h3>Pitfall 5: Default Dict Gotcha</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 8.33 — defaultdict Side Effects</span>
+                    <button class="code-figure-run" onclick="runCode('code33')">▶ Run</button>
+                </div>
+                <textarea id="code33" spellcheck="false">from collections import defaultdict
+
+# Gotcha: Accessing missing key creates it!
+dd = defaultdict(list)
+print(f"Before access: {dict(dd)}")
+
+# This creates the key even though we only checked!
+if dd["missing"]:
+    pass
+print(f"After accessing 'missing': {dict(dd)}")
+
+# Better: use 'in' to check existence
+dd2 = defaultdict(list)
+if "missing" in dd2:  # Doesn't create key
+    pass
+print(f"Using 'in' check: {dict(dd2)}")
+
+# Or use get() with default
+dd3 = defaultdict(list)
+result = dd3.get("missing", [])  # Doesn't create key
+print(f"Using get(): {dict(dd3)}")
+
+# This matters for iteration too
+dd4 = defaultdict(int)
+dd4["a"] = 1
+dd4["b"] = 2
+
+# Don't do this - creates 'c'!
+for key in ["a", "b", "c"]:
+    print(f"  {key}: {dd4[key]}")
+
+print(f"After loop: {dict(dd4)}")  # 'c' now exists!</textarea>
+                <div class="code-figure-output" id="outputcode33"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 8.33:</strong> Accessing a defaultdict with [] creates the key. Use 'in' or get() to check without creating.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 12: EXERCISES -->
+        <!-- ============================================== -->
+        <section id="exercises">
+            <h2>12. Exercises</h2>
+            
+            <!-- Exercise 1 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 1: Valid Anagram</div>
+                <p>Given two strings s and t, return true if t is an anagram of s, and false otherwise. An anagram uses exactly the same letters the same number of times.</p>
+                <p class="answer">(Hint: Compare character frequencies using Counter or dict)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 1 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex1')">▶ Run</button>
+                </div>
+                <textarea id="ex1" spellcheck="false"># HINT 1: Anagrams have identical character counts
+# HINT 2: Use Counter or build frequency dict
+# HINT 3: Compare the two frequency structures
+
+def is_anagram(s, t):
+    # Your code here
+    pass
+
+# Test your implementation
+# print(is_anagram("anagram", "nagaram"))  # True
+# print(is_anagram("rat", "car"))  # False</textarea>
+                <div class="code-figure-output" id="outputex1"></div>
+            </div>
+            
+            <!-- Exercise 2 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 2: Longest Consecutive Sequence</div>
+                <p>Given an unsorted array of integers, find the length of the longest consecutive elements sequence. Must run in O(n) time.</p>
+                <p class="answer">(Hint: Use set for O(1) lookup, only start counting from sequence starts)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 2 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex2')">▶ Run</button>
+                </div>
+                <textarea id="ex2" spellcheck="false"># HINT 1: Convert to set for O(1) lookup
+# HINT 2: A number starts a sequence if (num-1) not in set
+# HINT 3: Count consecutive numbers from each start
+
+def longest_consecutive(nums):
+    # Your code here
+    pass
+
+# Test your implementation
+# print(longest_consecutive([100, 4, 200, 1, 3, 2]))  # 4 (1,2,3,4)
+# print(longest_consecutive([0, 3, 7, 2, 5, 8, 4, 6, 0, 1]))  # 9</textarea>
+                <div class="code-figure-output" id="outputex2"></div>
+            </div>
+            
+            <!-- Exercise 3 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 3: Group Anagrams</div>
+                <p>Given an array of strings, group anagrams together. Return the groups in any order.</p>
+                <p class="answer">(Hint: Use sorted tuple of characters as dict key)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 3 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex3')">▶ Run</button>
+                </div>
+                <textarea id="ex3" spellcheck="false"># HINT 1: Anagrams have same sorted characters
+# HINT 2: Use tuple(sorted(word)) as key
+# HINT 3: defaultdict(list) simplifies grouping
+
+def group_anagrams(strs):
+    # Your code here
+    pass
+
+# Test your implementation
+# print(group_anagrams(["eat","tea","tan","ate","nat","bat"]))
+# Expected: [["eat","tea","ate"], ["tan","nat"], ["bat"]]</textarea>
+                <div class="code-figure-output" id="outputex3"></div>
+            </div>
+            
+            <!-- Exercise 4 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 4: Word Pattern</div>
+                <p>Given a pattern and a string s, find if s follows the same pattern. Here "follow" means a full match, where each letter in pattern maps to exactly one unique word in s.</p>
+                <p class="answer">(Hint: Create bijection mapping using two dicts)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 4 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex4')">▶ Run</button>
+                </div>
+                <textarea id="ex4" spellcheck="false"># HINT 1: Split s into words
+# HINT 2: Check lengths match
+# HINT 3: Map pattern char -> word AND word -> char (bijection)
+
+def word_pattern(pattern, s):
+    # Your code here
+    pass
+
+# Test your implementation
+# print(word_pattern("abba", "dog cat cat dog"))  # True
+# print(word_pattern("abba", "dog cat cat fish"))  # False
+# print(word_pattern("aaaa", "dog cat cat dog"))  # False</textarea>
+                <div class="code-figure-output" id="outputex4"></div>
+            </div>
+            
+            <!-- Exercise 5 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 5: Implement HashMap</div>
+                <p>Design a HashMap class without using built-in dict. Support put(key, value), get(key), and remove(key).</p>
+                <p class="answer">(Hint: Use list of buckets with chaining for collision resolution)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 5 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex5')">▶ Run</button>
+                </div>
+                <textarea id="ex5" spellcheck="false"># HINT 1: Use a fixed-size array of buckets
+# HINT 2: Each bucket is a list of (key, value) pairs
+# HINT 3: Hash key to find bucket, then linear search
+
+class MyHashMap:
+    def __init__(self):
+        # Your code here
+        pass
+    
+    def put(self, key, value):
+        # Your code here
+        pass
+    
+    def get(self, key):
+        # Return value or -1 if not found
+        # Your code here
+        pass
+    
+    def remove(self, key):
+        # Your code here
+        pass
+
+# Test your implementation
+# hm = MyHashMap()
+# hm.put(1, 1)
+# hm.put(2, 2)
+# print(hm.get(1))  # 1
+# print(hm.get(3))  # -1
+# hm.put(2, 1)
+# print(hm.get(2))  # 1
+# hm.remove(2)
+# print(hm.get(2))  # -1</textarea>
+                <div class="code-figure-output" id="outputex5"></div>
+            </div>
+        </section>
+
+        <!-- SUBMIT SECTION -->
+        <section class="submit-section">
+            <h2>Submit Your Work</h2>
+            <p>After completing the exercises, submit your attendance below.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student ID</label>
+                    <input type="text" id="studentId" placeholder="Enter your student ID">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" placeholder="Enter your full name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email (@istun.edu.tr)</label>
+                    <input type="email" id="studentEmail" placeholder="your.email@istun.edu.tr">
+                </div>
+                <div class="form-group">
+                    <label>Class Code</label>
+                    <input type="text" id="classCode" placeholder="From instructor">
+                </div>
+            </div>
+            <input type="text" id="hp" class="hp" tabindex="-1" autocomplete="off">
+            <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
+            <div class="submit-status" id="submitStatus"></div>
+        </section>
+    </main>
+
+    <script>
+        const pageLoadTime = Date.now();
+        
+        async function runCode(codeId) {
+            const codeEl = document.getElementById(codeId);
+            const outputEl = document.getElementById('output' + codeId);
+            const code = codeEl.value;
+            outputEl.classList.add('show');
+            outputEl.textContent = 'Running...';
+            
+            try {
+                const escaped = code.replace(/\\/g, '\\\\').replace(/"""/g, '\\"\\"\\"');
+                const result = await pyscript.interpreter.runPython(`
+import sys
+from io import StringIO
+_code = """` + escaped + `"""
+_old_stdout = sys.stdout
+sys.stdout = StringIO()
+try:
+    exec(_code)
+    _output = sys.stdout.getvalue()
+except Exception as e:
+    _output = f"Error: {e}"
+finally:
+    sys.stdout = _old_stdout
+_output
+`);
+                outputEl.textContent = result || '(no output)';
+            } catch(e) {
+                outputEl.textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        function submitWork() {
+            const status = document.getElementById('submitStatus');
+            const data = {
+                week: 'Week_08',
+                student_id: document.getElementById('studentId').value.trim(),
+                student_name: document.getElementById('studentName').value.trim(),
+                student_email: document.getElementById('studentEmail').value.trim().toLowerCase(),
+                classCode: document.getElementById('classCode').value.trim().toUpperCase(),
+                timeOnPage: Math.floor((Date.now() - pageLoadTime) / 1000)
+            };
+            
+            if (document.getElementById('hp').value) {
+                status.textContent = 'Submission rejected.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (data.timeOnPage < 60) {
+                status.textContent = 'Please spend more time reviewing the material.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (!data.student_id || !data.student_name || !data.student_email || !data.classCode) {
+                status.textContent = 'All fields are required.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (!data.student_email.endsWith('@istun.edu.tr')) {
+                status.textContent = 'Use your @istun.edu.tr email.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            status.textContent = 'Submitting...';
+            status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
+            
+            fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(res => {
+                status.textContent = res.success ? 'Submitted successfully!' : res.message;
+                status.style.cssText = 'display:block;background:rgba(' + (res.success ? '74,222,128' : '239,68,68') + ',0.2);color:' + (res.success ? '#4ade80' : '#fca5a5');
+            })
+            .catch(() => {
+                fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(() => {
+                    status.textContent = 'Submission sent!';
+                    status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80';
+                });
+            });
+        }
+    </script>
+</body>
+</html>

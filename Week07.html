@@ -1,0 +1,2288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 07: Heaps &amp; Priority Queues | DSA Course</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 19px;
+            background: #faf9f7;
+            color: #2c2c2c; 
+            line-height: 1.8;
+        }
+        
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .topbar .title { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 500; }
+        .topbar a { font-family: system-ui, sans-serif; color: white; text-decoration: none; font-size: 0.85rem; padding: 6px 14px; background: rgba(255,255,255,0.1); border-radius: 5px; }
+        .topbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .book { max-width: 750px; margin: 0 auto; padding: 60px 40px 100px; }
+        
+        .chapter-header { text-align: center; padding: 50px 0 60px; border-bottom: 1px solid #ddd; margin-bottom: 50px; }
+        .chapter-num { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: #7c3aed; margin-bottom: 15px; }
+        .chapter-header h1 { font-size: 2.8rem; font-weight: 600; color: #1a1a2e; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .chapter-header .subtitle { font-style: italic; color: #666; font-size: 1.1rem; }
+        
+        h2 { font-size: 1.6rem; font-weight: 600; color: #1a1a2e; margin: 60px 0 25px; padding-top: 30px; border-top: 1px solid #e5e5e5; }
+        h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+        h3 { font-size: 1.25rem; font-weight: 600; color: #333; margin: 40px 0 15px; }
+        h4 { font-size: 1.05rem; font-weight: 600; color: #555; margin: 30px 0 12px; }
+        
+        p { margin: 0 0 20px; text-align: justify; hyphens: auto; }
+        ul, ol { margin: 20px 0 25px 30px; }
+        li { margin: 10px 0; }
+        
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: #f0eeeb; padding: 2px 6px; border-radius: 3px; color: #7c3aed; }
+        .term { font-weight: 600; color: #1a1a2e; }
+        
+        .definition { background: #f8f7f5; border-left: 4px solid #7c3aed; padding: 20px 25px; margin: 30px 0; }
+        .definition-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 8px; font-weight: 600; }
+        .definition p { margin: 0; }
+        
+        .margin-note { background: #fffbeb; border: 1px solid #fcd34d; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .margin-note::before { content: "💡 "; }
+        
+        .important { background: #fef2f2; border: 1px solid #fca5a5; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .important::before { content: "⚠️ "; }
+        
+        .example { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; padding: 25px; margin: 30px 0; }
+        .example-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 15px; font-weight: 600; }
+        
+        .code-figure { margin: 35px 0; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background: #1e1e2e; }
+        .code-figure-header { background: #28283c; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
+        .code-figure-label { font-family: system-ui, sans-serif; font-size: 0.75rem; color: #a0a0b0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .code-figure-run { font-family: system-ui, sans-serif; background: #7c3aed; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
+        .code-figure-run:hover { background: #6d28d9; }
+        .code-figure textarea { width: 100%; min-height: 100px; padding: 18px; background: #1e1e2e; color: #e0e0e0; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; }
+        .code-figure textarea:focus { outline: none; }
+        .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; }
+        .code-figure-output.show { display: block; }
+        .code-figure-caption { background: #f8f8f8; padding: 12px 18px; font-size: 0.85rem; color: #666; border-top: 1px solid #e0e0e0; }
+        .code-figure-caption strong { color: #333; }
+        
+        .summary { background: linear-gradient(135deg, #7c3aed10, #7c3aed05); border: 1px solid #7c3aed30; border-radius: 8px; padding: 25px 30px; margin: 40px 0; }
+        .summary-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 12px; font-weight: 600; }
+        .summary ul { margin: 0; }
+        
+        .exercise { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 25px 30px; margin: 40px 0 20px; }
+        .exercise-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #16a34a; margin-bottom: 12px; font-weight: 600; }
+        .exercise p { margin: 0; }
+        .exercise .answer { margin-top: 12px; font-size: 0.9rem; color: #166534; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 0.95rem; }
+        th, td { border: 1px solid #ddd; padding: 12px 15px; text-align: left; }
+        th { background: #f5f5f5; font-weight: 600; }
+        
+        .submit-section { background: #1a1a2e; color: white; padding: 40px; border-radius: 10px; margin-top: 60px; }
+        .submit-section h2 { color: white; border: none; margin: 0 0 20px; padding: 0; font-size: 1.4rem; }
+        .submit-section p { color: #a0a0b0; text-align: left; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-family: system-ui, sans-serif; font-size: 0.85rem; color: #a0a0b0; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: white; font-size: 1rem; font-family: system-ui, sans-serif; }
+        .form-group input:focus { outline: none; border-color: #7c3aed; }
+        .submit-btn { background: #7c3aed; color: white; border: none; padding: 14px 30px; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; font-family: system-ui, sans-serif; margin-top: 10px; }
+        .submit-btn:hover { background: #6d28d9; }
+        .submit-status { margin-top: 15px; padding: 12px; border-radius: 5px; display: none; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+        .hp { position: absolute; left: -9999px; }
+        
+        .toc { background: #f8f7f5; padding: 30px 35px; margin: 0 0 50px; border-radius: 6px; }
+        .toc-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 15px; }
+        .toc ol { margin: 0; padding-left: 20px; }
+        .toc li { margin: 8px 0; }
+        .toc a { color: #7c3aed; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        
+        @media (max-width: 600px) {
+            .book { padding: 30px 20px; }
+            .chapter-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.4rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="topbar">
+        <span class="title">Data Structures &amp; Algorithms</span>
+        <a href="index.html">← Course Home</a>
+    </nav>
+    
+    <main class="book">
+        <header class="chapter-header">
+            <div class="chapter-num">Week Seven</div>
+            <h1>Heaps &amp; Priority Queues</h1>
+            <p class="subtitle">Efficient access to minimum or maximum elements</p>
+        </header>
+        
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <ol>
+                <li><a href="#intro">Introduction to Heaps</a></li>
+                <li><a href="#properties">Heap Properties</a></li>
+                <li><a href="#array-repr">Array Representation</a></li>
+                <li><a href="#operations">Heap Operations</a></li>
+                <li><a href="#heapify">Heapify Process</a></li>
+                <li><a href="#build-heap">Building a Heap</a></li>
+                <li><a href="#priority-queue">Priority Queues</a></li>
+                <li><a href="#python-heapq">Python's heapq Module</a></li>
+                <li><a href="#applications">Heap Applications</a></li>
+                <li><a href="#patterns">Common Patterns</a></li>
+                <li><a href="#pitfalls">Common Pitfalls</a></li>
+                <li><a href="#exercises">Exercises</a></li>
+            </ol>
+        </nav>
+
+        <!-- ============================================== -->
+        <!-- SECTION 1: INTRODUCTION TO HEAPS -->
+        <!-- ============================================== -->
+        <section id="intro">
+            <h2>1. Introduction to Heaps</h2>
+            
+            <p>In the previous week, we learned about binary search trees that provide O(log n) operations but can degrade to O(n) without balancing. This week, we introduce <span class="term">heaps</span>—a specialized tree structure that guarantees efficient access to the minimum or maximum element without the complexity of maintaining perfect balance.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">heap</span> is a complete binary tree that satisfies the <span class="term">heap property</span>: in a <span class="term">min-heap</span>, every parent is smaller than or equal to its children; in a <span class="term">max-heap</span>, every parent is greater than or equal to its children. The root always contains the minimum (or maximum) element.</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">Min-Heap vs Max-Heap</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+Min-Heap (parent ≤ children):        Max-Heap (parent ≥ children):
+
+         1                                    9
+       /   \                                /   \
+      3     2                              7     8
+     / \   /                              / \   /
+    7   4 5                              3   6 5
+
+Root = minimum (1)                  Root = maximum (9)
+Useful for: get min, priority       Useful for: get max, priority
+queues with smallest first          queues with largest first
+                </pre>
+            </div>
+            
+            <h3>Why Heaps?</h3>
+            
+            <table>
+                <tr>
+                    <th>Operation</th>
+                    <th>Sorted Array</th>
+                    <th>Unsorted Array</th>
+                    <th>Heap</th>
+                </tr>
+                <tr>
+                    <td>Find Min/Max</td>
+                    <td>O(1)</td>
+                    <td>O(n)</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td>Insert</td>
+                    <td>O(n)</td>
+                    <td>O(1)</td>
+                    <td>O(log n)</td>
+                </tr>
+                <tr>
+                    <td>Extract Min/Max</td>
+                    <td>O(1) or O(n)</td>
+                    <td>O(n)</td>
+                    <td>O(log n)</td>
+                </tr>
+                <tr>
+                    <td>Build from n elements</td>
+                    <td>O(n log n)</td>
+                    <td>O(n)</td>
+                    <td>O(n)</td>
+                </tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.1 — Heap vs Other Structures</span>
+                    <button class="code-figure-run" onclick="runCode('code1')">▶ Run</button>
+                </div>
+                <textarea id="code1" spellcheck="false">import heapq
+import time
+
+n = 10000
+data = list(range(n, 0, -1))  # Worst case: reverse sorted
+
+# Approach 1: Keep sorted array (insert + sort)
+sorted_arr = []
+start = time.perf_counter()
+for x in data[:1000]:  # Only 1000 for speed
+    sorted_arr.append(x)
+    sorted_arr.sort()  # O(n log n) each time!
+sorted_time = time.perf_counter() - start
+
+# Approach 2: Use heap
+heap = []
+start = time.perf_counter()
+for x in data[:1000]:
+    heapq.heappush(heap, x)  # O(log n) each time
+heap_time = time.perf_counter() - start
+
+print(f"Insert 1000 elements while maintaining order:")
+print(f"  Sorted array: {sorted_time*1000:.2f} ms")
+print(f"  Heap:         {heap_time*1000:.2f} ms")
+print(f"  Speedup:      {sorted_time/heap_time:.1f}x")
+
+print(f"\nBoth give minimum: sorted[0]={sorted_arr[0]}, heap[0]={heap[0]}")</textarea>
+                <div class="code-figure-output" id="outputcode1"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.1:</strong> Heaps provide the best trade-off when you need repeated access to the minimum/maximum with insertions.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 2: HEAP PROPERTIES -->
+        <!-- ============================================== -->
+        <section id="properties">
+            <h2>2. Heap Properties</h2>
+            
+            <p>A heap has two essential properties:</p>
+            
+            <div class="definition">
+                <div class="definition-title">Property 1: Complete Binary Tree</div>
+                <p>A heap is a <span class="term">complete binary tree</span>: all levels are fully filled except possibly the last level, which is filled from left to right. This ensures the tree is as compact as possible and can be efficiently stored in an array.</p>
+            </div>
+            
+            <div class="definition">
+                <div class="definition-title">Property 2: Heap Order</div>
+                <p>For a <span class="term">min-heap</span>, every node's value is less than or equal to its children's values. For a <span class="term">max-heap</span>, every node's value is greater than or equal to its children's values. Note: siblings have no ordering relationship.</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">Complete vs Incomplete Binary Tree</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+Complete (valid heap shape):      Not Complete (invalid):
+
+        1                              1
+       / \                            / \
+      2   3                          2   3
+     / \                              \
+    4   5                              4
+
+All levels filled left-to-right   Gap at 2's left child
+Can be stored as: [1,2,3,4,5]     Cannot use array efficiently
+                </pre>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.2 — Verifying Heap Properties</span>
+                    <button class="code-figure-run" onclick="runCode('code2')">▶ Run</button>
+                </div>
+                <textarea id="code2" spellcheck="false">def is_min_heap(arr):
+    """Check if array represents a valid min-heap."""
+    n = len(arr)
+    for i in range(n):
+        left = 2 * i + 1
+        right = 2 * i + 2
+        
+        # Check left child
+        if left < n and arr[i] > arr[left]:
+            return False
+        # Check right child
+        if right < n and arr[i] > arr[right]:
+            return False
+    return True
+
+def is_max_heap(arr):
+    """Check if array represents a valid max-heap."""
+    n = len(arr)
+    for i in range(n):
+        left = 2 * i + 1
+        right = 2 * i + 2
+        
+        if left < n and arr[i] < arr[left]:
+            return False
+        if right < n and arr[i] < arr[right]:
+            return False
+    return True
+
+# Test cases
+min_heap = [1, 3, 2, 7, 4, 5]
+max_heap = [9, 7, 8, 3, 6, 5]
+not_heap = [1, 5, 2, 3, 4]  # 5 > parent's children rule violated
+
+print(f"[1, 3, 2, 7, 4, 5] is min-heap: {is_min_heap(min_heap)}")
+print(f"[9, 7, 8, 3, 6, 5] is max-heap: {is_max_heap(max_heap)}")
+print(f"[1, 5, 2, 3, 4] is min-heap: {is_min_heap(not_heap)}")
+
+# Note: min_heap is NOT a max_heap and vice versa
+print(f"\n[1, 3, 2, 7, 4, 5] is max-heap: {is_max_heap(min_heap)}")</textarea>
+                <div class="code-figure-output" id="outputcode2"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.2:</strong> Heap property check verifies parent-child relationships for all non-leaf nodes.
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                Unlike BSTs, heaps don't maintain complete sorted order. In a min-heap, we only know the root is smallest—finding the second smallest requires extracting the root first!
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 3: ARRAY REPRESENTATION -->
+        <!-- ============================================== -->
+        <section id="array-repr">
+            <h2>3. Array Representation</h2>
+            
+            <p>The complete binary tree property allows heaps to be efficiently stored in arrays without explicit pointers:</p>
+            
+            <div class="example">
+                <div class="example-title">Tree to Array Mapping</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+Tree representation:              Array representation:
+
+           1 (i=0)                Index: 0  1  2  3  4  5
+          / \                     Value: 1  3  2  7  4  5
+         /   \
+    (i=1) 3   2 (i=2)             For node at index i:
+       / \   /                    • Parent:      (i-1) // 2
+      /   \ /                     • Left child:  2*i + 1
+ (i=3)7  4 5(i=5)                 • Right child: 2*i + 2
+     (i=4)
+                </pre>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.3 — Array Index Navigation</span>
+                    <button class="code-figure-run" onclick="runCode('code3')">▶ Run</button>
+                </div>
+                <textarea id="code3" spellcheck="false">def parent(i):
+    """Return parent index."""
+    return (i - 1) // 2
+
+def left_child(i):
+    """Return left child index."""
+    return 2 * i + 1
+
+def right_child(i):
+    """Return right child index."""
+    return 2 * i + 2
+
+def has_parent(i):
+    return i > 0
+
+def has_left_child(i, heap_size):
+    return left_child(i) < heap_size
+
+def has_right_child(i, heap_size):
+    return right_child(i) < heap_size
+
+# Demonstrate with heap [1, 3, 2, 7, 4, 5]
+heap = [1, 3, 2, 7, 4, 5]
+print(f"Heap: {heap}\n")
+
+for i in range(len(heap)):
+    info = f"Index {i} (value={heap[i]}): "
+    
+    if has_parent(i):
+        info += f"parent={heap[parent(i)]} "
+    else:
+        info += "parent=None (root) "
+    
+    if has_left_child(i, len(heap)):
+        info += f"left={heap[left_child(i)]} "
+    else:
+        info += "left=None "
+        
+    if has_right_child(i, len(heap)):
+        info += f"right={heap[right_child(i)]}"
+    else:
+        info += "right=None"
+    
+    print(info)</textarea>
+                <div class="code-figure-output" id="outputcode3"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.3:</strong> Array indices provide O(1) navigation between parent and children without pointers.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.4 — Visualizing Heap as Tree</span>
+                    <button class="code-figure-run" onclick="runCode('code4')">▶ Run</button>
+                </div>
+                <textarea id="code4" spellcheck="false">def print_heap_tree(heap):
+    """Print heap as a tree structure."""
+    if not heap:
+        print("Empty heap")
+        return
+    
+    n = len(heap)
+    height = 0
+    while (1 << height) - 1 < n:
+        height += 1
+    
+    max_width = (1 << height) * 2
+    
+    level = 0
+    i = 0
+    while i < n:
+        level_size = 1 << level
+        spacing = max_width // (level_size + 1)
+        
+        line = ""
+        for j in range(level_size):
+            if i + j < n:
+                line += f"{heap[i + j]:^{spacing}}"
+            else:
+                break
+        
+        print(line)
+        i += level_size
+        level += 1
+
+# Test with different heaps
+print("Min-heap [1, 3, 2, 7, 4, 5, 6]:")
+print_heap_tree([1, 3, 2, 7, 4, 5, 6])
+
+print("\nMax-heap [9, 7, 8, 3, 6, 5, 2]:")
+print_heap_tree([9, 7, 8, 3, 6, 5, 2])</textarea>
+                <div class="code-figure-output" id="outputcode4"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.4:</strong> Heap array can be visualized as a complete binary tree with level-order layout.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 4: HEAP OPERATIONS -->
+        <!-- ============================================== -->
+        <section id="operations">
+            <h2>4. Heap Operations</h2>
+            
+            <h3>Operation 1: Peek (Get Min/Max)</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.5 — Peek Operation</span>
+                    <button class="code-figure-run" onclick="runCode('code5')">▶ Run</button>
+                </div>
+                <textarea id="code5" spellcheck="false">class MinHeap:
+    def __init__(self):
+        self.heap = []
+    
+    def peek(self):
+        """Return minimum without removing - O(1)."""
+        if not self.heap:
+            raise IndexError("Heap is empty")
+        return self.heap[0]
+    
+    def __len__(self):
+        return len(self.heap)
+    
+    def is_empty(self):
+        return len(self.heap) == 0
+
+# Test
+heap = MinHeap()
+heap.heap = [1, 3, 2, 7, 4, 5]  # Pre-built heap
+
+print(f"Heap: {heap.heap}")
+print(f"Peek (minimum): {heap.peek()}")
+print(f"Heap unchanged: {heap.heap}")
+print(f"Size: {len(heap)}")</textarea>
+                <div class="code-figure-output" id="outputcode5"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.5:</strong> Peek is O(1)—the minimum/maximum is always at index 0.
+                </div>
+            </div>
+            
+            <h3>Operation 2: Insert (Push)</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.6 — Insert with Bubble Up</span>
+                    <button class="code-figure-run" onclick="runCode('code6')">▶ Run</button>
+                </div>
+                <textarea id="code6" spellcheck="false">class MinHeap:
+    def __init__(self):
+        self.heap = []
+    
+    def _parent(self, i):
+        return (i - 1) // 2
+    
+    def _bubble_up(self, i):
+        """Move element up until heap property restored."""
+        while i > 0:
+            parent_idx = self._parent(i)
+            if self.heap[i] < self.heap[parent_idx]:
+                # Swap with parent
+                self.heap[i], self.heap[parent_idx] = \
+                    self.heap[parent_idx], self.heap[i]
+                i = parent_idx
+            else:
+                break
+    
+    def insert(self, value):
+        """Add element to heap - O(log n)."""
+        self.heap.append(value)  # Add at end
+        self._bubble_up(len(self.heap) - 1)  # Restore heap
+    
+    def __repr__(self):
+        return f"MinHeap({self.heap})"
+
+# Demonstrate insertion
+heap = MinHeap()
+values = [5, 3, 8, 1, 2, 9, 4]
+
+print("Inserting values:")
+for v in values:
+    heap.insert(v)
+    print(f"  Insert {v}: {heap.heap}")
+
+print(f"\nFinal heap: {heap}")
+print(f"Minimum: {heap.heap[0]}")</textarea>
+                <div class="code-figure-output" id="outputcode6"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.6:</strong> Insert adds at the end, then bubbles up to restore heap property. O(log n) worst case.
+                </div>
+            </div>
+            
+            <h3>Operation 3: Extract Min/Max</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.7 — Extract with Bubble Down</span>
+                    <button class="code-figure-run" onclick="runCode('code7')">▶ Run</button>
+                </div>
+                <textarea id="code7" spellcheck="false">class MinHeap:
+    def __init__(self):
+        self.heap = []
+    
+    def _left(self, i):
+        return 2 * i + 1
+    
+    def _right(self, i):
+        return 2 * i + 2
+    
+    def _bubble_down(self, i):
+        """Move element down until heap property restored."""
+        n = len(self.heap)
+        while True:
+            smallest = i
+            left = self._left(i)
+            right = self._right(i)
+            
+            if left < n and self.heap[left] < self.heap[smallest]:
+                smallest = left
+            if right < n and self.heap[right] < self.heap[smallest]:
+                smallest = right
+            
+            if smallest != i:
+                self.heap[i], self.heap[smallest] = \
+                    self.heap[smallest], self.heap[i]
+                i = smallest
+            else:
+                break
+    
+    def extract_min(self):
+        """Remove and return minimum - O(log n)."""
+        if not self.heap:
+            raise IndexError("Heap is empty")
+        
+        min_val = self.heap[0]
+        
+        # Move last element to root
+        self.heap[0] = self.heap[-1]
+        self.heap.pop()
+        
+        # Restore heap property
+        if self.heap:
+            self._bubble_down(0)
+        
+        return min_val
+    
+    def insert(self, value):
+        self.heap.append(value)
+        i = len(self.heap) - 1
+        while i > 0:
+            parent = (i - 1) // 2
+            if self.heap[i] < self.heap[parent]:
+                self.heap[i], self.heap[parent] = self.heap[parent], self.heap[i]
+                i = parent
+            else:
+                break
+
+# Demonstrate extraction
+heap = MinHeap()
+for v in [1, 3, 2, 7, 4, 5]:
+    heap.insert(v)
+
+print(f"Initial heap: {heap.heap}")
+print("\nExtracting in order:")
+while heap.heap:
+    val = heap.extract_min()
+    print(f"  Extracted {val}, remaining: {heap.heap}")</textarea>
+                <div class="code-figure-output" id="outputcode7"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.7:</strong> Extract replaces root with last element, then bubbles down. Repeated extraction gives sorted order!
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 5: HEAPIFY PROCESS -->
+        <!-- ============================================== -->
+        <section id="heapify">
+            <h2>5. Heapify Process</h2>
+            
+            <p>The <span class="term">heapify</span> operation (also called sift-down or percolate-down) fixes a single violation of the heap property. It assumes both subtrees are valid heaps, but the root may violate the property.</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.8 — Heapify (Sift Down)</span>
+                    <button class="code-figure-run" onclick="runCode('code8')">▶ Run</button>
+                </div>
+                <textarea id="code8" spellcheck="false">def heapify_min(arr, n, i):
+    """
+    Heapify subtree rooted at index i.
+    Assumes children are already valid heaps.
+    Time: O(log n), Space: O(1)
+    """
+    smallest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+    
+    # Find smallest among root, left, right
+    if left < n and arr[left] < arr[smallest]:
+        smallest = left
+    if right < n and arr[right] < arr[smallest]:
+        smallest = right
+    
+    # If root is not smallest, swap and continue
+    if smallest != i:
+        arr[i], arr[smallest] = arr[smallest], arr[i]
+        heapify_min(arr, n, smallest)  # Recurse on affected subtree
+
+def heapify_max(arr, n, i):
+    """Heapify for max-heap."""
+    largest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+    
+    if left < n and arr[left] > arr[largest]:
+        largest = left
+    if right < n and arr[right] > arr[largest]:
+        largest = right
+    
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify_max(arr, n, largest)
+
+# Example: fix a single violation
+arr = [10, 3, 2, 7, 4, 5]  # 10 violates min-heap at root
+print(f"Before heapify: {arr}")
+print("  10 at root is larger than children 3 and 2")
+
+heapify_min(arr, len(arr), 0)
+print(f"After heapify:  {arr}")
+print("  2 bubbled up to root, 10 moved down")</textarea>
+                <div class="code-figure-output" id="outputcode8"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.8:</strong> Heapify fixes one node by comparing with children and swapping with the smaller (min-heap) or larger (max-heap) child.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.9 — Iterative Heapify</span>
+                    <button class="code-figure-run" onclick="runCode('code9')">▶ Run</button>
+                </div>
+                <textarea id="code9" spellcheck="false">def heapify_iterative(arr, n, i):
+    """Iterative heapify - O(1) space."""
+    while True:
+        smallest = i
+        left = 2 * i + 1
+        right = 2 * i + 2
+        
+        if left < n and arr[left] < arr[smallest]:
+            smallest = left
+        if right < n and arr[right] < arr[smallest]:
+            smallest = right
+        
+        if smallest == i:
+            break
+        
+        arr[i], arr[smallest] = arr[smallest], arr[i]
+        i = smallest  # Continue from swapped position
+
+# Compare recursive vs iterative
+arr1 = [10, 3, 2, 7, 4, 5]
+arr2 = [10, 3, 2, 7, 4, 5]
+
+heapify_min(arr1, len(arr1), 0)  # Recursive
+heapify_iterative(arr2, len(arr2), 0)  # Iterative
+
+print(f"Recursive result: {arr1}")
+print(f"Iterative result: {arr2}")
+print(f"Same result: {arr1 == arr2}")</textarea>
+                <div class="code-figure-output" id="outputcode9"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.9:</strong> Iterative heapify avoids recursion overhead and uses O(1) extra space.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 6: BUILDING A HEAP -->
+        <!-- ============================================== -->
+        <section id="build-heap">
+            <h2>6. Building a Heap</h2>
+            
+            <p>Given an array, we can build a heap in-place. There are two approaches:</p>
+            
+            <h3>Approach 1: Repeated Insertion - O(n log n)</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.10 — Build Heap via Insertion</span>
+                    <button class="code-figure-run" onclick="runCode('code10')">▶ Run</button>
+                </div>
+                <textarea id="code10" spellcheck="false">def build_heap_insert(arr):
+    """Build heap by inserting elements one by one - O(n log n)."""
+    heap = []
+    
+    for val in arr:
+        # Insert (append + bubble up)
+        heap.append(val)
+        i = len(heap) - 1
+        
+        while i > 0:
+            parent = (i - 1) // 2
+            if heap[i] < heap[parent]:
+                heap[i], heap[parent] = heap[parent], heap[i]
+                i = parent
+            else:
+                break
+    
+    return heap
+
+arr = [4, 10, 3, 5, 1, 8, 7]
+print(f"Original: {arr}")
+heap = build_heap_insert(arr)
+print(f"Heap (via insertion): {heap}")
+
+# Verify it's a valid min-heap
+def is_min_heap(arr):
+    for i in range(len(arr)):
+        left, right = 2*i+1, 2*i+2
+        if left < len(arr) and arr[i] > arr[left]:
+            return False
+        if right < len(arr) and arr[i] > arr[right]:
+            return False
+    return True
+
+print(f"Valid min-heap: {is_min_heap(heap)}")</textarea>
+                <div class="code-figure-output" id="outputcode10"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.10:</strong> Repeated insertion is intuitive but takes O(n log n) total time.
+                </div>
+            </div>
+            
+            <h3>Approach 2: Bottom-Up Heapify - O(n)</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.11 — Build Heap via Heapify</span>
+                    <button class="code-figure-run" onclick="runCode('code11')">▶ Run</button>
+                </div>
+                <textarea id="code11" spellcheck="false">def heapify(arr, n, i):
+    """Min-heapify subtree rooted at i."""
+    smallest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+    
+    if left < n and arr[left] < arr[smallest]:
+        smallest = left
+    if right < n and arr[right] < arr[smallest]:
+        smallest = right
+    
+    if smallest != i:
+        arr[i], arr[smallest] = arr[smallest], arr[i]
+        heapify(arr, n, smallest)
+
+def build_heap_heapify(arr):
+    """
+    Build heap in-place using bottom-up heapify - O(n).
+    Start from last non-leaf and heapify each node.
+    """
+    n = len(arr)
+    # Last non-leaf is at index (n // 2) - 1
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+    return arr
+
+arr = [4, 10, 3, 5, 1, 8, 7]
+print(f"Original: {arr}")
+build_heap_heapify(arr)
+print(f"Heap (via heapify): {arr}")
+
+# Why O(n)? Most nodes are near leaves and need few swaps
+# Nodes at height h: n/2^(h+1), work per node: O(h)
+# Total: sum of h * n/2^(h+1) = O(n)</textarea>
+                <div class="code-figure-output" id="outputcode11"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.11:</strong> Bottom-up heapify is O(n) because most nodes are near leaves and need minimal work.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.12 — Build Heap Performance</span>
+                    <button class="code-figure-run" onclick="runCode('code12')">▶ Run</button>
+                </div>
+                <textarea id="code12" spellcheck="false">import time
+import random
+import heapq
+
+def build_via_insert(arr):
+    heap = []
+    for val in arr:
+        heap.append(val)
+        i = len(heap) - 1
+        while i > 0:
+            p = (i - 1) // 2
+            if heap[i] < heap[p]:
+                heap[i], heap[p] = heap[p], heap[i]
+                i = p
+            else:
+                break
+    return heap
+
+def build_via_heapify(arr):
+    arr = arr.copy()
+    heapq.heapify(arr)  # Uses bottom-up heapify
+    return arr
+
+# Compare performance
+sizes = [1000, 5000, 10000]
+
+print("Build heap performance comparison:")
+print("-" * 50)
+
+for n in sizes:
+    arr = [random.randint(1, 10000) for _ in range(n)]
+    
+    start = time.perf_counter()
+    build_via_insert(arr.copy())
+    insert_time = time.perf_counter() - start
+    
+    start = time.perf_counter()
+    build_via_heapify(arr)
+    heapify_time = time.perf_counter() - start
+    
+    print(f"n={n:5d}: insert={insert_time*1000:.2f}ms, "
+          f"heapify={heapify_time*1000:.2f}ms, "
+          f"ratio={insert_time/heapify_time:.1f}x")</textarea>
+                <div class="code-figure-output" id="outputcode12"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.12:</strong> Bottom-up heapify is significantly faster than repeated insertion for building heaps.
+                </div>
+            </div>
+            
+            <div class="important">
+                Always use <code>heapq.heapify()</code> to build a heap from an existing list. It's O(n) and modifies the list in-place. Don't use repeated <code>heappush()</code> which is O(n log n).
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 7: PRIORITY QUEUES -->
+        <!-- ============================================== -->
+        <section id="priority-queue">
+            <h2>7. Priority Queues</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">priority queue</span> is an abstract data type where each element has a priority. Elements are dequeued in priority order, not insertion order. Heaps are the most common implementation of priority queues.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.13 — Priority Queue Implementation</span>
+                    <button class="code-figure-run" onclick="runCode('code13')">▶ Run</button>
+                </div>
+                <textarea id="code13" spellcheck="false">class PriorityQueue:
+    """Min-priority queue using heap."""
+    
+    def __init__(self):
+        self._heap = []
+    
+    def push(self, item, priority):
+        """Add item with given priority."""
+        # Store as (priority, item) tuple
+        entry = (priority, item)
+        self._heap.append(entry)
+        self._bubble_up(len(self._heap) - 1)
+    
+    def pop(self):
+        """Remove and return lowest priority item."""
+        if not self._heap:
+            raise IndexError("Priority queue is empty")
+        
+        min_entry = self._heap[0]
+        self._heap[0] = self._heap[-1]
+        self._heap.pop()
+        
+        if self._heap:
+            self._bubble_down(0)
+        
+        return min_entry[1]  # Return item, not tuple
+    
+    def peek(self):
+        """Return lowest priority item without removing."""
+        if not self._heap:
+            raise IndexError("Priority queue is empty")
+        return self._heap[0][1]
+    
+    def _bubble_up(self, i):
+        while i > 0:
+            parent = (i - 1) // 2
+            if self._heap[i][0] < self._heap[parent][0]:
+                self._heap[i], self._heap[parent] = \
+                    self._heap[parent], self._heap[i]
+                i = parent
+            else:
+                break
+    
+    def _bubble_down(self, i):
+        n = len(self._heap)
+        while True:
+            smallest = i
+            left, right = 2*i+1, 2*i+2
+            if left < n and self._heap[left][0] < self._heap[smallest][0]:
+                smallest = left
+            if right < n and self._heap[right][0] < self._heap[smallest][0]:
+                smallest = right
+            if smallest != i:
+                self._heap[i], self._heap[smallest] = \
+                    self._heap[smallest], self._heap[i]
+                i = smallest
+            else:
+                break
+    
+    def __len__(self):
+        return len(self._heap)
+
+# Test priority queue
+pq = PriorityQueue()
+tasks = [
+    ("Low priority task", 3),
+    ("Critical task", 1),
+    ("Medium task", 2),
+    ("Another low", 3),
+]
+
+print("Adding tasks:")
+for task, priority in tasks:
+    pq.push(task, priority)
+    print(f"  Added '{task}' with priority {priority}")
+
+print("\nProcessing in priority order:")
+while len(pq) > 0:
+    task = pq.pop()
+    print(f"  Processing: {task}")</textarea>
+                <div class="code-figure-output" id="outputcode13"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.13:</strong> Priority queue wraps heap with meaningful interface. Lower priority value = higher urgency.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.14 — Max-Priority Queue</span>
+                    <button class="code-figure-run" onclick="runCode('code14')">▶ Run</button>
+                </div>
+                <textarea id="code14" spellcheck="false">import heapq
+
+class MaxPriorityQueue:
+    """Max-priority queue using negated priorities."""
+    
+    def __init__(self):
+        self._heap = []
+    
+    def push(self, item, priority):
+        """Add item - higher priority served first."""
+        # Negate priority for max-heap behavior
+        heapq.heappush(self._heap, (-priority, item))
+    
+    def pop(self):
+        """Remove highest priority item."""
+        if not self._heap:
+            raise IndexError("Empty queue")
+        return heapq.heappop(self._heap)[1]
+    
+    def peek(self):
+        if not self._heap:
+            raise IndexError("Empty queue")
+        return self._heap[0][1]
+    
+    def __len__(self):
+        return len(self._heap)
+
+# Test max-priority queue
+pq = MaxPriorityQueue()
+
+print("Hospital ER Triage (higher = more urgent):")
+patients = [
+    ("Minor cut", 1),
+    ("Heart attack", 5),
+    ("Broken arm", 3),
+    ("Severe allergic reaction", 4),
+]
+
+for patient, urgency in patients:
+    pq.push(patient, urgency)
+    print(f"  Admitted: {patient} (urgency {urgency})")
+
+print("\nTreatment order:")
+while len(pq) > 0:
+    print(f"  Treating: {pq.pop()}")</textarea>
+                <div class="code-figure-output" id="outputcode14"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.14:</strong> Max-priority queue negates priorities to use Python's min-heap. Higher values processed first.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 8: PYTHON'S HEAPQ MODULE -->
+        <!-- ============================================== -->
+        <section id="python-heapq">
+            <h2>8. Python's heapq Module</h2>
+            
+            <p>Python's <code>heapq</code> module provides heap operations on regular lists. It implements a min-heap.</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.15 — heapq Basics</span>
+                    <button class="code-figure-run" onclick="runCode('code15')">▶ Run</button>
+                </div>
+                <textarea id="code15" spellcheck="false">import heapq
+
+# Create empty heap (just a list)
+heap = []
+
+# Push elements - O(log n) each
+heapq.heappush(heap, 5)
+heapq.heappush(heap, 3)
+heapq.heappush(heap, 8)
+heapq.heappush(heap, 1)
+print(f"After pushes: {heap}")
+
+# Peek at minimum - O(1)
+print(f"Minimum: {heap[0]}")
+
+# Pop minimum - O(log n)
+min_val = heapq.heappop(heap)
+print(f"Popped: {min_val}")
+print(f"After pop: {heap}")
+
+# Build heap from existing list - O(n)
+data = [9, 5, 2, 7, 3, 8, 1]
+print(f"\nOriginal list: {data}")
+heapq.heapify(data)
+print(f"After heapify: {data}")
+
+# Push and pop in one operation - O(log n)
+result = heapq.heappushpop(data, 4)  # Push 4, pop min
+print(f"heappushpop(4): popped {result}, heap={data}")
+
+# Pop and push - O(log n)
+result = heapq.heapreplace(data, 0)  # Pop min, push 0
+print(f"heapreplace(0): popped {result}, heap={data}")</textarea>
+                <div class="code-figure-output" id="outputcode15"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.15:</strong> heapq provides efficient heap operations. Remember: it's a min-heap operating on a regular list.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.16 — heapq Advanced Functions</span>
+                    <button class="code-figure-run" onclick="runCode('code16')">▶ Run</button>
+                </div>
+                <textarea id="code16" spellcheck="false">import heapq
+
+# nlargest and nsmallest - efficient for small k
+data = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+print(f"Data: {data}")
+print(f"3 smallest: {heapq.nsmallest(3, data)}")
+print(f"3 largest:  {heapq.nlargest(3, data)}")
+
+# With key function
+words = ['apple', 'pie', 'banana', 'cherry', 'date']
+print(f"\nWords: {words}")
+print(f"2 shortest: {heapq.nsmallest(2, words, key=len)}")
+print(f"2 longest:  {heapq.nlargest(2, words, key=len)}")
+
+# Merge sorted iterables
+list1 = [1, 3, 5, 7]
+list2 = [2, 4, 6, 8]
+list3 = [0, 9]
+print(f"\nMerging sorted lists: {list1}, {list2}, {list3}")
+merged = list(heapq.merge(list1, list2, list3))
+print(f"Result: {merged}")
+
+# When to use nlargest/nsmallest vs sorted:
+# - k << n: use nlargest/nsmallest O(n + k log n)
+# - k ≈ n: use sorted() O(n log n)
+# - k = 1: use min()/max() O(n)</textarea>
+                <div class="code-figure-output" id="outputcode16"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.16:</strong> heapq also provides nlargest, nsmallest, and merge for common operations.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.17 — Max-Heap with heapq</span>
+                    <button class="code-figure-run" onclick="runCode('code17')">▶ Run</button>
+                </div>
+                <textarea id="code17" spellcheck="false">import heapq
+
+# heapq only provides min-heap
+# For max-heap, negate values
+
+class MaxHeap:
+    def __init__(self):
+        self._heap = []
+    
+    def push(self, val):
+        heapq.heappush(self._heap, -val)
+    
+    def pop(self):
+        return -heapq.heappop(self._heap)
+    
+    def peek(self):
+        return -self._heap[0]
+    
+    def __len__(self):
+        return len(self._heap)
+
+# Test
+max_heap = MaxHeap()
+values = [3, 1, 4, 1, 5, 9, 2, 6]
+
+print("Building max-heap:")
+for v in values:
+    max_heap.push(v)
+    print(f"  Push {v}: max={max_heap.peek()}")
+
+print("\nExtracting in descending order:")
+while len(max_heap) > 0:
+    print(f"  Pop: {max_heap.pop()}")</textarea>
+                <div class="code-figure-output" id="outputcode17"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.17:</strong> Negate values to simulate max-heap with Python's min-heap implementation.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.18 — Custom Objects in Heap</span>
+                    <button class="code-figure-run" onclick="runCode('code18')">▶ Run</button>
+                </div>
+                <textarea id="code18" spellcheck="false">import heapq
+
+# For custom objects, use tuples (priority, tiebreaker, object)
+# Tiebreaker ensures comparison works even with equal priorities
+
+class Task:
+    def __init__(self, name):
+        self.name = name
+    def __repr__(self):
+        return f"Task({self.name})"
+
+# Using tuple approach
+task_heap = []
+counter = 0  # Tiebreaker for equal priorities
+
+tasks = [
+    (2, "Write code"),
+    (1, "Fix critical bug"),
+    (2, "Review PR"),
+    (3, "Update docs"),
+]
+
+for priority, name in tasks:
+    task = Task(name)
+    # (priority, counter, task) - counter breaks ties
+    heapq.heappush(task_heap, (priority, counter, task))
+    counter += 1
+
+print("Tasks in priority order:")
+while task_heap:
+    priority, _, task = heapq.heappop(task_heap)
+    print(f"  Priority {priority}: {task.name}")</textarea>
+                <div class="code-figure-output" id="outputcode18"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.18:</strong> Use tuples with a counter as tiebreaker when heap elements might have equal priorities.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 9: HEAP APPLICATIONS -->
+        <!-- ============================================== -->
+        <section id="applications">
+            <h2>9. Heap Applications</h2>
+            
+            <h3>Application 1: Heap Sort</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.19 — Heap Sort</span>
+                    <button class="code-figure-run" onclick="runCode('code19')">▶ Run</button>
+                </div>
+                <textarea id="code19" spellcheck="false">def heapify(arr, n, i):
+    """Max-heapify for ascending sort."""
+    largest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+    
+    if left < n and arr[left] > arr[largest]:
+        largest = left
+    if right < n and arr[right] > arr[largest]:
+        largest = right
+    
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest)
+
+def heap_sort(arr):
+    """
+    Sort array using heap - O(n log n) time, O(1) space.
+    1. Build max-heap
+    2. Repeatedly extract max to end
+    """
+    n = len(arr)
+    
+    # Build max-heap
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+    
+    # Extract elements one by one
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]  # Move max to end
+        heapify(arr, i, 0)  # Heapify reduced heap
+
+arr = [12, 11, 13, 5, 6, 7]
+print(f"Original: {arr}")
+heap_sort(arr)
+print(f"Sorted:   {arr}")</textarea>
+                <div class="code-figure-output" id="outputcode19"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.19:</strong> Heap sort builds max-heap, then repeatedly moves max to sorted portion. O(n log n) and in-place.
+                </div>
+            </div>
+            
+            <h3>Application 2: K Largest/Smallest Elements</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.20 — K Largest Elements</span>
+                    <button class="code-figure-run" onclick="runCode('code20')">▶ Run</button>
+                </div>
+                <textarea id="code20" spellcheck="false">import heapq
+
+def k_largest_sort(arr, k):
+    """Sort and take last k - O(n log n)."""
+    return sorted(arr)[-k:]
+
+def k_largest_heap(arr, k):
+    """
+    Use min-heap of size k - O(n log k).
+    Keep k largest seen so far.
+    """
+    heap = []
+    for num in arr:
+        if len(heap) < k:
+            heapq.heappush(heap, num)
+        elif num > heap[0]:
+            heapq.heapreplace(heap, num)  # Pop smallest, push new
+    return sorted(heap, reverse=True)
+
+def k_largest_builtin(arr, k):
+    """Use heapq.nlargest - optimized implementation."""
+    return heapq.nlargest(k, arr)
+
+# Test
+arr = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7]
+k = 4
+
+print(f"Array: {arr}")
+print(f"k = {k}")
+print(f"\nk largest (sort):    {k_largest_sort(arr, k)}")
+print(f"k largest (heap):    {k_largest_heap(arr, k)}")
+print(f"k largest (builtin): {k_largest_builtin(arr, k)}")</textarea>
+                <div class="code-figure-output" id="outputcode20"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.20:</strong> For k largest, use min-heap of size k. Each element is O(log k), total O(n log k).
+                </div>
+            </div>
+            
+            <h3>Application 3: Merge K Sorted Lists</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.21 — Merge K Sorted Lists</span>
+                    <button class="code-figure-run" onclick="runCode('code21')">▶ Run</button>
+                </div>
+                <textarea id="code21" spellcheck="false">import heapq
+
+def merge_k_sorted(lists):
+    """
+    Merge k sorted lists into one sorted list.
+    Time: O(n log k) where n is total elements
+    """
+    result = []
+    heap = []  # (value, list_index, element_index)
+    
+    # Initialize with first element of each list
+    for i, lst in enumerate(lists):
+        if lst:
+            heapq.heappush(heap, (lst[0], i, 0))
+    
+    while heap:
+        val, list_idx, elem_idx = heapq.heappop(heap)
+        result.append(val)
+        
+        # If there's a next element in that list, add it
+        if elem_idx + 1 < len(lists[list_idx]):
+            next_val = lists[list_idx][elem_idx + 1]
+            heapq.heappush(heap, (next_val, list_idx, elem_idx + 1))
+    
+    return result
+
+# Test
+lists = [
+    [1, 4, 7, 10],
+    [2, 5, 8, 11],
+    [3, 6, 9, 12],
+]
+
+print("Sorted lists:")
+for i, lst in enumerate(lists):
+    print(f"  List {i}: {lst}")
+
+merged = merge_k_sorted(lists)
+print(f"\nMerged: {merged}")</textarea>
+                <div class="code-figure-output" id="outputcode21"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.21:</strong> Keep one element from each list in heap. Always pop smallest, push its successor.
+                </div>
+            </div>
+            
+            <h3>Application 4: Running Median</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.22 — Running Median with Two Heaps</span>
+                    <button class="code-figure-run" onclick="runCode('code22')">▶ Run</button>
+                </div>
+                <textarea id="code22" spellcheck="false">import heapq
+
+class MedianFinder:
+    """
+    Find median in O(log n) per insert, O(1) per query.
+    Use two heaps: max-heap for lower half, min-heap for upper half.
+    """
+    
+    def __init__(self):
+        self.low = []   # Max-heap (negated) for smaller half
+        self.high = []  # Min-heap for larger half
+    
+    def add(self, num):
+        # Add to max-heap of lower half
+        heapq.heappush(self.low, -num)
+        
+        # Ensure max of low <= min of high
+        if self.high and -self.low[0] > self.high[0]:
+            val = -heapq.heappop(self.low)
+            heapq.heappush(self.high, val)
+        
+        # Balance sizes: low can have at most 1 more than high
+        if len(self.low) > len(self.high) + 1:
+            val = -heapq.heappop(self.low)
+            heapq.heappush(self.high, val)
+        elif len(self.high) > len(self.low):
+            val = heapq.heappop(self.high)
+            heapq.heappush(self.low, -val)
+    
+    def median(self):
+        if len(self.low) > len(self.high):
+            return -self.low[0]
+        return (-self.low[0] + self.high[0]) / 2
+
+# Test
+mf = MedianFinder()
+numbers = [2, 3, 4, 1, 5, 6]
+
+print("Running median:")
+for num in numbers:
+    mf.add(num)
+    print(f"  Add {num}: median = {mf.median()}")</textarea>
+                <div class="code-figure-output" id="outputcode22"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.22:</strong> Two heaps split data at median. Max-heap holds smaller half, min-heap holds larger half.
+                </div>
+            </div>
+            
+            <h3>Application 5: Top K Frequent Elements</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.23 — Top K Frequent</span>
+                    <button class="code-figure-run" onclick="runCode('code23')">▶ Run</button>
+                </div>
+                <textarea id="code23" spellcheck="false">import heapq
+from collections import Counter
+
+def top_k_frequent(nums, k):
+    """
+    Find k most frequent elements.
+    Time: O(n log k)
+    """
+    # Count frequencies - O(n)
+    count = Counter(nums)
+    
+    # Use min-heap of size k
+    # Heap contains (frequency, element)
+    heap = []
+    for num, freq in count.items():
+        if len(heap) < k:
+            heapq.heappush(heap, (freq, num))
+        elif freq > heap[0][0]:
+            heapq.heapreplace(heap, (freq, num))
+    
+    return [num for freq, num in heap]
+
+# Test
+nums = [1, 1, 1, 2, 2, 3, 3, 3, 3, 4]
+k = 2
+
+print(f"Array: {nums}")
+print(f"Frequencies: {dict(Counter(nums))}")
+print(f"Top {k} frequent: {top_k_frequent(nums, k)}")</textarea>
+                <div class="code-figure-output" id="outputcode23"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.23:</strong> Count frequencies, then use size-k heap to keep the k most frequent.
+                </div>
+            </div>
+            
+            <h3>Application 6: Dijkstra's Shortest Path</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.24 — Dijkstra with Heap</span>
+                    <button class="code-figure-run" onclick="runCode('code24')">▶ Run</button>
+                </div>
+                <textarea id="code24" spellcheck="false">import heapq
+
+def dijkstra(graph, start):
+    """
+    Find shortest paths from start to all nodes.
+    Time: O((V + E) log V) with heap
+    """
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    
+    # Priority queue: (distance, node)
+    pq = [(0, start)]
+    
+    while pq:
+        dist, node = heapq.heappop(pq)
+        
+        # Skip if we found a better path already
+        if dist > distances[node]:
+            continue
+        
+        for neighbor, weight in graph[node].items():
+            new_dist = dist + weight
+            if new_dist < distances[neighbor]:
+                distances[neighbor] = new_dist
+                heapq.heappush(pq, (new_dist, neighbor))
+    
+    return distances
+
+# Example graph
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'A': 1, 'C': 2, 'D': 5},
+    'C': {'A': 4, 'B': 2, 'D': 1},
+    'D': {'B': 5, 'C': 1},
+}
+
+print("Graph:")
+for node, edges in graph.items():
+    print(f"  {node}: {edges}")
+
+distances = dijkstra(graph, 'A')
+print(f"\nShortest distances from A:")
+for node, dist in sorted(distances.items()):
+    print(f"  A -> {node}: {dist}")</textarea>
+                <div class="code-figure-output" id="outputcode24"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.24:</strong> Dijkstra's algorithm uses a min-heap to always process the nearest unvisited node.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 10: COMMON PATTERNS -->
+        <!-- ============================================== -->
+        <section id="patterns">
+            <h2>10. Common Patterns</h2>
+            
+            <h3>Pattern 1: Kth Element Problems</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.25 — Kth Largest in Stream</span>
+                    <button class="code-figure-run" onclick="runCode('code25')">▶ Run</button>
+                </div>
+                <textarea id="code25" spellcheck="false">import heapq
+
+class KthLargest:
+    """
+    Find kth largest element in a stream.
+    Maintain min-heap of size k.
+    """
+    
+    def __init__(self, k, nums):
+        self.k = k
+        self.heap = []
+        for num in nums:
+            self.add(num)
+    
+    def add(self, val):
+        if len(self.heap) < self.k:
+            heapq.heappush(self.heap, val)
+        elif val > self.heap[0]:
+            heapq.heapreplace(self.heap, val)
+        return self.heap[0]  # kth largest
+
+# Test
+k = 3
+initial = [4, 5, 8, 2]
+kth = KthLargest(k, initial)
+
+print(f"Initial: {initial}, k={k}")
+print(f"Heap (k largest): {sorted(kth.heap, reverse=True)}")
+print(f"Kth largest: {kth.heap[0]}")
+
+for val in [3, 5, 10, 9, 4]:
+    result = kth.add(val)
+    print(f"Add {val}: kth largest = {result}")</textarea>
+                <div class="code-figure-output" id="outputcode25"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.25:</strong> For kth largest in stream, keep min-heap of size k. Root is always the kth largest.
+                </div>
+            </div>
+            
+            <h3>Pattern 2: Scheduling Problems</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.26 — Task Scheduler</span>
+                    <button class="code-figure-run" onclick="runCode('code26')">▶ Run</button>
+                </div>
+                <textarea id="code26" spellcheck="false">import heapq
+from collections import Counter
+
+def least_interval(tasks, n):
+    """
+    Find minimum time to complete all tasks.
+    Same task must have n intervals between executions.
+    """
+    # Count task frequencies
+    freq = list(Counter(tasks).values())
+    
+    # Max-heap of frequencies (negate for max-heap)
+    heap = [-f for f in freq]
+    heapq.heapify(heap)
+    
+    time = 0
+    while heap:
+        temp = []
+        
+        # Try to fill n+1 slots in this cycle
+        for _ in range(n + 1):
+            if heap:
+                count = -heapq.heappop(heap)
+                if count > 1:
+                    temp.append(-(count - 1))
+            time += 1
+            
+            # If no more tasks, stop
+            if not heap and not temp:
+                break
+        
+        # Add remaining tasks back
+        for item in temp:
+            heapq.heappush(heap, item)
+    
+    return time
+
+# Test
+tasks = ['A', 'A', 'A', 'B', 'B', 'B']
+n = 2
+
+print(f"Tasks: {tasks}")
+print(f"Cooling interval: {n}")
+print(f"Minimum time: {least_interval(tasks, n)}")
+# A -> B -> idle -> A -> B -> idle -> A -> B = 8</textarea>
+                <div class="code-figure-output" id="outputcode26"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.26:</strong> Greedy scheduling: always process most frequent task first to minimize idle time.
+                </div>
+            </div>
+            
+            <h3>Pattern 3: Meeting Rooms</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.27 — Minimum Meeting Rooms</span>
+                    <button class="code-figure-run" onclick="runCode('code27')">▶ Run</button>
+                </div>
+                <textarea id="code27" spellcheck="false">import heapq
+
+def min_meeting_rooms(intervals):
+    """
+    Find minimum number of meeting rooms required.
+    Heap tracks end times of ongoing meetings.
+    """
+    if not intervals:
+        return 0
+    
+    # Sort by start time
+    intervals.sort(key=lambda x: x[0])
+    
+    # Heap of end times (rooms in use)
+    rooms = []
+    heapq.heappush(rooms, intervals[0][1])
+    
+    for start, end in intervals[1:]:
+        # If earliest ending room is free, reuse it
+        if start >= rooms[0]:
+            heapq.heappop(rooms)
+        
+        # Add current meeting's end time
+        heapq.heappush(rooms, end)
+    
+    return len(rooms)
+
+# Test
+meetings = [(0, 30), (5, 10), (15, 20)]
+print(f"Meetings: {meetings}")
+print(f"Rooms needed: {min_meeting_rooms(meetings)}")
+
+meetings2 = [(7, 10), (2, 4)]
+print(f"\nMeetings: {meetings2}")
+print(f"Rooms needed: {min_meeting_rooms(meetings2)}")</textarea>
+                <div class="code-figure-output" id="outputcode27"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.27:</strong> Track meeting end times in heap. When new meeting starts, check if any room is free.
+                </div>
+            </div>
+            
+            <h3>Pattern 4: Sliding Window Maximum</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.28 — Max in Sliding Window</span>
+                    <button class="code-figure-run" onclick="runCode('code28')">▶ Run</button>
+                </div>
+                <textarea id="code28" spellcheck="false">import heapq
+
+def max_sliding_window(nums, k):
+    """
+    Find maximum in each sliding window of size k.
+    Using max-heap with lazy removal.
+    """
+    result = []
+    # Max-heap: (-value, index)
+    heap = []
+    
+    for i, num in enumerate(nums):
+        # Add current element
+        heapq.heappush(heap, (-num, i))
+        
+        # Remove elements outside window
+        while heap[0][1] <= i - k:
+            heapq.heappop(heap)
+        
+        # Add max to result once window is full
+        if i >= k - 1:
+            result.append(-heap[0][0])
+    
+    return result
+
+# Test
+nums = [1, 3, -1, -3, 5, 3, 6, 7]
+k = 3
+
+print(f"Array: {nums}, k={k}")
+print(f"Max in each window: {max_sliding_window(nums, k)}")
+
+# Verify manually
+print("\nWindows:")
+for i in range(len(nums) - k + 1):
+    window = nums[i:i+k]
+    print(f"  {window} -> max = {max(window)}")</textarea>
+                <div class="code-figure-output" id="outputcode28"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.28:</strong> Max-heap with lazy removal of out-of-window elements. Check index before using top.
+                </div>
+            </div>
+            
+            <h3>Pattern 5: Skyline Problem</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.29 — Skyline Outline</span>
+                    <button class="code-figure-run" onclick="runCode('code29')">▶ Run</button>
+                </div>
+                <textarea id="code29" spellcheck="false">import heapq
+
+def get_skyline(buildings):
+    """
+    Get skyline silhouette from buildings.
+    Each building: [left, right, height]
+    """
+    # Create events: (x, type, height)
+    # Start: negative height (process taller first)
+    # End: positive height
+    events = []
+    for left, right, height in buildings:
+        events.append((left, -height, right))  # Start
+        events.append((right, 0, 0))  # End marker
+    
+    events.sort()
+    
+    result = []
+    # Max-heap of (negative height, end position)
+    # Use (0, float('inf')) as ground
+    heap = [(0, float('inf'))]
+    
+    for x, neg_h, end in events:
+        if neg_h != 0:  # Start of building
+            heapq.heappush(heap, (neg_h, end))
+        
+        # Remove buildings that have ended
+        while heap[0][1] <= x:
+            heapq.heappop(heap)
+        
+        # Current max height
+        max_h = -heap[0][0]
+        
+        # Add to result if height changed
+        if not result or result[-1][1] != max_h:
+            result.append([x, max_h])
+    
+    return result
+
+# Test
+buildings = [[2, 9, 10], [3, 7, 15], [5, 12, 12]]
+print(f"Buildings: {buildings}")
+skyline = get_skyline(buildings)
+print(f"Skyline: {skyline}")</textarea>
+                <div class="code-figure-output" id="outputcode29"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.29:</strong> Skyline uses sweep line with max-heap to track tallest active building at each position.
+                </div>
+            </div>
+            
+            <h3>Pattern 6: IPO (Project Selection)</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.30 — Maximum Capital</span>
+                    <button class="code-figure-run" onclick="runCode('code30')">▶ Run</button>
+                </div>
+                <textarea id="code30" spellcheck="false">import heapq
+
+def find_maximized_capital(k, w, profits, capital):
+    """
+    Select at most k projects to maximize capital.
+    Each project needs minimum capital to start.
+    w = starting capital
+    """
+    n = len(profits)
+    # Projects sorted by capital required
+    projects = sorted(zip(capital, profits))
+    
+    available = []  # Max-heap of profits (negated)
+    i = 0
+    
+    for _ in range(k):
+        # Add all affordable projects to heap
+        while i < n and projects[i][0] <= w:
+            heapq.heappush(available, -projects[i][1])
+            i += 1
+        
+        # If no projects available, stop
+        if not available:
+            break
+        
+        # Do the most profitable project
+        w += -heapq.heappop(available)
+    
+    return w
+
+# Test
+k = 2
+w = 0
+profits = [1, 2, 3]
+capital = [0, 1, 1]
+
+print(f"Starting capital: {w}")
+print(f"Projects (capital, profit): {list(zip(capital, profits))}")
+print(f"Select at most {k} projects")
+print(f"Maximum capital: {find_maximized_capital(k, w, profits, capital)}")</textarea>
+                <div class="code-figure-output" id="outputcode30"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.30:</strong> Greedy selection: always pick most profitable affordable project. Two heaps pattern.
+                </div>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-title">Key Takeaways</div>
+                <ul>
+                    <li><strong>Heap</strong> is a complete binary tree with heap property (parent vs children)</li>
+                    <li><strong>Min-heap:</strong> root is minimum; <strong>Max-heap:</strong> root is maximum</li>
+                    <li><strong>Array storage:</strong> parent at (i-1)//2, children at 2i+1 and 2i+2</li>
+                    <li><strong>Operations:</strong> peek O(1), insert O(log n), extract O(log n)</li>
+                    <li><strong>Build heap:</strong> use heapify for O(n) instead of repeated insert O(n log n)</li>
+                    <li><strong>Python:</strong> use <code>heapq</code> module (min-heap only, negate for max)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 11: PITFALLS -->
+        <!-- ============================================== -->
+        <section id="pitfalls">
+            <h2>11. Common Pitfalls</h2>
+            
+            <h3>Pitfall 1: Confusing heapify with heappush</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.31 — heapify vs heappush</span>
+                    <button class="code-figure-run" onclick="runCode('code31')">▶ Run</button>
+                </div>
+                <textarea id="code31" spellcheck="false">import heapq
+import time
+
+data = list(range(10000, 0, -1))  # Reverse sorted
+
+# WRONG: Using heappush in loop - O(n log n)
+heap1 = []
+start = time.perf_counter()
+for x in data:
+    heapq.heappush(heap1, x)
+push_time = time.perf_counter() - start
+
+# RIGHT: Using heapify - O(n)
+heap2 = data.copy()
+start = time.perf_counter()
+heapq.heapify(heap2)
+heapify_time = time.perf_counter() - start
+
+print(f"Building heap from {len(data)} elements:")
+print(f"  heappush loop: {push_time*1000:.2f} ms")
+print(f"  heapify:       {heapify_time*1000:.2f} ms")
+print(f"  Speedup:       {push_time/heapify_time:.1f}x")
+print(f"\nBoth valid: {heap1[0] == heap2[0] == 1}")</textarea>
+                <div class="code-figure-output" id="outputcode31"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.31:</strong> Always use heapify() to build a heap from existing data, not repeated heappush().
+                </div>
+            </div>
+            
+            <h3>Pitfall 2: Forgetting heapq is Min-Heap Only</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.32 — Max-Heap Patterns</span>
+                    <button class="code-figure-run" onclick="runCode('code32')">▶ Run</button>
+                </div>
+                <textarea id="code32" spellcheck="false">import heapq
+
+# WRONG: Expecting max-heap behavior
+data = [3, 1, 4, 1, 5, 9]
+heapq.heapify(data)
+print(f"heapq gives minimum: {data[0]}")  # 1, not 9!
+
+# RIGHT: Negate for max-heap
+max_heap = [-x for x in [3, 1, 4, 1, 5, 9]]
+heapq.heapify(max_heap)
+print(f"Negated gives maximum: {-max_heap[0]}")  # 9
+
+# For objects, use negative priority
+tasks = [(3, 'low'), (1, 'high'), (2, 'medium')]
+
+# Max-priority (higher number = higher priority)
+max_pq = [(-p, t) for p, t in tasks]
+heapq.heapify(max_pq)
+
+print("\nMax-priority queue order:")
+while max_pq:
+    neg_p, task = heapq.heappop(max_pq)
+    print(f"  Priority {-neg_p}: {task}")</textarea>
+                <div class="code-figure-output" id="outputcode32"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.32:</strong> Python's heapq is always a min-heap. Negate values for max-heap behavior.
+                </div>
+            </div>
+            
+            <h3>Pitfall 3: Modifying Heap Elements</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 7.33 — Safe Heap Updates</span>
+                    <button class="code-figure-run" onclick="runCode('code33')">▶ Run</button>
+                </div>
+                <textarea id="code33" spellcheck="false">import heapq
+
+# WRONG: Modifying element in heap
+heap = [[5, 'task1'], [3, 'task2'], [8, 'task3']]
+heapq.heapify(heap)
+print(f"Before: {heap}")
+print(f"Min: {heap[0]}")
+
+# DON'T DO THIS - breaks heap property!
+heap[1][0] = 1  # Changing priority
+print(f"After modification: {heap}")
+print(f"Min is wrong: {heap[0]} (should be [1, 'task3'])")
+
+# RIGHT: Remove and re-add, or use lazy deletion
+# Option 1: Rebuild heap
+heapq.heapify(heap)
+print(f"After re-heapify: {heap}")
+
+# Option 2: Mark entries as invalid (lazy deletion)
+# See pattern with (priority, counter, item) tuples</textarea>
+                <div class="code-figure-output" id="outputcode33"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 7.33:</strong> Never modify heap elements directly. Re-heapify or use lazy deletion pattern.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 12: EXERCISES -->
+        <!-- ============================================== -->
+        <section id="exercises">
+            <h2>12. Exercises</h2>
+            
+            <!-- Exercise 1 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 1: Last Stone Weight</div>
+                <p>We have stones with weights. Each turn, smash two heaviest stones together. If weights are equal, both destroyed. If not, the lighter is destroyed and the heavier's weight becomes the difference. Return the weight of the last remaining stone (or 0 if none).</p>
+                <p class="answer">(Hint: Use a max-heap to always get the two heaviest)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 1 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex1')">▶ Run</button>
+                </div>
+                <textarea id="ex1" spellcheck="false"># HINT 1: Use max-heap (negate values for heapq)
+# HINT 2: Pop two largest, if different, push difference
+# HINT 3: Continue until 0 or 1 stones remain
+
+import heapq
+
+def last_stone_weight(stones):
+    # Your code here
+    pass
+
+# Test your implementation
+# stones = [2, 7, 4, 1, 8, 1]
+# print(f"Stones: {stones}")
+# print(f"Last stone weight: {last_stone_weight(stones)}")  # Expected: 1</textarea>
+                <div class="code-figure-output" id="outputex1"></div>
+            </div>
+            
+            <!-- Exercise 2 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 2: K Closest Points to Origin</div>
+                <p>Given an array of points where points[i] = [xi, yi], return the k closest points to the origin (0, 0). Distance is Euclidean.</p>
+                <p class="answer">(Hint: Use max-heap of size k based on distance)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 2 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex2')">▶ Run</button>
+                </div>
+                <textarea id="ex2" spellcheck="false"># HINT 1: Distance = x^2 + y^2 (no need for sqrt)
+# HINT 2: Use max-heap of size k (negate distance)
+# HINT 3: If current point closer than heap max, replace
+
+import heapq
+
+def k_closest(points, k):
+    # Your code here
+    pass
+
+# Test your implementation
+# points = [[1, 3], [-2, 2], [5, 8], [0, 1]]
+# k = 2
+# print(f"Points: {points}")
+# print(f"{k} closest to origin: {k_closest(points, k)}")</textarea>
+                <div class="code-figure-output" id="outputex2"></div>
+            </div>
+            
+            <!-- Exercise 3 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 3: Reorganize String</div>
+                <p>Given a string s, rearrange so that no two adjacent characters are the same. Return any valid arrangement, or "" if impossible.</p>
+                <p class="answer">(Hint: Always place most frequent character, use max-heap)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 3 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex3')">▶ Run</button>
+                </div>
+                <textarea id="ex3" spellcheck="false"># HINT 1: Count character frequencies
+# HINT 2: Use max-heap of (count, char)
+# HINT 3: Alternate between most frequent chars
+# HINT 4: Impossible if max_count > (len+1)/2
+
+import heapq
+from collections import Counter
+
+def reorganize_string(s):
+    # Your code here
+    pass
+
+# Test your implementation
+# print(f"'aab' -> '{reorganize_string('aab')}'")  # "aba"
+# print(f"'aaab' -> '{reorganize_string('aaab')}'")  # ""</textarea>
+                <div class="code-figure-output" id="outputex3"></div>
+            </div>
+            
+            <!-- Exercise 4 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 4: Find Median from Data Stream</div>
+                <p>Implement MedianFinder class with addNum(int num) and findMedian() methods. findMedian should return the median of all elements added so far.</p>
+                <p class="answer">(Hint: Use two heaps - max-heap for lower half, min-heap for upper half)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 4 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex4')">▶ Run</button>
+                </div>
+                <textarea id="ex4" spellcheck="false"># HINT 1: max-heap for smaller half, min-heap for larger half
+# HINT 2: Keep heaps balanced (differ by at most 1)
+# HINT 3: Ensure all in max-heap <= all in min-heap
+# HINT 4: Median is top of larger heap or average of both tops
+
+import heapq
+
+class MedianFinder:
+    def __init__(self):
+        # Your code here
+        pass
+    
+    def addNum(self, num):
+        # Your code here
+        pass
+    
+    def findMedian(self):
+        # Your code here
+        pass
+
+# Test your implementation
+# mf = MedianFinder()
+# mf.addNum(1); print(f"Added 1, median: {mf.findMedian()}")
+# mf.addNum(2); print(f"Added 2, median: {mf.findMedian()}")
+# mf.addNum(3); print(f"Added 3, median: {mf.findMedian()}")</textarea>
+                <div class="code-figure-output" id="outputex4"></div>
+            </div>
+            
+            <!-- Exercise 5 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 5: Ugly Number II</div>
+                <p>An ugly number is a positive integer whose prime factors are limited to 2, 3, and 5. Given n, return the nth ugly number. (1 is considered ugly.)</p>
+                <p class="answer">(Hint: Use min-heap, generate by multiplying existing ugly numbers by 2, 3, 5)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 5 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex5')">▶ Run</button>
+                </div>
+                <textarea id="ex5" spellcheck="false"># HINT 1: Start with 1 in heap
+# HINT 2: Pop minimum, multiply by 2, 3, 5, add to heap
+# HINT 3: Use set to avoid duplicates
+# HINT 4: Repeat until you've popped n numbers
+
+import heapq
+
+def nth_ugly_number(n):
+    # Your code here
+    pass
+
+# Test your implementation
+# for i in [1, 10, 15]:
+#     print(f"Ugly number {i}: {nth_ugly_number(i)}")
+# First 15: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15, 16, 18, 20, 24</textarea>
+                <div class="code-figure-output" id="outputex5"></div>
+            </div>
+        </section>
+
+        <!-- SUBMIT SECTION -->
+        <section class="submit-section">
+            <h2>Submit Your Work</h2>
+            <p>After completing the exercises, submit your attendance below.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student ID</label>
+                    <input type="text" id="studentId" placeholder="Enter your student ID">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" placeholder="Enter your full name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email (@istun.edu.tr)</label>
+                    <input type="email" id="studentEmail" placeholder="your.email@istun.edu.tr">
+                </div>
+                <div class="form-group">
+                    <label>Class Code</label>
+                    <input type="text" id="classCode" placeholder="From instructor">
+                </div>
+            </div>
+            <input type="text" id="hp" class="hp" tabindex="-1" autocomplete="off">
+            <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
+            <div class="submit-status" id="submitStatus"></div>
+        </section>
+    </main>
+
+    <script>
+        const pageLoadTime = Date.now();
+        
+        async function runCode(codeId) {
+            const codeEl = document.getElementById(codeId);
+            const outputEl = document.getElementById('output' + codeId);
+            const code = codeEl.value;
+            outputEl.classList.add('show');
+            outputEl.textContent = 'Running...';
+            
+            try {
+                const escaped = code.replace(/\\/g, '\\\\').replace(/"""/g, '\\"\\"\\"');
+                const result = await pyscript.interpreter.runPython(`
+import sys
+from io import StringIO
+_code = """` + escaped + `"""
+_old_stdout = sys.stdout
+sys.stdout = StringIO()
+try:
+    exec(_code)
+    _output = sys.stdout.getvalue()
+except Exception as e:
+    _output = f"Error: {e}"
+finally:
+    sys.stdout = _old_stdout
+_output
+`);
+                outputEl.textContent = result || '(no output)';
+            } catch(e) {
+                outputEl.textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        function submitWork() {
+            const status = document.getElementById('submitStatus');
+            const data = {
+                week: 'Week_07',
+                student_id: document.getElementById('studentId').value.trim(),
+                student_name: document.getElementById('studentName').value.trim(),
+                student_email: document.getElementById('studentEmail').value.trim().toLowerCase(),
+                classCode: document.getElementById('classCode').value.trim().toUpperCase(),
+                timeOnPage: Math.floor((Date.now() - pageLoadTime) / 1000)
+            };
+            
+            if (document.getElementById('hp').value) {
+                status.textContent = 'Submission rejected.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (data.timeOnPage < 60) {
+                status.textContent = 'Please spend more time reviewing the material.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (!data.student_id || !data.student_name || !data.student_email || !data.classCode) {
+                status.textContent = 'All fields are required.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (!data.student_email.endsWith('@istun.edu.tr')) {
+                status.textContent = 'Use your @istun.edu.tr email.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            status.textContent = 'Submitting...';
+            status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
+            
+            fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(res => {
+                status.textContent = res.success ? 'Submitted successfully!' : res.message;
+                status.style.cssText = 'display:block;background:rgba(' + (res.success ? '74,222,128' : '239,68,68') + ',0.2);color:' + (res.success ? '#4ade80' : '#fca5a5');
+            })
+            .catch(() => {
+                fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(() => {
+                    status.textContent = 'Submission sent!';
+                    status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80';
+                });
+            });
+        }
+    </script>
+</body>
+</html>

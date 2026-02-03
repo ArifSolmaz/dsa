@@ -1,0 +1,2724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 06: Trees &amp; Binary Search Trees | DSA Course</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 19px;
+            background: #faf9f7;
+            color: #2c2c2c; 
+            line-height: 1.8;
+        }
+        
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .topbar .title { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 500; }
+        .topbar a { font-family: system-ui, sans-serif; color: white; text-decoration: none; font-size: 0.85rem; padding: 6px 14px; background: rgba(255,255,255,0.1); border-radius: 5px; }
+        .topbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .book { max-width: 750px; margin: 0 auto; padding: 60px 40px 100px; }
+        
+        .chapter-header { text-align: center; padding: 50px 0 60px; border-bottom: 1px solid #ddd; margin-bottom: 50px; }
+        .chapter-num { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: #7c3aed; margin-bottom: 15px; }
+        .chapter-header h1 { font-size: 2.8rem; font-weight: 600; color: #1a1a2e; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .chapter-header .subtitle { font-style: italic; color: #666; font-size: 1.1rem; }
+        
+        h2 { font-size: 1.6rem; font-weight: 600; color: #1a1a2e; margin: 60px 0 25px; padding-top: 30px; border-top: 1px solid #e5e5e5; }
+        h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+        h3 { font-size: 1.25rem; font-weight: 600; color: #333; margin: 40px 0 15px; }
+        h4 { font-size: 1.05rem; font-weight: 600; color: #555; margin: 30px 0 12px; }
+        
+        p { margin: 0 0 20px; text-align: justify; hyphens: auto; }
+        ul, ol { margin: 20px 0 25px 30px; }
+        li { margin: 10px 0; }
+        
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: #f0eeeb; padding: 2px 6px; border-radius: 3px; color: #7c3aed; }
+        .term { font-weight: 600; color: #1a1a2e; }
+        
+        .definition { background: #f8f7f5; border-left: 4px solid #7c3aed; padding: 20px 25px; margin: 30px 0; }
+        .definition-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 8px; font-weight: 600; }
+        .definition p { margin: 0; }
+        
+        .margin-note { background: #fffbeb; border: 1px solid #fcd34d; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .margin-note::before { content: "💡 "; }
+        
+        .important { background: #fef2f2; border: 1px solid #fca5a5; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .important::before { content: "⚠️ "; }
+        
+        .example { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; padding: 25px; margin: 30px 0; }
+        .example-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 15px; font-weight: 600; }
+        
+        .code-figure { margin: 35px 0; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background: #1e1e2e; }
+        .code-figure-header { background: #28283c; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
+        .code-figure-label { font-family: system-ui, sans-serif; font-size: 0.75rem; color: #a0a0b0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .code-figure-run { font-family: system-ui, sans-serif; background: #7c3aed; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
+        .code-figure-run:hover { background: #6d28d9; }
+        .code-figure textarea { width: 100%; min-height: 100px; padding: 18px; background: #1e1e2e; color: #e0e0e0; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; }
+        .code-figure textarea:focus { outline: none; }
+        .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; }
+        .code-figure-output.show { display: block; }
+        .code-figure-caption { background: #f8f8f8; padding: 12px 18px; font-size: 0.85rem; color: #666; border-top: 1px solid #e0e0e0; }
+        .code-figure-caption strong { color: #333; }
+        
+        .summary { background: linear-gradient(135deg, #7c3aed10, #7c3aed05); border: 1px solid #7c3aed30; border-radius: 8px; padding: 25px 30px; margin: 40px 0; }
+        .summary-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 12px; font-weight: 600; }
+        .summary ul { margin: 0; }
+        
+        .exercise { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 25px 30px; margin: 40px 0 20px; }
+        .exercise-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #16a34a; margin-bottom: 12px; font-weight: 600; }
+        .exercise p { margin: 0; }
+        .exercise .answer { margin-top: 12px; font-size: 0.9rem; color: #166534; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 0.95rem; }
+        th, td { border: 1px solid #ddd; padding: 12px 15px; text-align: left; }
+        th { background: #f5f5f5; font-weight: 600; }
+        
+        .submit-section { background: #1a1a2e; color: white; padding: 40px; border-radius: 10px; margin-top: 60px; }
+        .submit-section h2 { color: white; border: none; margin: 0 0 20px; padding: 0; font-size: 1.4rem; }
+        .submit-section p { color: #a0a0b0; text-align: left; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-family: system-ui, sans-serif; font-size: 0.85rem; color: #a0a0b0; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: white; font-size: 1rem; font-family: system-ui, sans-serif; }
+        .form-group input:focus { outline: none; border-color: #7c3aed; }
+        .submit-btn { background: #7c3aed; color: white; border: none; padding: 14px 30px; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; font-family: system-ui, sans-serif; margin-top: 10px; }
+        .submit-btn:hover { background: #6d28d9; }
+        .submit-status { margin-top: 15px; padding: 12px; border-radius: 5px; display: none; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+        .hp { position: absolute; left: -9999px; }
+        
+        .toc { background: #f8f7f5; padding: 30px 35px; margin: 0 0 50px; border-radius: 6px; }
+        .toc-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 15px; }
+        .toc ol { margin: 0; padding-left: 20px; }
+        .toc li { margin: 8px 0; }
+        .toc a { color: #7c3aed; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        
+        @media (max-width: 600px) {
+            .book { padding: 30px 20px; }
+            .chapter-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.4rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="topbar">
+        <span class="title">Data Structures &amp; Algorithms</span>
+        <a href="index.html">← Course Home</a>
+    </nav>
+    
+    <main class="book">
+        <header class="chapter-header">
+            <div class="chapter-num">Week Six</div>
+            <h1>Trees &amp; Binary Search Trees</h1>
+            <p class="subtitle">Hierarchical data structures and ordered search</p>
+        </header>
+        
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <ol>
+                <li><a href="#intro">Introduction to Trees</a></li>
+                <li><a href="#terminology">Tree Terminology</a></li>
+                <li><a href="#binary-trees">Binary Trees</a></li>
+                <li><a href="#traversals">Tree Traversals</a></li>
+                <li><a href="#bst-intro">Binary Search Trees</a></li>
+                <li><a href="#bst-ops">BST Operations</a></li>
+                <li><a href="#bst-analysis">BST Analysis</a></li>
+                <li><a href="#applications">Tree Applications</a></li>
+                <li><a href="#patterns">Common Patterns</a></li>
+                <li><a href="#pitfalls">Common Pitfalls</a></li>
+                <li><a href="#exercises">Exercises</a></li>
+            </ol>
+        </nav>
+
+        <!-- ============================================== -->
+        <!-- SECTION 1: INTRODUCTION TO TREES -->
+        <!-- ============================================== -->
+        <section id="intro">
+            <h2>1. Introduction to Trees</h2>
+            
+            <p>So far, we've studied linear data structures: arrays, linked lists, stacks, and queues. Now we move to <span class="term">trees</span>—a fundamentally different structure that organizes data hierarchically. Trees are everywhere: file systems, HTML DOM, organization charts, and decision-making algorithms.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">tree</span> is a hierarchical data structure consisting of nodes connected by edges. It has a single <span class="term">root</span> node at the top, and each node can have zero or more <span class="term">child</span> nodes. Unlike graphs, trees have no cycles—there's exactly one path between any two nodes.</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">Tree Visualization</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+                    A          ← Root (level 0)
+                  / | \
+                 B  C  D       ← Level 1
+                / \    |
+               E   F   G       ← Level 2
+                  /|\
+                 H I J         ← Level 3 (H, I, J are leaves)
+
+Key observations:
+• A is the root (no parent)
+• E, H, I, J, G are leaves (no children)
+• B is parent of E and F; F is parent of H, I, J
+• Depth of A = 0, depth of F = 2, depth of H = 3
+• Height of tree = 3 (longest path from root to leaf)
+                </pre>
+            </div>
+            
+            <h3>Why Trees?</h3>
+            
+            <p>Trees provide efficient operations that neither arrays nor linked lists can match:</p>
+            
+            <table>
+                <tr>
+                    <th>Operation</th>
+                    <th>Array (sorted)</th>
+                    <th>Linked List</th>
+                    <th>Balanced BST</th>
+                </tr>
+                <tr>
+                    <td>Search</td>
+                    <td>O(log n)</td>
+                    <td>O(n)</td>
+                    <td>O(log n)</td>
+                </tr>
+                <tr>
+                    <td>Insert</td>
+                    <td>O(n)</td>
+                    <td>O(1)*</td>
+                    <td>O(log n)</td>
+                </tr>
+                <tr>
+                    <td>Delete</td>
+                    <td>O(n)</td>
+                    <td>O(1)*</td>
+                    <td>O(log n)</td>
+                </tr>
+                <tr>
+                    <td>Find Min/Max</td>
+                    <td>O(1)</td>
+                    <td>O(n)</td>
+                    <td>O(log n)</td>
+                </tr>
+            </table>
+            
+            <p><em>* If you already have a reference to the position</em></p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.1 — Basic Tree Node</span>
+                    <button class="code-figure-run" onclick="runCode('code1')">▶ Run</button>
+                </div>
+                <textarea id="code1" spellcheck="false"># Generic tree node - can have any number of children
+class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.children = []  # List of child nodes
+    
+    def add_child(self, child):
+        self.children.append(child)
+    
+    def __repr__(self):
+        return f"TreeNode({self.data})"
+
+# Build a simple tree
+#       A
+#      /|\
+#     B C D
+#    /|
+#   E F
+root = TreeNode('A')
+b = TreeNode('B')
+c = TreeNode('C')
+d = TreeNode('D')
+e = TreeNode('E')
+f = TreeNode('F')
+
+root.add_child(b)
+root.add_child(c)
+root.add_child(d)
+b.add_child(e)
+b.add_child(f)
+
+print(f"Root: {root}")
+print(f"Root's children: {root.children}")
+print(f"B's children: {b.children}")
+print(f"C's children: {c.children} (leaf node)")</textarea>
+                <div class="code-figure-output" id="outputcode1"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.1:</strong> A generic tree node stores data and a list of children. Leaves have empty children lists.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 2: TREE TERMINOLOGY -->
+        <!-- ============================================== -->
+        <section id="terminology">
+            <h2>2. Tree Terminology</h2>
+            
+            <p>Trees have specific vocabulary that's important to understand:</p>
+            
+            <div class="definition">
+                <div class="definition-title">Key Terms</div>
+                <p>
+                <strong>Root:</strong> The topmost node with no parent.<br>
+                <strong>Parent:</strong> A node that has children.<br>
+                <strong>Child:</strong> A node directly connected below another node.<br>
+                <strong>Siblings:</strong> Nodes sharing the same parent.<br>
+                <strong>Leaf:</strong> A node with no children.<br>
+                <strong>Internal node:</strong> A node with at least one child.<br>
+                <strong>Depth:</strong> Distance from root to node (root has depth 0).<br>
+                <strong>Height:</strong> Longest path from node to any leaf below it.<br>
+                <strong>Subtree:</strong> A node and all its descendants.
+                </p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.2 — Computing Tree Properties</span>
+                    <button class="code-figure-run" onclick="runCode('code2')">▶ Run</button>
+                </div>
+                <textarea id="code2" spellcheck="false">class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.children = []
+    
+    def add_child(self, child):
+        self.children.append(child)
+
+def tree_height(node):
+    """Height = longest path to leaf. Leaf height = 0."""
+    if not node.children:
+        return 0
+    return 1 + max(tree_height(child) for child in node.children)
+
+def tree_size(node):
+    """Total number of nodes in subtree."""
+    return 1 + sum(tree_size(child) for child in node.children)
+
+def count_leaves(node):
+    """Count leaf nodes in subtree."""
+    if not node.children:
+        return 1
+    return sum(count_leaves(child) for child in node.children)
+
+def find_depth(root, target, depth=0):
+    """Find depth of target node."""
+    if root.data == target:
+        return depth
+    for child in root.children:
+        result = find_depth(child, target, depth + 1)
+        if result != -1:
+            return result
+    return -1
+
+# Build tree:  A -> [B -> [E, F], C, D -> [G]]
+root = TreeNode('A')
+b, c, d = TreeNode('B'), TreeNode('C'), TreeNode('D')
+e, f, g = TreeNode('E'), TreeNode('F'), TreeNode('G')
+root.add_child(b); root.add_child(c); root.add_child(d)
+b.add_child(e); b.add_child(f); d.add_child(g)
+
+print(f"Tree height: {tree_height(root)}")
+print(f"Tree size: {tree_size(root)}")
+print(f"Leaf count: {count_leaves(root)}")
+print(f"Depth of 'A': {find_depth(root, 'A')}")
+print(f"Depth of 'F': {find_depth(root, 'F')}")
+print(f"Depth of 'G': {find_depth(root, 'G')}")</textarea>
+                <div class="code-figure-output" id="outputcode2"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.2:</strong> Tree properties are naturally computed with recursion—process node, then recurse on children.
+                </div>
+            </div>
+            
+            <h3>Types of Trees</h3>
+            
+            <ul>
+                <li><strong>Binary Tree:</strong> Each node has at most 2 children (left and right)</li>
+                <li><strong>Binary Search Tree (BST):</strong> Binary tree with ordering property</li>
+                <li><strong>Balanced Tree:</strong> Height is O(log n) - AVL, Red-Black trees</li>
+                <li><strong>Complete Binary Tree:</strong> All levels filled except possibly last</li>
+                <li><strong>Full Binary Tree:</strong> Every node has 0 or 2 children</li>
+                <li><strong>N-ary Tree:</strong> Each node can have up to N children</li>
+            </ul>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 3: BINARY TREES -->
+        <!-- ============================================== -->
+        <section id="binary-trees">
+            <h2>3. Binary Trees</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">binary tree</span> is a tree where each node has at most two children, typically called <span class="term">left</span> and <span class="term">right</span>. Binary trees are the foundation for many important data structures including BSTs, heaps, and expression trees.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.3 — Binary Tree Node</span>
+                    <button class="code-figure-run" onclick="runCode('code3')">▶ Run</button>
+                </div>
+                <textarea id="code3" spellcheck="false"># Binary tree node - exactly left and right children
+class BinaryNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+    
+    def __repr__(self):
+        return f"BinaryNode({self.data})"
+
+# Build a binary tree:
+#        1
+#       / \
+#      2   3
+#     / \   \
+#    4   5   6
+
+root = BinaryNode(1)
+root.left = BinaryNode(2)
+root.right = BinaryNode(3)
+root.left.left = BinaryNode(4)
+root.left.right = BinaryNode(5)
+root.right.right = BinaryNode(6)
+
+print(f"Root: {root}")
+print(f"Left child: {root.left}")
+print(f"Right child: {root.right}")
+print(f"Left-Left: {root.left.left}")
+print(f"Left-Right: {root.left.right}")
+print(f"Right-Right: {root.right.right}")</textarea>
+                <div class="code-figure-output" id="outputcode3"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.3:</strong> Binary tree nodes have explicit left and right pointers instead of a children list.
+                </div>
+            </div>
+            
+            <h3>Binary Tree Properties</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.4 — Binary Tree Properties</span>
+                    <button class="code-figure-run" onclick="runCode('code4')">▶ Run</button>
+                </div>
+                <textarea id="code4" spellcheck="false">class BinaryNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def height(node):
+    """Height of binary tree."""
+    if node is None:
+        return -1  # Empty tree has height -1
+    return 1 + max(height(node.left), height(node.right))
+
+def size(node):
+    """Number of nodes."""
+    if node is None:
+        return 0
+    return 1 + size(node.left) + size(node.right)
+
+def is_full(node):
+    """Every node has 0 or 2 children."""
+    if node is None:
+        return True
+    if node.left is None and node.right is None:
+        return True  # Leaf
+    if node.left and node.right:
+        return is_full(node.left) and is_full(node.right)
+    return False  # One child only
+
+def max_nodes_at_height(h):
+    """Maximum nodes in binary tree of height h."""
+    return 2**(h+1) - 1
+
+# Build tree
+root = BinaryNode(1)
+root.left = BinaryNode(2)
+root.right = BinaryNode(3)
+root.left.left = BinaryNode(4)
+root.left.right = BinaryNode(5)
+
+print(f"Height: {height(root)}")
+print(f"Size: {size(root)}")
+print(f"Is full binary tree: {is_full(root)}")
+
+print(f"\nMax nodes for heights 0-4:")
+for h in range(5):
+    print(f"  Height {h}: max {max_nodes_at_height(h)} nodes")</textarea>
+                <div class="code-figure-output" id="outputcode4"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.4:</strong> Binary trees have at most 2^(h+1) - 1 nodes, where h is the height.
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                A <strong>complete</strong> binary tree has all levels filled except possibly the last, which is filled from left to right. Heaps use this property for array-based storage.
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 4: TREE TRAVERSALS -->
+        <!-- ============================================== -->
+        <section id="traversals">
+            <h2>4. Tree Traversals</h2>
+            
+            <p><span class="term">Tree traversal</span> means visiting every node exactly once in a specific order. There are four main traversal methods:</p>
+            
+            <div class="example">
+                <div class="example-title">Traversal Orders</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+        1
+       / \
+      2   3
+     / \
+    4   5
+
+Preorder  (Root, Left, Right): 1, 2, 4, 5, 3
+Inorder   (Left, Root, Right): 4, 2, 5, 1, 3
+Postorder (Left, Right, Root): 4, 5, 2, 3, 1
+Level-order (BFS):             1, 2, 3, 4, 5
+                </pre>
+            </div>
+            
+            <h3>Recursive Traversals</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.5 — Recursive Traversals</span>
+                    <button class="code-figure-run" onclick="runCode('code5')">▶ Run</button>
+                </div>
+                <textarea id="code5" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def preorder(node, result=None):
+    """Root -> Left -> Right"""
+    if result is None:
+        result = []
+    if node:
+        result.append(node.data)    # Visit root
+        preorder(node.left, result)  # Traverse left
+        preorder(node.right, result) # Traverse right
+    return result
+
+def inorder(node, result=None):
+    """Left -> Root -> Right"""
+    if result is None:
+        result = []
+    if node:
+        inorder(node.left, result)   # Traverse left
+        result.append(node.data)     # Visit root
+        inorder(node.right, result)  # Traverse right
+    return result
+
+def postorder(node, result=None):
+    """Left -> Right -> Root"""
+    if result is None:
+        result = []
+    if node:
+        postorder(node.left, result)  # Traverse left
+        postorder(node.right, result) # Traverse right
+        result.append(node.data)      # Visit root
+    return result
+
+# Build tree:  1 -> [2 -> [4, 5], 3]
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.left = Node(4)
+root.left.right = Node(5)
+
+print(f"Preorder:  {preorder(root)}")
+print(f"Inorder:   {inorder(root)}")
+print(f"Postorder: {postorder(root)}")</textarea>
+                <div class="code-figure-output" id="outputcode5"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.5:</strong> The three DFS traversals differ only in when they visit the current node.
+                </div>
+            </div>
+            
+            <h3>Iterative Traversals with Stack</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.6 — Iterative Preorder</span>
+                    <button class="code-figure-run" onclick="runCode('code6')">▶ Run</button>
+                </div>
+                <textarea id="code6" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def preorder_iterative(root):
+    """Preorder using explicit stack."""
+    if not root:
+        return []
+    
+    result = []
+    stack = [root]
+    
+    while stack:
+        node = stack.pop()
+        result.append(node.data)
+        
+        # Push right first so left is processed first
+        if node.right:
+            stack.append(node.right)
+        if node.left:
+            stack.append(node.left)
+    
+    return result
+
+def inorder_iterative(root):
+    """Inorder using explicit stack."""
+    result = []
+    stack = []
+    current = root
+    
+    while current or stack:
+        # Go to leftmost
+        while current:
+            stack.append(current)
+            current = current.left
+        
+        # Visit node
+        current = stack.pop()
+        result.append(current.data)
+        
+        # Move to right subtree
+        current = current.right
+    
+    return result
+
+# Build tree
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.left = Node(4)
+root.left.right = Node(5)
+
+print(f"Preorder (iterative): {preorder_iterative(root)}")
+print(f"Inorder (iterative):  {inorder_iterative(root)}")</textarea>
+                <div class="code-figure-output" id="outputcode6"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.6:</strong> Iterative traversals use a stack to simulate the call stack of recursion.
+                </div>
+            </div>
+            
+            <h3>Level-Order Traversal (BFS)</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.7 — Level-Order Traversal</span>
+                    <button class="code-figure-run" onclick="runCode('code7')">▶ Run</button>
+                </div>
+                <textarea id="code7" spellcheck="false">from collections import deque
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def level_order(root):
+    """BFS traversal - level by level."""
+    if not root:
+        return []
+    
+    result = []
+    queue = deque([root])
+    
+    while queue:
+        node = queue.popleft()
+        result.append(node.data)
+        
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+    
+    return result
+
+def level_order_by_level(root):
+    """Return list of lists, one per level."""
+    if not root:
+        return []
+    
+    result = []
+    queue = deque([root])
+    
+    while queue:
+        level_size = len(queue)
+        level_values = []
+        
+        for _ in range(level_size):
+            node = queue.popleft()
+            level_values.append(node.data)
+            
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        
+        result.append(level_values)
+    
+    return result
+
+# Build tree
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.left = Node(4)
+root.left.right = Node(5)
+root.right.right = Node(6)
+
+print(f"Level order: {level_order(root)}")
+print(f"By level: {level_order_by_level(root)}")</textarea>
+                <div class="code-figure-output" id="outputcode7"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.7:</strong> Level-order uses a queue to visit nodes breadth-first, one level at a time.
+                </div>
+            </div>
+            
+            <h3>Iterative Postorder Traversal</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.8 — Iterative Postorder</span>
+                    <button class="code-figure-run" onclick="runCode('code7a')">▶ Run</button>
+                </div>
+                <textarea id="code7a" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def postorder_iterative(root):
+    """
+    Postorder using two stacks.
+    Stack1 processes nodes, Stack2 stores result in reverse.
+    """
+    if not root:
+        return []
+    
+    stack1 = [root]
+    stack2 = []
+    
+    while stack1:
+        node = stack1.pop()
+        stack2.append(node.data)
+        
+        # Push left first so right is processed first
+        if node.left:
+            stack1.append(node.left)
+        if node.right:
+            stack1.append(node.right)
+    
+    return stack2[::-1]  # Reverse to get postorder
+
+# Build tree
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.left = Node(4)
+root.left.right = Node(5)
+
+print(f"Postorder (iterative): {postorder_iterative(root)}")</textarea>
+                <div class="code-figure-output" id="outputcode7a"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.8:</strong> Iterative postorder uses two stacks—one for processing, one for storing results.
+                </div>
+            </div>
+            
+            <h3>Morris Traversal (O(1) Space)</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.9 — Morris Inorder Traversal</span>
+                    <button class="code-figure-run" onclick="runCode('code7b')">▶ Run</button>
+                </div>
+                <textarea id="code7b" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def morris_inorder(root):
+    """
+    O(1) space inorder traversal using Morris threading.
+    Temporarily modifies tree structure (restores after).
+    """
+    result = []
+    current = root
+    
+    while current:
+        if current.left is None:
+            result.append(current.data)
+            current = current.right
+        else:
+            # Find inorder predecessor
+            predecessor = current.left
+            while predecessor.right and predecessor.right != current:
+                predecessor = predecessor.right
+            
+            if predecessor.right is None:
+                # Create thread
+                predecessor.right = current
+                current = current.left
+            else:
+                # Remove thread
+                predecessor.right = None
+                result.append(current.data)
+                current = current.right
+    
+    return result
+
+# Build tree
+root = Node(4)
+root.left = Node(2)
+root.right = Node(6)
+root.left.left = Node(1)
+root.left.right = Node(3)
+root.right.left = Node(5)
+
+print(f"Morris inorder: {morris_inorder(root)}")
+print("Note: O(1) space, O(n) time!")</textarea>
+                <div class="code-figure-output" id="outputcode7b"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.9:</strong> Morris traversal uses temporary threading to achieve O(1) space without recursion or stack.
+                </div>
+            </div>
+            
+            <div class="important">
+                <strong>When to use which traversal:</strong><br>
+                • <strong>Preorder:</strong> Copy tree, serialize tree, prefix expressions<br>
+                • <strong>Inorder:</strong> BST gives sorted order, expression trees<br>
+                • <strong>Postorder:</strong> Delete tree, postfix expressions, folder sizes<br>
+                • <strong>Level-order:</strong> Find minimum depth, print tree by levels
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 5: BST INTRODUCTION -->
+        <!-- ============================================== -->
+        <section id="bst-intro">
+            <h2>5. Binary Search Trees</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">Binary Search Tree (BST)</span> is a binary tree with an ordering property: for every node, all values in its left subtree are less than the node's value, and all values in its right subtree are greater. This property enables O(log n) search, insert, and delete operations on average.</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">BST Property Visualization</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+Valid BST:                  Invalid BST:
+       8                          8
+      / \                        / \
+     3   10                     3   10
+    / \    \                   / \    \
+   1   6    14                1   9    14
+      / \   /                    / \   /
+     4   7 13                   4   7 13
+
+Left of 8: {1,3,4,6,7}       Left of 8 contains 9 > 8!
+All < 8 ✓                    BST property violated ✗
+
+Inorder traversal of valid BST: 1, 3, 4, 6, 7, 8, 10, 13, 14
+Notice: sorted order!
+                </pre>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.8 — BST Validation</span>
+                    <button class="code-figure-run" onclick="runCode('code8')">▶ Run</button>
+                </div>
+                <textarea id="code8" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def is_valid_bst(node, min_val=float('-inf'), max_val=float('inf')):
+    """
+    Check if tree is a valid BST.
+    Each node must be within (min_val, max_val) range.
+    """
+    if node is None:
+        return True
+    
+    # Check current node value is within bounds
+    if node.data <= min_val or node.data >= max_val:
+        return False
+    
+    # Left subtree: all values must be < current
+    # Right subtree: all values must be > current
+    return (is_valid_bst(node.left, min_val, node.data) and
+            is_valid_bst(node.right, node.data, max_val))
+
+# Valid BST
+root1 = Node(8)
+root1.left = Node(3)
+root1.right = Node(10)
+root1.left.left = Node(1)
+root1.left.right = Node(6)
+
+# Invalid BST (9 is in left subtree but > 8)
+root2 = Node(8)
+root2.left = Node(3)
+root2.right = Node(10)
+root2.left.left = Node(1)
+root2.left.right = Node(9)  # Invalid!
+
+print(f"Tree 1 is valid BST: {is_valid_bst(root1)}")
+print(f"Tree 2 is valid BST: {is_valid_bst(root2)}")</textarea>
+                <div class="code-figure-output" id="outputcode8"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.8:</strong> BST validation tracks valid range for each node—don't just compare with parent!
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.9 — BST Search</span>
+                    <button class="code-figure-run" onclick="runCode('code9')">▶ Run</button>
+                </div>
+                <textarea id="code9" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def search_recursive(node, target):
+    """Search BST recursively - O(h) time."""
+    if node is None:
+        return None
+    if target == node.data:
+        return node
+    elif target < node.data:
+        return search_recursive(node.left, target)
+    else:
+        return search_recursive(node.right, target)
+
+def search_iterative(root, target):
+    """Search BST iteratively - O(h) time, O(1) space."""
+    current = root
+    while current:
+        if target == current.data:
+            return current
+        elif target < current.data:
+            current = current.left
+        else:
+            current = current.right
+    return None
+
+# Build BST:    8
+#              / \
+#             3   10
+#            / \
+#           1   6
+root = Node(8)
+root.left = Node(3)
+root.right = Node(10)
+root.left.left = Node(1)
+root.left.right = Node(6)
+
+# Search tests
+for target in [6, 10, 5]:
+    result = search_iterative(root, target)
+    print(f"Search {target}: {'Found' if result else 'Not found'}")</textarea>
+                <div class="code-figure-output" id="outputcode9"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.12:</strong> BST search eliminates half the remaining nodes at each step—like binary search on arrays.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.13 — BST Floor and Ceiling</span>
+                    <button class="code-figure-run" onclick="runCode('code9a')">▶ Run</button>
+                </div>
+                <textarea id="code9a" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def floor(root, target):
+    """Find largest value <= target."""
+    result = None
+    while root:
+        if root.data == target:
+            return root.data
+        elif root.data < target:
+            result = root.data  # Potential floor
+            root = root.right
+        else:
+            root = root.left
+    return result
+
+def ceiling(root, target):
+    """Find smallest value >= target."""
+    result = None
+    while root:
+        if root.data == target:
+            return root.data
+        elif root.data > target:
+            result = root.data  # Potential ceiling
+            root = root.left
+        else:
+            root = root.right
+    return result
+
+# Build BST: [8, 3, 10, 1, 6, 14, 4, 7]
+def insert(root, value):
+    if root is None:
+        return Node(value)
+    if value < root.data:
+        root.left = insert(root.left, value)
+    else:
+        root.right = insert(root.right, value)
+    return root
+
+root = None
+for v in [8, 3, 10, 1, 6, 14, 4, 7]:
+    root = insert(root, v)
+
+print("BST contains: [1, 3, 4, 6, 7, 8, 10, 14]")
+for target in [5, 7, 9, 15, 0]:
+    print(f"  floor({target})={floor(root, target)}, ceiling({target})={ceiling(root, target)}")</textarea>
+                <div class="code-figure-output" id="outputcode9a"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.13:</strong> Floor/ceiling operations find nearest values in O(h) time.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 6: BST OPERATIONS -->
+        <!-- ============================================== -->
+        <section id="bst-ops">
+            <h2>6. BST Operations</h2>
+            
+            <h3>Insertion</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.10 — BST Insertion</span>
+                    <button class="code-figure-run" onclick="runCode('code10')">▶ Run</button>
+                </div>
+                <textarea id="code10" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def insert(root, value):
+    """Insert value into BST, return root."""
+    if root is None:
+        return Node(value)
+    
+    if value < root.data:
+        root.left = insert(root.left, value)
+    else:
+        root.right = insert(root.right, value)
+    
+    return root
+
+def inorder(node):
+    """Return inorder traversal."""
+    if not node:
+        return []
+    return inorder(node.left) + [node.data] + inorder(node.right)
+
+# Build BST by inserting values
+root = None
+values = [8, 3, 10, 1, 6, 14, 4, 7, 13]
+
+print("Building BST:")
+for v in values:
+    root = insert(root, v)
+    print(f"  Insert {v}: inorder = {inorder(root)}")
+
+print(f"\nFinal BST inorder (sorted!): {inorder(root)}")</textarea>
+                <div class="code-figure-output" id="outputcode10"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.10:</strong> BST insertion always adds new nodes as leaves. Inorder traversal gives sorted order.
+                </div>
+            </div>
+            
+            <h3>Finding Min and Max</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.11 — BST Min/Max</span>
+                    <button class="code-figure-run" onclick="runCode('code11')">▶ Run</button>
+                </div>
+                <textarea id="code11" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def find_min(node):
+    """Minimum is the leftmost node."""
+    if node is None:
+        return None
+    while node.left:
+        node = node.left
+    return node
+
+def find_max(node):
+    """Maximum is the rightmost node."""
+    if node is None:
+        return None
+    while node.right:
+        node = node.right
+    return node
+
+def find_successor(root, target):
+    """Find inorder successor (next larger value)."""
+    successor = None
+    current = root
+    
+    while current:
+        if target < current.data:
+            successor = current  # Potential successor
+            current = current.left
+        else:
+            current = current.right
+    
+    return successor
+
+# Build BST
+def insert(root, value):
+    if root is None:
+        return Node(value)
+    if value < root.data:
+        root.left = insert(root.left, value)
+    else:
+        root.right = insert(root.right, value)
+    return root
+
+root = None
+for v in [8, 3, 10, 1, 6, 14, 4, 7, 13]:
+    root = insert(root, v)
+
+print(f"Minimum: {find_min(root).data}")
+print(f"Maximum: {find_max(root).data}")
+
+print("\nInorder successors:")
+for val in [1, 6, 8, 13]:
+    succ = find_successor(root, val)
+    print(f"  Successor of {val}: {succ.data if succ else 'None'}")</textarea>
+                <div class="code-figure-output" id="outputcode11"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.11:</strong> In a BST, minimum is leftmost, maximum is rightmost. Both are O(h).
+                </div>
+            </div>
+            
+            <h3>Deletion</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.12 — BST Deletion</span>
+                    <button class="code-figure-run" onclick="runCode('code12')">▶ Run</button>
+                </div>
+                <textarea id="code12" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def find_min(node):
+    while node.left:
+        node = node.left
+    return node
+
+def delete(root, value):
+    """
+    Delete value from BST. Three cases:
+    1. Leaf: simply remove
+    2. One child: replace with child
+    3. Two children: replace with inorder successor
+    """
+    if root is None:
+        return None
+    
+    # Find the node to delete
+    if value < root.data:
+        root.left = delete(root.left, value)
+    elif value > root.data:
+        root.right = delete(root.right, value)
+    else:
+        # Found the node to delete
+        
+        # Case 1 & 2: No child or one child
+        if root.left is None:
+            return root.right
+        elif root.right is None:
+            return root.left
+        
+        # Case 3: Two children
+        # Find inorder successor (smallest in right subtree)
+        successor = find_min(root.right)
+        root.data = successor.data
+        root.right = delete(root.right, successor.data)
+    
+    return root
+
+def inorder(node):
+    if not node:
+        return []
+    return inorder(node.left) + [node.data] + inorder(node.right)
+
+def insert(root, value):
+    if root is None:
+        return Node(value)
+    if value < root.data:
+        root.left = insert(root.left, value)
+    else:
+        root.right = insert(root.right, value)
+    return root
+
+# Build BST
+root = None
+for v in [8, 3, 10, 1, 6, 14, 4, 7, 13]:
+    root = insert(root, v)
+
+print(f"Original: {inorder(root)}")
+
+# Delete leaf
+root = delete(root, 4)
+print(f"Delete 4 (leaf): {inorder(root)}")
+
+# Delete node with one child
+root = delete(root, 14)
+print(f"Delete 14 (one child): {inorder(root)}")
+
+# Delete node with two children
+root = delete(root, 3)
+print(f"Delete 3 (two children): {inorder(root)}")</textarea>
+                <div class="code-figure-output" id="outputcode12"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.12:</strong> BST deletion handles three cases. Two-children case uses inorder successor to maintain BST property.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 7: BST ANALYSIS -->
+        <!-- ============================================== -->
+        <section id="bst-analysis">
+            <h2>7. BST Analysis</h2>
+            
+            <h3>Time Complexity</h3>
+            
+            <table>
+                <tr>
+                    <th>Operation</th>
+                    <th>Average Case</th>
+                    <th>Worst Case</th>
+                </tr>
+                <tr>
+                    <td>Search</td>
+                    <td>O(log n)</td>
+                    <td>O(n)</td>
+                </tr>
+                <tr>
+                    <td>Insert</td>
+                    <td>O(log n)</td>
+                    <td>O(n)</td>
+                </tr>
+                <tr>
+                    <td>Delete</td>
+                    <td>O(log n)</td>
+                    <td>O(n)</td>
+                </tr>
+                <tr>
+                    <td>Find Min/Max</td>
+                    <td>O(log n)</td>
+                    <td>O(n)</td>
+                </tr>
+            </table>
+            
+            <p>The worst case O(n) occurs when the tree becomes a straight line (degenerate tree).</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.13 — BST Degeneration</span>
+                    <button class="code-figure-run" onclick="runCode('code13')">▶ Run</button>
+                </div>
+                <textarea id="code13" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def insert(root, value):
+    if root is None:
+        return Node(value)
+    if value < root.data:
+        root.left = insert(root.left, value)
+    else:
+        root.right = insert(root.right, value)
+    return root
+
+def height(node):
+    if node is None:
+        return -1
+    return 1 + max(height(node.left), height(node.right))
+
+def size(node):
+    if node is None:
+        return 0
+    return 1 + size(node.left) + size(node.right)
+
+# Balanced BST from random order
+import random
+balanced_values = list(range(1, 16))
+random.shuffle(balanced_values)
+balanced_root = None
+for v in balanced_values:
+    balanced_root = insert(balanced_root, v)
+
+# Degenerate BST from sorted order
+sorted_values = list(range(1, 16))
+degenerate_root = None
+for v in sorted_values:
+    degenerate_root = insert(degenerate_root, v)
+
+print("Inserting values 1-15:")
+print(f"\nBalanced (random order):")
+print(f"  Height: {height(balanced_root)}")
+print(f"  Ideal height: ~{int(3.9)}")  # log2(15) ≈ 3.9
+
+print(f"\nDegenerate (sorted order):")
+print(f"  Height: {height(degenerate_root)}")
+print(f"  This is essentially a linked list!")
+
+print("\nSolution: Use self-balancing trees (AVL, Red-Black)")</textarea>
+                <div class="code-figure-output" id="outputcode13"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.16:</strong> Inserting sorted data creates a degenerate BST with O(n) operations. Self-balancing trees solve this.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.17 — BST vs Balanced Tree Performance</span>
+                    <button class="code-figure-run" onclick="runCode('code13a')">▶ Run</button>
+                </div>
+                <textarea id="code13a" spellcheck="false">import time
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def insert(root, value):
+    if root is None:
+        return Node(value)
+    if value < root.data:
+        root.left = insert(root.left, value)
+    else:
+        root.right = insert(root.right, value)
+    return root
+
+def search(root, target):
+    while root:
+        if target == root.data:
+            return True
+        elif target < root.data:
+            root = root.left
+        else:
+            root = root.right
+    return False
+
+n = 1000
+
+# Degenerate BST (sorted insert)
+sorted_root = None
+start = time.perf_counter()
+for i in range(n):
+    sorted_root = insert(sorted_root, i)
+sorted_insert_time = time.perf_counter() - start
+
+# Search in degenerate BST
+start = time.perf_counter()
+for i in range(0, n, 10):
+    search(sorted_root, i)
+sorted_search_time = time.perf_counter() - start
+
+# Random order BST (more balanced)
+import random
+values = list(range(n))
+random.shuffle(values)
+random_root = None
+start = time.perf_counter()
+for v in values:
+    random_root = insert(random_root, v)
+random_insert_time = time.perf_counter() - start
+
+# Search in random BST
+start = time.perf_counter()
+for i in range(0, n, 10):
+    search(random_root, i)
+random_search_time = time.perf_counter() - start
+
+print(f"Insert {n} elements:")
+print(f"  Sorted order (degenerate): {sorted_insert_time*1000:.2f} ms")
+print(f"  Random order (balanced):   {random_insert_time*1000:.2f} ms")
+print(f"\nSearch 100 elements:")
+print(f"  Degenerate BST: {sorted_search_time*1000:.2f} ms")
+print(f"  Balanced BST:   {random_search_time*1000:.2f} ms")</textarea>
+                <div class="code-figure-output" id="outputcode13a"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.17:</strong> Degenerate trees have dramatically worse performance than balanced trees.
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                Self-balancing trees like AVL and Red-Black trees automatically rebalance after each operation, guaranteeing O(log n) height. Python's <code>sortedcontainers</code> module provides balanced implementations.
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 8: TREE APPLICATIONS -->
+        <!-- ============================================== -->
+        <section id="applications">
+            <h2>8. Tree Applications</h2>
+            
+            <h3>Application 1: Expression Trees</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.14 — Expression Tree</span>
+                    <button class="code-figure-run" onclick="runCode('code14')">▶ Run</button>
+                </div>
+                <textarea id="code14" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def evaluate(node):
+    """Evaluate expression tree."""
+    if node is None:
+        return 0
+    
+    # Leaf node = operand
+    if node.left is None and node.right is None:
+        return int(node.data)
+    
+    # Internal node = operator
+    left_val = evaluate(node.left)
+    right_val = evaluate(node.right)
+    
+    if node.data == '+':
+        return left_val + right_val
+    elif node.data == '-':
+        return left_val - right_val
+    elif node.data == '*':
+        return left_val * right_val
+    elif node.data == '/':
+        return left_val // right_val
+
+def infix(node):
+    """Convert to infix notation with parentheses."""
+    if node.left is None:
+        return node.data
+    return f"({infix(node.left)} {node.data} {infix(node.right)})"
+
+# Build expression tree for: (3 + 4) * (5 - 2)
+#           *
+#          / \
+#         +   -
+#        / \ / \
+#       3  4 5  2
+root = Node('*')
+root.left = Node('+')
+root.right = Node('-')
+root.left.left = Node('3')
+root.left.right = Node('4')
+root.right.left = Node('5')
+root.right.right = Node('2')
+
+print(f"Expression: {infix(root)}")
+print(f"Result: {evaluate(root)}")</textarea>
+                <div class="code-figure-output" id="outputcode14"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.14:</strong> Expression trees represent mathematical expressions. Postorder traversal evaluates them.
+                </div>
+            </div>
+            
+            <h3>Application 2: File System Representation</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.15 — File System Tree</span>
+                    <button class="code-figure-run" onclick="runCode('code15')">▶ Run</button>
+                </div>
+                <textarea id="code15" spellcheck="false">class FileNode:
+    def __init__(self, name, is_dir=False, size=0):
+        self.name = name
+        self.is_dir = is_dir
+        self.size = size  # For files
+        self.children = []  # For directories
+    
+    def add_child(self, child):
+        if self.is_dir:
+            self.children.append(child)
+
+def print_tree(node, prefix=""):
+    """Print file system tree."""
+    print(f"{prefix}{node.name}")
+    for i, child in enumerate(node.children):
+        is_last = (i == len(node.children) - 1)
+        new_prefix = prefix + ("    " if is_last else "│   ")
+        connector = "└── " if is_last else "├── "
+        print(f"{prefix}{connector}{child.name}" + 
+              (f" ({child.size} bytes)" if not child.is_dir else ""))
+        if child.is_dir:
+            print_tree(child, new_prefix)
+
+def total_size(node):
+    """Calculate total size including subdirectories."""
+    if not node.is_dir:
+        return node.size
+    return sum(total_size(child) for child in node.children)
+
+# Build file system
+root = FileNode("/", is_dir=True)
+home = FileNode("home", is_dir=True)
+docs = FileNode("documents", is_dir=True)
+file1 = FileNode("readme.txt", size=1024)
+file2 = FileNode("data.csv", size=5120)
+file3 = FileNode("photo.jpg", size=2048)
+
+root.add_child(home)
+root.add_child(FileNode("etc", is_dir=True))
+home.add_child(docs)
+home.add_child(file3)
+docs.add_child(file1)
+docs.add_child(file2)
+
+print("File System Structure:")
+print_tree(root)
+print(f"\nTotal size of /home: {total_size(home)} bytes")</textarea>
+                <div class="code-figure-output" id="outputcode15"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.15:</strong> File systems are naturally represented as trees. Directories are internal nodes, files are leaves.
+                </div>
+            </div>
+            
+            <h3>Application 3: Autocomplete with Trie</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.16 — Trie for Autocomplete</span>
+                    <button class="code-figure-run" onclick="runCode('code16')">▶ Run</button>
+                </div>
+                <textarea id="code16" spellcheck="false">class TrieNode:
+    def __init__(self):
+        self.children = {}  # char -> TrieNode
+        self.is_word = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_word = True
+    
+    def search(self, word):
+        node = self._find_node(word)
+        return node is not None and node.is_word
+    
+    def starts_with(self, prefix):
+        return self._find_node(prefix) is not None
+    
+    def _find_node(self, prefix):
+        node = self.root
+        for char in prefix:
+            if char not in node.children:
+                return None
+            node = node.children[char]
+        return node
+    
+    def autocomplete(self, prefix):
+        """Return all words starting with prefix."""
+        node = self._find_node(prefix)
+        if not node:
+            return []
+        
+        results = []
+        self._collect_words(node, prefix, results)
+        return results
+    
+    def _collect_words(self, node, prefix, results):
+        if node.is_word:
+            results.append(prefix)
+        for char, child in node.children.items():
+            self._collect_words(child, prefix + char, results)
+
+# Test autocomplete
+trie = Trie()
+words = ["apple", "app", "application", "apply", "apt", "banana", "band"]
+for word in words:
+    trie.insert(word)
+
+print("Autocomplete results:")
+for prefix in ["app", "ap", "ban", "xyz"]:
+    results = trie.autocomplete(prefix)
+    print(f"  '{prefix}': {results}")</textarea>
+                <div class="code-figure-output" id="outputcode16"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.19:</strong> Tries enable O(k) search where k is the key length. Perfect for autocomplete and spell-checking.
+                </div>
+            </div>
+            
+            <h3>Application 4: Binary Tree from Arrays</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.20 — Build Tree from Inorder and Preorder</span>
+                    <button class="code-figure-run" onclick="runCode('code16a')">▶ Run</button>
+                </div>
+                <textarea id="code16a" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def build_tree(preorder, inorder):
+    """
+    Reconstruct binary tree from preorder and inorder traversals.
+    Preorder: Root comes first
+    Inorder: Separates left and right subtrees
+    """
+    if not preorder or not inorder:
+        return None
+    
+    # Root is first element of preorder
+    root_val = preorder[0]
+    root = Node(root_val)
+    
+    # Find root position in inorder
+    root_idx = inorder.index(root_val)
+    
+    # Build subtrees
+    root.left = build_tree(preorder[1:root_idx+1], inorder[:root_idx])
+    root.right = build_tree(preorder[root_idx+1:], inorder[root_idx+1:])
+    
+    return root
+
+def postorder(node):
+    if not node:
+        return []
+    return postorder(node.left) + postorder(node.right) + [node.data]
+
+# Test
+preorder = [3, 9, 20, 15, 7]
+inorder = [9, 3, 15, 20, 7]
+
+root = build_tree(preorder, inorder)
+print(f"Preorder: {preorder}")
+print(f"Inorder: {inorder}")
+print(f"Built tree postorder: {postorder(root)}")</textarea>
+                <div class="code-figure-output" id="outputcode16a"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.20:</strong> Given preorder and inorder, the tree can be uniquely reconstructed.
+                </div>
+            </div>
+            
+            <h3>Application 5: Right Side View</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.21 — Binary Tree Right Side View</span>
+                    <button class="code-figure-run" onclick="runCode('code16b')">▶ Run</button>
+                </div>
+                <textarea id="code16b" spellcheck="false">from collections import deque
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def right_side_view(root):
+    """Return values visible from right side of tree."""
+    if not root:
+        return []
+    
+    result = []
+    queue = deque([root])
+    
+    while queue:
+        level_size = len(queue)
+        
+        for i in range(level_size):
+            node = queue.popleft()
+            
+            # Last node in this level is visible from right
+            if i == level_size - 1:
+                result.append(node.data)
+            
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+    
+    return result
+
+# Build tree:     1
+#               / \
+#              2   3
+#               \   \
+#                5   4
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.right = Node(5)
+root.right.right = Node(4)
+
+print(f"Right side view: {right_side_view(root)}")
+# From right: see 1, then 3, then 4</textarea>
+                <div class="code-figure-output" id="outputcode16b"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.21:</strong> Right side view shows the rightmost node at each level.
+                </div>
+            </div>
+            
+            <h3>Application 6: Flatten Tree to Linked List</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.22 — Flatten Binary Tree</span>
+                    <button class="code-figure-run" onclick="runCode('code16c')">▶ Run</button>
+                </div>
+                <textarea id="code16c" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def flatten(root):
+    """
+    Flatten tree to linked list in-place (preorder).
+    All nodes end up as right children.
+    """
+    if not root:
+        return
+    
+    # Flatten left and right subtrees
+    flatten(root.left)
+    flatten(root.right)
+    
+    # Store right subtree
+    right_subtree = root.right
+    
+    # Move left subtree to right
+    root.right = root.left
+    root.left = None
+    
+    # Find end of new right subtree and attach old right
+    current = root
+    while current.right:
+        current = current.right
+    current.right = right_subtree
+
+def print_list(node):
+    """Print flattened tree as list."""
+    result = []
+    while node:
+        result.append(node.data)
+        node = node.right
+    return result
+
+# Build tree:     1
+#               / \
+#              2   5
+#             / \   \
+#            3   4   6
+root = Node(1)
+root.left = Node(2)
+root.right = Node(5)
+root.left.left = Node(3)
+root.left.right = Node(4)
+root.right.right = Node(6)
+
+flatten(root)
+print(f"Flattened: {print_list(root)}")
+# Should be: 1 -> 2 -> 3 -> 4 -> 5 -> 6</textarea>
+                <div class="code-figure-output" id="outputcode16c"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.22:</strong> Flattening converts tree to linked list following preorder sequence.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 9: COMMON PATTERNS -->
+        <!-- ============================================== -->
+        <section id="patterns">
+            <h2>9. Common Patterns</h2>
+            
+            <h3>Pattern 1: Lowest Common Ancestor</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.17 — LCA in Binary Tree</span>
+                    <button class="code-figure-run" onclick="runCode('code17')">▶ Run</button>
+                </div>
+                <textarea id="code17" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def lca(root, p, q):
+    """
+    Find lowest common ancestor of nodes p and q.
+    LCA is the deepest node that has both p and q as descendants.
+    """
+    if root is None:
+        return None
+    
+    # If current node is p or q, it's the LCA
+    if root.data == p or root.data == q:
+        return root
+    
+    # Search in left and right subtrees
+    left_lca = lca(root.left, p, q)
+    right_lca = lca(root.right, p, q)
+    
+    # If both found something, current node is LCA
+    if left_lca and right_lca:
+        return root
+    
+    # Otherwise return the non-null result
+    return left_lca if left_lca else right_lca
+
+def lca_bst(root, p, q):
+    """LCA in BST is simpler - use BST property."""
+    while root:
+        if p < root.data and q < root.data:
+            root = root.left
+        elif p > root.data and q > root.data:
+            root = root.right
+        else:
+            return root
+    return None
+
+# Build tree:    3
+#              / \
+#             5   1
+#            / \
+#           6   2
+root = Node(3)
+root.left = Node(5)
+root.right = Node(1)
+root.left.left = Node(6)
+root.left.right = Node(2)
+
+print("LCA tests (general binary tree):")
+print(f"  LCA(5, 1) = {lca(root, 5, 1).data}")  # 3
+print(f"  LCA(5, 6) = {lca(root, 5, 6).data}")  # 5
+print(f"  LCA(6, 2) = {lca(root, 6, 2).data}")  # 5</textarea>
+                <div class="code-figure-output" id="outputcode17"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.17:</strong> LCA is found where paths to p and q diverge. BST version exploits ordering.
+                </div>
+            </div>
+            
+            <h3>Pattern 2: Path Sum</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.18 — Path Sum Problems</span>
+                    <button class="code-figure-run" onclick="runCode('code18')">▶ Run</button>
+                </div>
+                <textarea id="code18" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def has_path_sum(root, target_sum):
+    """Check if any root-to-leaf path equals target_sum."""
+    if root is None:
+        return False
+    
+    # Leaf node: check if remaining sum equals node value
+    if root.left is None and root.right is None:
+        return root.data == target_sum
+    
+    # Recurse with reduced target
+    remaining = target_sum - root.data
+    return (has_path_sum(root.left, remaining) or
+            has_path_sum(root.right, remaining))
+
+def all_paths(root, target_sum):
+    """Find all root-to-leaf paths that sum to target."""
+    results = []
+    
+    def dfs(node, remaining, path):
+        if node is None:
+            return
+        
+        path.append(node.data)
+        
+        # Leaf node
+        if node.left is None and node.right is None:
+            if remaining == node.data:
+                results.append(path.copy())
+        else:
+            dfs(node.left, remaining - node.data, path)
+            dfs(node.right, remaining - node.data, path)
+        
+        path.pop()  # Backtrack
+    
+    dfs(root, target_sum, [])
+    return results
+
+# Build tree:     5
+#               / \
+#              4   8
+#             /   / \
+#            11  13  4
+#           /  \    / \
+#          7    2  5   1
+root = Node(5)
+root.left = Node(4)
+root.right = Node(8)
+root.left.left = Node(11)
+root.right.left = Node(13)
+root.right.right = Node(4)
+root.left.left.left = Node(7)
+root.left.left.right = Node(2)
+root.right.right.left = Node(5)
+root.right.right.right = Node(1)
+
+target = 22
+print(f"Has path sum {target}: {has_path_sum(root, target)}")
+print(f"All paths with sum {target}: {all_paths(root, target)}")</textarea>
+                <div class="code-figure-output" id="outputcode18"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.18:</strong> Path sum uses DFS with backtracking. Track the current path and sum while exploring.
+                </div>
+            </div>
+            
+            <h3>Pattern 3: Serialize and Deserialize</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.19 — Tree Serialization</span>
+                    <button class="code-figure-run" onclick="runCode('code19')">▶ Run</button>
+                </div>
+                <textarea id="code19" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def serialize(root):
+    """Convert tree to string using preorder with null markers."""
+    def helper(node):
+        if node is None:
+            return ["#"]
+        return [str(node.data)] + helper(node.left) + helper(node.right)
+    
+    return ",".join(helper(root))
+
+def deserialize(data):
+    """Reconstruct tree from serialized string."""
+    values = iter(data.split(","))
+    
+    def helper():
+        val = next(values)
+        if val == "#":
+            return None
+        node = Node(int(val))
+        node.left = helper()
+        node.right = helper()
+        return node
+    
+    return helper()
+
+def inorder(node):
+    if not node:
+        return []
+    return inorder(node.left) + [node.data] + inorder(node.right)
+
+# Build tree
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.right.left = Node(4)
+root.right.right = Node(5)
+
+print(f"Original tree (inorder): {inorder(root)}")
+
+# Serialize
+serialized = serialize(root)
+print(f"Serialized: {serialized}")
+
+# Deserialize
+restored = deserialize(serialized)
+print(f"Restored tree (inorder): {inorder(restored)}")</textarea>
+                <div class="code-figure-output" id="outputcode19"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.19:</strong> Serialization converts a tree to a string. Preorder with null markers enables unique reconstruction.
+                </div>
+            </div>
+            
+            <h3>Pattern 4: Tree Diameter</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.20 — Tree Diameter</span>
+                    <button class="code-figure-run" onclick="runCode('code20')">▶ Run</button>
+                </div>
+                <textarea id="code20" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def diameter(root):
+    """
+    Diameter = longest path between any two nodes.
+    Path may or may not pass through root.
+    """
+    max_diameter = [0]  # Use list to allow modification in nested function
+    
+    def height(node):
+        if node is None:
+            return 0
+        
+        left_height = height(node.left)
+        right_height = height(node.right)
+        
+        # Update diameter: path through this node
+        max_diameter[0] = max(max_diameter[0], 
+                              left_height + right_height)
+        
+        return 1 + max(left_height, right_height)
+    
+    height(root)
+    return max_diameter[0]
+
+# Build tree:     1
+#               / \
+#              2   3
+#             / \
+#            4   5
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.left = Node(4)
+root.left.right = Node(5)
+
+print(f"Tree diameter: {diameter(root)}")
+# Diameter is path 4 -> 2 -> 1 -> 3 = 3 edges
+# Or 4 -> 2 -> 5 = 2 edges, or 5 -> 2 -> 1 -> 3 = 3 edges</textarea>
+                <div class="code-figure-output" id="outputcode20"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.20:</strong> Diameter is computed during height calculation. At each node, check if path through it is longest.
+                </div>
+            </div>
+            
+            <h3>Pattern 5: Check Balanced Tree</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.21 — Balanced Tree Check</span>
+                    <button class="code-figure-run" onclick="runCode('code21')">▶ Run</button>
+                </div>
+                <textarea id="code21" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def is_balanced(root):
+    """
+    Check if tree is height-balanced.
+    Balanced = height difference of subtrees <= 1 at every node.
+    """
+    def check(node):
+        if node is None:
+            return 0  # Height of empty tree
+        
+        left_height = check(node.left)
+        if left_height == -1:
+            return -1  # Left subtree unbalanced
+        
+        right_height = check(node.right)
+        if right_height == -1:
+            return -1  # Right subtree unbalanced
+        
+        if abs(left_height - right_height) > 1:
+            return -1  # Current node unbalanced
+        
+        return 1 + max(left_height, right_height)
+    
+    return check(root) != -1
+
+# Balanced tree
+balanced = Node(1)
+balanced.left = Node(2)
+balanced.right = Node(3)
+balanced.left.left = Node(4)
+
+# Unbalanced tree
+unbalanced = Node(1)
+unbalanced.left = Node(2)
+unbalanced.left.left = Node(3)
+unbalanced.left.left.left = Node(4)
+
+print(f"Balanced tree: {is_balanced(balanced)}")
+print(f"Unbalanced tree: {is_balanced(unbalanced)}")</textarea>
+                <div class="code-figure-output" id="outputcode21"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.28:</strong> Efficient balance check computes height while checking balance, returning -1 early if unbalanced.
+                </div>
+            </div>
+            
+            <h3>Pattern 6: Zigzag Level Order</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.29 — Zigzag Traversal</span>
+                    <button class="code-figure-run" onclick="runCode('code21a')">▶ Run</button>
+                </div>
+                <textarea id="code21a" spellcheck="false">from collections import deque
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def zigzag_level_order(root):
+    """Traverse tree level by level, alternating direction."""
+    if not root:
+        return []
+    
+    result = []
+    queue = deque([root])
+    left_to_right = True
+    
+    while queue:
+        level_size = len(queue)
+        level = deque()
+        
+        for _ in range(level_size):
+            node = queue.popleft()
+            
+            if left_to_right:
+                level.append(node.data)
+            else:
+                level.appendleft(node.data)
+            
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        
+        result.append(list(level))
+        left_to_right = not left_to_right
+    
+    return result
+
+# Build tree:     3
+#               / \
+#              9  20
+#                / \
+#               15  7
+root = Node(3)
+root.left = Node(9)
+root.right = Node(20)
+root.right.left = Node(15)
+root.right.right = Node(7)
+
+print(f"Zigzag level order: {zigzag_level_order(root)}")
+# [[3], [20, 9], [15, 7]]</textarea>
+                <div class="code-figure-output" id="outputcode21a"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.29:</strong> Zigzag traversal alternates between left-to-right and right-to-left at each level.
+                </div>
+            </div>
+            
+            <h3>Pattern 7: Count Complete Tree Nodes</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.30 — Count Nodes in Complete Tree</span>
+                    <button class="code-figure-run" onclick="runCode('code21b')">▶ Run</button>
+                </div>
+                <textarea id="code21b" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def count_nodes(root):
+    """
+    Count nodes in complete binary tree in O(log^2 n) time.
+    Uses the property that one subtree is always perfect.
+    """
+    if not root:
+        return 0
+    
+    left_height = get_height(root.left)
+    right_height = get_height(root.right)
+    
+    if left_height == right_height:
+        # Left subtree is perfect
+        # Nodes = 2^left_height (left subtree + root) + count right
+        return (1 << left_height) + count_nodes(root.right)
+    else:
+        # Right subtree is perfect (one level less)
+        # Nodes = 2^right_height (right subtree + root) + count left
+        return (1 << right_height) + count_nodes(root.left)
+
+def get_height(node):
+    """Height by going left (complete tree property)."""
+    height = 0
+    while node:
+        height += 1
+        node = node.left
+    return height
+
+# Build complete tree with 6 nodes
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.left = Node(4)
+root.left.right = Node(5)
+root.right.left = Node(6)
+
+print(f"Node count: {count_nodes(root)}")
+print("This is O(log^2 n), not O(n)!")</textarea>
+                <div class="code-figure-output" id="outputcode21b"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.30:</strong> Complete tree node counting exploits the structure for O(log² n) complexity.
+                </div>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-title">Key Takeaways</div>
+                <ul>
+                    <li><strong>Trees</strong> are hierarchical structures with nodes and edges</li>
+                    <li><strong>Binary trees</strong> have at most 2 children per node</li>
+                    <li><strong>Traversals:</strong> preorder (root first), inorder (sorted for BST), postorder (children first), level-order (BFS)</li>
+                    <li><strong>BST property:</strong> left &lt; root &lt; right enables O(log n) operations</li>
+                    <li><strong>BST worst case:</strong> O(n) when degenerate—use balanced trees</li>
+                    <li><strong>Common patterns:</strong> recursion, DFS/BFS, path tracking, height calculation</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 10: PITFALLS -->
+        <!-- ============================================== -->
+        <section id="pitfalls">
+            <h2>10. Common Pitfalls</h2>
+            
+            <h3>Pitfall 1: Wrong BST Validation</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.22 — BST Validation Mistakes</span>
+                    <button class="code-figure-run" onclick="runCode('code22')">▶ Run</button>
+                </div>
+                <textarea id="code22" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+# WRONG: Only checks immediate children
+def is_bst_wrong(node):
+    if node is None:
+        return True
+    if node.left and node.left.data >= node.data:
+        return False
+    if node.right and node.right.data <= node.data:
+        return False
+    return is_bst_wrong(node.left) and is_bst_wrong(node.right)
+
+# CORRECT: Tracks valid range
+def is_bst_correct(node, min_val=float('-inf'), max_val=float('inf')):
+    if node is None:
+        return True
+    if node.data <= min_val or node.data >= max_val:
+        return False
+    return (is_bst_correct(node.left, min_val, node.data) and
+            is_bst_correct(node.right, node.data, max_val))
+
+# This tree passes wrong validation but is NOT a valid BST!
+#       10
+#      /  \
+#     5    15
+#    / \
+#   1   12  <- 12 > 10, violates BST!
+root = Node(10)
+root.left = Node(5)
+root.right = Node(15)
+root.left.left = Node(1)
+root.left.right = Node(12)  # Invalid!
+
+print(f"Wrong validation: {is_bst_wrong(root)}")  # True (incorrect!)
+print(f"Correct validation: {is_bst_correct(root)}")  # False</textarea>
+                <div class="code-figure-output" id="outputcode22"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.22:</strong> BST validation must check entire valid range, not just immediate parent.
+                </div>
+            </div>
+            
+            <h3>Pitfall 2: Forgetting Base Cases</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.23 — Proper Base Cases</span>
+                    <button class="code-figure-run" onclick="runCode('code23')">▶ Run</button>
+                </div>
+                <textarea id="code23" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+# BAD: Missing None check causes AttributeError
+def count_nodes_bad(node):
+    return 1 + count_nodes_bad(node.left) + count_nodes_bad(node.right)
+
+# GOOD: Always check for None first
+def count_nodes_good(node):
+    if node is None:  # Base case!
+        return 0
+    return 1 + count_nodes_good(node.left) + count_nodes_good(node.right)
+
+# Test
+root = Node(1)
+root.left = Node(2)
+
+print(f"Good function: {count_nodes_good(root)}")
+
+try:
+    count_nodes_bad(root)
+except AttributeError as e:
+    print(f"Bad function error: {e}")
+
+print("\nAlways handle None at the start of recursive tree functions!")</textarea>
+                <div class="code-figure-output" id="outputcode23"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.23:</strong> Always check for None at the start of recursive tree functions.
+                </div>
+            </div>
+            
+            <h3>Pitfall 3: Modifying Tree During Traversal</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.24 — Safe Tree Modification</span>
+                    <button class="code-figure-run" onclick="runCode('code24')">▶ Run</button>
+                </div>
+                <textarea id="code24" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def collect_nodes_to_delete(root, target):
+    """Collect nodes to delete, don't delete during traversal."""
+    to_delete = []
+    
+    def traverse(node):
+        if node is None:
+            return
+        if node.data == target:
+            to_delete.append(node)
+        traverse(node.left)
+        traverse(node.right)
+    
+    traverse(root)
+    return to_delete
+
+def inorder(node):
+    if not node:
+        return []
+    return inorder(node.left) + [node.data] + inorder(node.right)
+
+# Build tree
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+
+print(f"Tree: {inorder(root)}")
+print("\nTip: Never modify a tree while traversing it.")
+print("Instead, collect what to modify, then modify separately.")</textarea>
+                <div class="code-figure-output" id="outputcode24"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.24:</strong> Collect nodes to modify during traversal, then modify in a separate pass.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 11: EXERCISES -->
+        <!-- ============================================== -->
+        <section id="exercises">
+            <h2>11. Exercises</h2>
+            
+            <!-- Exercise 1 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 1: Maximum Depth of Binary Tree</div>
+                <p>Write a function that returns the maximum depth (height) of a binary tree. An empty tree has depth 0, a single node has depth 1.</p>
+                <p class="answer">(Hint: Recursively find max depth of subtrees, add 1)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 1 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex1')">▶ Run</button>
+                </div>
+                <textarea id="ex1" spellcheck="false"># HINT 1: Base case: None returns 0
+# HINT 2: Recursively get max depth of left and right
+# HINT 3: Return 1 + max(left_depth, right_depth)
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def max_depth(root):
+    # Your code here
+    pass
+
+# Test your implementation
+# root = Node(3)
+# root.left = Node(9)
+# root.right = Node(20)
+# root.right.left = Node(15)
+# root.right.right = Node(7)
+# print(f"Max depth: {max_depth(root)}")  # Expected: 3</textarea>
+                <div class="code-figure-output" id="outputex1"></div>
+            </div>
+            
+            <!-- Exercise 2 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 2: Invert Binary Tree</div>
+                <p>Write a function that inverts (mirrors) a binary tree. Swap left and right children at every node.</p>
+                <p class="answer">(Hint: Recursively invert, then swap left and right)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 2 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex2')">▶ Run</button>
+                </div>
+                <textarea id="ex2" spellcheck="false"># HINT 1: Base case: return None if node is None
+# HINT 2: Swap node.left and node.right
+# HINT 3: Recursively invert both subtrees
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def invert_tree(root):
+    # Your code here
+    pass
+
+# Test your implementation
+# root = Node(4)
+# root.left = Node(2)
+# root.right = Node(7)
+# root.left.left = Node(1)
+# root.left.right = Node(3)
+# invert_tree(root)
+# # After invert: 4 -> [7, 2], 7 -> [], 2 -> [3, 1]</textarea>
+                <div class="code-figure-output" id="outputex2"></div>
+            </div>
+            
+            <!-- Exercise 3 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 3: Kth Smallest in BST</div>
+                <p>Given a BST, find the kth smallest element (1-indexed).</p>
+                <p class="answer">(Hint: Inorder traversal of BST gives sorted order)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 3 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex3')">▶ Run</button>
+                </div>
+                <textarea id="ex3" spellcheck="false"># HINT 1: Inorder traversal visits BST nodes in sorted order
+# HINT 2: Count nodes as you traverse
+# HINT 3: Return when count equals k
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def kth_smallest(root, k):
+    # Your code here
+    pass
+
+# Test your implementation
+# root = Node(5)
+# root.left = Node(3)
+# root.right = Node(6)
+# root.left.left = Node(2)
+# root.left.right = Node(4)
+# root.left.left.left = Node(1)
+# print(f"1st smallest: {kth_smallest(root, 1)}")  # 1
+# print(f"3rd smallest: {kth_smallest(root, 3)}")  # 3</textarea>
+                <div class="code-figure-output" id="outputex3"></div>
+            </div>
+            
+            <!-- Exercise 4 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 4: Symmetric Tree</div>
+                <p>Check if a binary tree is symmetric (mirror of itself around the center).</p>
+                <p class="answer">(Hint: Compare left subtree with right subtree recursively)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 4 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex4')">▶ Run</button>
+                </div>
+                <textarea id="ex4" spellcheck="false"># HINT 1: Tree is symmetric if left subtree mirrors right subtree
+# HINT 2: Compare left.left with right.right, left.right with right.left
+# HINT 3: Base cases: both None (True), one None (False)
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def is_symmetric(root):
+    # Your code here
+    pass
+
+# Test your implementation
+# Symmetric:    1
+#              / \
+#             2   2
+#            / \ / \
+#           3  4 4  3
+# symmetric = Node(1)
+# symmetric.left = Node(2)
+# symmetric.right = Node(2)
+# symmetric.left.left = Node(3)
+# symmetric.left.right = Node(4)
+# symmetric.right.left = Node(4)
+# symmetric.right.right = Node(3)
+# print(f"Is symmetric: {is_symmetric(symmetric)}")  # True</textarea>
+                <div class="code-figure-output" id="outputex4"></div>
+            </div>
+            
+            <!-- Exercise 5 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 5: Construct BST from Preorder</div>
+                <p>Given a preorder traversal of a BST, construct the original BST.</p>
+                <p class="answer">(Hint: First element is root, use BST property to partition rest)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 5 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex5')">▶ Run</button>
+                </div>
+                <textarea id="ex5" spellcheck="false"># HINT 1: First element is always the root
+# HINT 2: Elements smaller than root go to left subtree
+# HINT 3: Elements larger than root go to right subtree
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def bst_from_preorder(preorder):
+    # Your code here
+    pass
+
+def inorder(node):
+    if not node:
+        return []
+    return inorder(node.left) + [node.data] + inorder(node.right)
+
+# Test your implementation
+# preorder = [8, 5, 1, 7, 10, 12]
+# root = bst_from_preorder(preorder)
+# print(f"Inorder: {inorder(root)}")  # [1, 5, 7, 8, 10, 12]</textarea>
+                <div class="code-figure-output" id="outputex5"></div>
+            </div>
+        </section>
+
+        <!-- SUBMIT SECTION -->
+        <section class="submit-section">
+            <h2>Submit Your Work</h2>
+            <p>After completing the exercises, submit your attendance below.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student ID</label>
+                    <input type="text" id="studentId" placeholder="Enter your student ID">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" placeholder="Enter your full name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email (@istun.edu.tr)</label>
+                    <input type="email" id="studentEmail" placeholder="your.email@istun.edu.tr">
+                </div>
+                <div class="form-group">
+                    <label>Class Code</label>
+                    <input type="text" id="classCode" placeholder="From instructor">
+                </div>
+            </div>
+            <input type="text" id="hp" class="hp" tabindex="-1" autocomplete="off">
+            <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
+            <div class="submit-status" id="submitStatus"></div>
+        </section>
+    </main>
+
+    <script>
+        const pageLoadTime = Date.now();
+        
+        async function runCode(codeId) {
+            const codeEl = document.getElementById(codeId);
+            const outputEl = document.getElementById('output' + codeId);
+            const code = codeEl.value;
+            outputEl.classList.add('show');
+            outputEl.textContent = 'Running...';
+            
+            try {
+                const escaped = code.replace(/\\/g, '\\\\').replace(/"""/g, '\\"\\"\\"');
+                const result = await pyscript.interpreter.runPython(`
+import sys
+from io import StringIO
+_code = """` + escaped + `"""
+_old_stdout = sys.stdout
+sys.stdout = StringIO()
+try:
+    exec(_code)
+    _output = sys.stdout.getvalue()
+except Exception as e:
+    _output = f"Error: {e}"
+finally:
+    sys.stdout = _old_stdout
+_output
+`);
+                outputEl.textContent = result || '(no output)';
+            } catch(e) {
+                outputEl.textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        function submitWork() {
+            const status = document.getElementById('submitStatus');
+            const data = {
+                week: 'Week_06',
+                student_id: document.getElementById('studentId').value.trim(),
+                student_name: document.getElementById('studentName').value.trim(),
+                student_email: document.getElementById('studentEmail').value.trim().toLowerCase(),
+                classCode: document.getElementById('classCode').value.trim().toUpperCase(),
+                timeOnPage: Math.floor((Date.now() - pageLoadTime) / 1000)
+            };
+            
+            if (document.getElementById('hp').value) {
+                status.textContent = 'Submission rejected.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (data.timeOnPage < 60) {
+                status.textContent = 'Please spend more time reviewing the material.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (!data.student_id || !data.student_name || !data.student_email || !data.classCode) {
+                status.textContent = 'All fields are required.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (!data.student_email.endsWith('@istun.edu.tr')) {
+                status.textContent = 'Use your @istun.edu.tr email.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            status.textContent = 'Submitting...';
+            status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
+            
+            fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(res => {
+                status.textContent = res.success ? 'Submitted successfully!' : res.message;
+                status.style.cssText = 'display:block;background:rgba(' + (res.success ? '74,222,128' : '239,68,68') + ',0.2);color:' + (res.success ? '#4ade80' : '#fca5a5');
+            })
+            .catch(() => {
+                fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(() => {
+                    status.textContent = 'Submission sent!';
+                    status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80';
+                });
+            });
+        }
+    </script>
+</body>
+</html>

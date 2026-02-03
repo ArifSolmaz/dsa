@@ -1,0 +1,2351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 09: Graphs | DSA Course</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 19px;
+            background: #faf9f7;
+            color: #2c2c2c; 
+            line-height: 1.8;
+        }
+        
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .topbar .title { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 500; }
+        .topbar a { font-family: system-ui, sans-serif; color: white; text-decoration: none; font-size: 0.85rem; padding: 6px 14px; background: rgba(255,255,255,0.1); border-radius: 5px; }
+        .topbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .book { max-width: 750px; margin: 0 auto; padding: 60px 40px 100px; }
+        
+        .chapter-header { text-align: center; padding: 50px 0 60px; border-bottom: 1px solid #ddd; margin-bottom: 50px; }
+        .chapter-num { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: #7c3aed; margin-bottom: 15px; }
+        .chapter-header h1 { font-size: 2.8rem; font-weight: 600; color: #1a1a2e; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .chapter-header .subtitle { font-style: italic; color: #666; font-size: 1.1rem; }
+        
+        h2 { font-size: 1.6rem; font-weight: 600; color: #1a1a2e; margin: 60px 0 25px; padding-top: 30px; border-top: 1px solid #e5e5e5; }
+        h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+        h3 { font-size: 1.25rem; font-weight: 600; color: #333; margin: 40px 0 15px; }
+        h4 { font-size: 1.05rem; font-weight: 600; color: #555; margin: 30px 0 12px; }
+        
+        p { margin: 0 0 20px; text-align: justify; hyphens: auto; }
+        ul, ol { margin: 20px 0 25px 30px; }
+        li { margin: 10px 0; }
+        
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: #f0eeeb; padding: 2px 6px; border-radius: 3px; color: #7c3aed; }
+        .term { font-weight: 600; color: #1a1a2e; }
+        
+        .definition { background: #f8f7f5; border-left: 4px solid #7c3aed; padding: 20px 25px; margin: 30px 0; }
+        .definition-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 8px; font-weight: 600; }
+        .definition p { margin: 0; }
+        
+        .margin-note { background: #fffbeb; border: 1px solid #fcd34d; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .margin-note::before { content: "💡 "; }
+        
+        .important { background: #fef2f2; border: 1px solid #fca5a5; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .important::before { content: "⚠️ "; }
+        
+        .example { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; padding: 25px; margin: 30px 0; }
+        .example-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 15px; font-weight: 600; }
+        
+        .code-figure { margin: 35px 0; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background: #1e1e2e; }
+        .code-figure-header { background: #28283c; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
+        .code-figure-label { font-family: system-ui, sans-serif; font-size: 0.75rem; color: #a0a0b0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .code-figure-run { font-family: system-ui, sans-serif; background: #7c3aed; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
+        .code-figure-run:hover { background: #6d28d9; }
+        .code-figure textarea { width: 100%; min-height: 100px; padding: 18px; background: #1e1e2e; color: #e0e0e0; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; }
+        .code-figure textarea:focus { outline: none; }
+        .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; }
+        .code-figure-output.show { display: block; }
+        .code-figure-caption { background: #f8f8f8; padding: 12px 18px; font-size: 0.85rem; color: #666; border-top: 1px solid #e0e0e0; }
+        .code-figure-caption strong { color: #333; }
+        
+        .summary { background: linear-gradient(135deg, #7c3aed10, #7c3aed05); border: 1px solid #7c3aed30; border-radius: 8px; padding: 25px 30px; margin: 40px 0; }
+        .summary-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 12px; font-weight: 600; }
+        .summary ul { margin: 0; }
+        
+        .exercise { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 25px 30px; margin: 40px 0 20px; }
+        .exercise-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #16a34a; margin-bottom: 12px; font-weight: 600; }
+        .exercise p { margin: 0; }
+        .exercise .answer { margin-top: 12px; font-size: 0.9rem; color: #166534; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 0.95rem; }
+        th, td { border: 1px solid #ddd; padding: 12px 15px; text-align: left; }
+        th { background: #f5f5f5; font-weight: 600; }
+        
+        .submit-section { background: #1a1a2e; color: white; padding: 40px; border-radius: 10px; margin-top: 60px; }
+        .submit-section h2 { color: white; border: none; margin: 0 0 20px; padding: 0; font-size: 1.4rem; }
+        .submit-section p { color: #a0a0b0; text-align: left; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-family: system-ui, sans-serif; font-size: 0.85rem; color: #a0a0b0; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: white; font-size: 1rem; font-family: system-ui, sans-serif; }
+        .form-group input:focus { outline: none; border-color: #7c3aed; }
+        .submit-btn { background: #7c3aed; color: white; border: none; padding: 14px 30px; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; font-family: system-ui, sans-serif; margin-top: 10px; }
+        .submit-btn:hover { background: #6d28d9; }
+        .submit-status { margin-top: 15px; padding: 12px; border-radius: 5px; display: none; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+        .hp { position: absolute; left: -9999px; }
+        
+        .toc { background: #f8f7f5; padding: 30px 35px; margin: 0 0 50px; border-radius: 6px; }
+        .toc-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 15px; }
+        .toc ol { margin: 0; padding-left: 20px; }
+        .toc li { margin: 8px 0; }
+        .toc a { color: #7c3aed; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        
+        @media (max-width: 600px) {
+            .book { padding: 30px 20px; }
+            .chapter-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.4rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="topbar">
+        <span class="title">Data Structures &amp; Algorithms</span>
+        <a href="index.html">← Course Home</a>
+    </nav>
+    
+    <main class="book">
+        <header class="chapter-header">
+            <div class="chapter-num">Week Nine</div>
+            <h1>Graphs</h1>
+            <p class="subtitle">Modeling relationships and connections between entities</p>
+        </header>
+        
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <ol>
+                <li><a href="#intro">Introduction to Graphs</a></li>
+                <li><a href="#terminology">Graph Terminology</a></li>
+                <li><a href="#representations">Graph Representations</a></li>
+                <li><a href="#bfs">Breadth-First Search (BFS)</a></li>
+                <li><a href="#dfs">Depth-First Search (DFS)</a></li>
+                <li><a href="#connected">Connected Components</a></li>
+                <li><a href="#cycle">Cycle Detection</a></li>
+                <li><a href="#topological">Topological Sort</a></li>
+                <li><a href="#applications">Graph Applications</a></li>
+                <li><a href="#patterns">Common Patterns</a></li>
+                <li><a href="#pitfalls">Common Pitfalls</a></li>
+                <li><a href="#exercises">Exercises</a></li>
+            </ol>
+        </nav>
+
+        <!-- ============================================== -->
+        <!-- SECTION 1: INTRODUCTION TO GRAPHS -->
+        <!-- ============================================== -->
+        <section id="intro">
+            <h2>1. Introduction to Graphs</h2>
+            
+            <p>We've studied linear structures (arrays, linked lists) and hierarchical structures (trees). Now we explore <span class="term">graphs</span>—the most general data structure for representing relationships. Trees are actually a special case of graphs!</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">graph</span> G = (V, E) consists of a set of <span class="term">vertices</span> (or nodes) V and a set of <span class="term">edges</span> E connecting pairs of vertices. Unlike trees, graphs can have cycles, multiple paths between nodes, and nodes with any number of connections.</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">Graph vs Tree</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+Tree (special graph):           General Graph:
+
+        A                           A --- B
+       /|\                          |\ /| |
+      B C D                         | X | |
+     /|                             |/ \| |
+    E F                             C --- D
+
+- One root, one path             - No root, multiple paths
+- n-1 edges for n nodes          - Any number of edges
+- No cycles                      - Can have cycles (A-B-D-C-A)
+                </pre>
+            </div>
+            
+            <h3>Real-World Graph Examples</h3>
+            
+            <table>
+                <tr>
+                    <th>Domain</th>
+                    <th>Vertices</th>
+                    <th>Edges</th>
+                </tr>
+                <tr>
+                    <td>Social Network</td>
+                    <td>Users</td>
+                    <td>Friendships</td>
+                </tr>
+                <tr>
+                    <td>Road Map</td>
+                    <td>Intersections</td>
+                    <td>Roads</td>
+                </tr>
+                <tr>
+                    <td>Web</td>
+                    <td>Pages</td>
+                    <td>Hyperlinks</td>
+                </tr>
+                <tr>
+                    <td>Course Prerequisites</td>
+                    <td>Courses</td>
+                    <td>Dependencies</td>
+                </tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.1 — Graph Basics</span>
+                    <button class="code-figure-run" onclick="runCode('code1')">▶ Run</button>
+                </div>
+                <textarea id="code1" spellcheck="false"># Simple graph representation
+# Vertices: A, B, C, D
+# Edges: A-B, A-C, B-C, B-D, C-D
+
+# As adjacency list (most common)
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'C', 'D'],
+    'C': ['A', 'B', 'D'],
+    'D': ['B', 'C']
+}
+
+print("Graph (adjacency list):")
+for vertex, neighbors in graph.items():
+    print(f"  {vertex}: {neighbors}")
+
+# Basic properties
+num_vertices = len(graph)
+num_edges = sum(len(neighbors) for neighbors in graph.values()) // 2
+print(f"\nVertices: {num_vertices}")
+print(f"Edges: {num_edges}")
+
+# Check if edge exists - O(degree)
+def has_edge(graph, u, v):
+    return v in graph.get(u, [])
+
+print(f"\nEdge A-B exists: {has_edge(graph, 'A', 'B')}")
+print(f"Edge A-D exists: {has_edge(graph, 'A', 'D')}")</textarea>
+                <div class="code-figure-output" id="outputcode1"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.1:</strong> Adjacency list is the most common graph representation for sparse graphs.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 2: GRAPH TERMINOLOGY -->
+        <!-- ============================================== -->
+        <section id="terminology">
+            <h2>2. Graph Terminology</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Key Terms</div>
+                <p>
+                <strong>Directed vs Undirected:</strong> In a directed graph (digraph), edges have direction (A→B ≠ B→A). In undirected graphs, edges are bidirectional.<br>
+                <strong>Weighted:</strong> Edges may have weights (costs, distances, capacities).<br>
+                <strong>Degree:</strong> Number of edges connected to a vertex. In digraphs: in-degree and out-degree.<br>
+                <strong>Path:</strong> Sequence of vertices connected by edges.<br>
+                <strong>Cycle:</strong> Path that starts and ends at the same vertex.<br>
+                <strong>Connected:</strong> There's a path between every pair of vertices.
+                </p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.2 — Directed vs Undirected Graphs</span>
+                    <button class="code-figure-run" onclick="runCode('code2')">▶ Run</button>
+                </div>
+                <textarea id="code2" spellcheck="false"># Undirected graph - edges go both ways
+undirected = {
+    'A': ['B', 'C'],
+    'B': ['A', 'C'],
+    'C': ['A', 'B']
+}
+
+# Directed graph - edges have direction
+directed = {
+    'A': ['B', 'C'],  # A -> B, A -> C
+    'B': ['C'],       # B -> C
+    'C': []           # C has no outgoing edges
+}
+
+print("Undirected graph:")
+for v, neighbors in undirected.items():
+    print(f"  {v} <-> {neighbors}")
+
+print("\nDirected graph:")
+for v, neighbors in directed.items():
+    print(f"  {v} -> {neighbors}")
+
+# Degree calculations
+def undirected_degree(graph, vertex):
+    return len(graph[vertex])
+
+def in_degree(graph, vertex):
+    """Count incoming edges in directed graph."""
+    count = 0
+    for v in graph:
+        if vertex in graph[v]:
+            count += 1
+    return count
+
+def out_degree(graph, vertex):
+    """Count outgoing edges in directed graph."""
+    return len(graph[vertex])
+
+print(f"\nUndirected degree of A: {undirected_degree(undirected, 'A')}")
+print(f"Directed in-degree of C: {in_degree(directed, 'C')}")
+print(f"Directed out-degree of A: {out_degree(directed, 'A')}")</textarea>
+                <div class="code-figure-output" id="outputcode2"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.2:</strong> Directed graphs distinguish between incoming and outgoing edges.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.3 — Weighted Graphs</span>
+                    <button class="code-figure-run" onclick="runCode('code3')">▶ Run</button>
+                </div>
+                <textarea id="code3" spellcheck="false"># Weighted graph - edges have costs
+# Adjacency list with weights: {vertex: [(neighbor, weight), ...]}
+weighted_graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('C', 1), ('D', 5)],
+    'C': [('A', 2), ('B', 1), ('D', 8)],
+    'D': [('B', 5), ('C', 8)]
+}
+
+print("Weighted graph (city distances):")
+for vertex, edges in weighted_graph.items():
+    for neighbor, weight in edges:
+        print(f"  {vertex} --{weight}--> {neighbor}")
+
+# Alternative: dict of dicts
+weighted_dict = {
+    'A': {'B': 4, 'C': 2},
+    'B': {'A': 4, 'C': 1, 'D': 5},
+    'C': {'A': 2, 'B': 1, 'D': 8},
+    'D': {'B': 5, 'C': 8}
+}
+
+print(f"\nWeight of edge A-B: {weighted_dict['A']['B']}")
+print(f"Neighbors of C: {list(weighted_dict['C'].keys())}")</textarea>
+                <div class="code-figure-output" id="outputcode3"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.3:</strong> Weighted graphs store edge weights, useful for distances, costs, or capacities.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 3: GRAPH REPRESENTATIONS -->
+        <!-- ============================================== -->
+        <section id="representations">
+            <h2>3. Graph Representations</h2>
+            
+            <h3>Adjacency List</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.4 — Adjacency List Implementation</span>
+                    <button class="code-figure-run" onclick="runCode('code4')">▶ Run</button>
+                </div>
+                <textarea id="code4" spellcheck="false">from collections import defaultdict
+
+class Graph:
+    """Graph using adjacency list."""
+    
+    def __init__(self, directed=False):
+        self.adj = defaultdict(list)
+        self.directed = directed
+    
+    def add_vertex(self, v):
+        """Ensure vertex exists."""
+        if v not in self.adj:
+            self.adj[v] = []
+    
+    def add_edge(self, u, v, weight=None):
+        """Add edge between u and v."""
+        if weight is not None:
+            self.adj[u].append((v, weight))
+            if not self.directed:
+                self.adj[v].append((u, weight))
+        else:
+            self.adj[u].append(v)
+            if not self.directed:
+                self.adj[v].append(u)
+    
+    def neighbors(self, v):
+        """Get neighbors of vertex."""
+        return self.adj[v]
+    
+    def vertices(self):
+        """Get all vertices."""
+        return list(self.adj.keys())
+    
+    def __repr__(self):
+        return f"Graph({dict(self.adj)})"
+
+# Test
+g = Graph(directed=False)
+edges = [('A', 'B'), ('A', 'C'), ('B', 'C'), ('B', 'D'), ('C', 'D')]
+for u, v in edges:
+    g.add_edge(u, v)
+
+print("Graph:")
+for v in g.vertices():
+    print(f"  {v}: {g.neighbors(v)}")</textarea>
+                <div class="code-figure-output" id="outputcode4"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.4:</strong> Adjacency list uses O(V + E) space and O(degree) time for neighbor lookup.
+                </div>
+            </div>
+            
+            <h3>Adjacency Matrix</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.5 — Adjacency Matrix Implementation</span>
+                    <button class="code-figure-run" onclick="runCode('code5')">▶ Run</button>
+                </div>
+                <textarea id="code5" spellcheck="false">class GraphMatrix:
+    """Graph using adjacency matrix."""
+    
+    def __init__(self, vertices):
+        self.vertices = vertices
+        self.v_index = {v: i for i, v in enumerate(vertices)}
+        n = len(vertices)
+        self.matrix = [[0] * n for _ in range(n)]
+    
+    def add_edge(self, u, v, weight=1):
+        i, j = self.v_index[u], self.v_index[v]
+        self.matrix[i][j] = weight
+        self.matrix[j][i] = weight  # Undirected
+    
+    def has_edge(self, u, v):
+        i, j = self.v_index[u], self.v_index[v]
+        return self.matrix[i][j] != 0
+    
+    def neighbors(self, v):
+        i = self.v_index[v]
+        result = []
+        for j, vertex in enumerate(self.vertices):
+            if self.matrix[i][j] != 0:
+                result.append(vertex)
+        return result
+    
+    def display(self):
+        print("    " + " ".join(self.vertices))
+        for i, v in enumerate(self.vertices):
+            print(f"{v}   " + " ".join(str(x) for x in self.matrix[i]))
+
+# Test
+g = GraphMatrix(['A', 'B', 'C', 'D'])
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+g.add_edge('B', 'C')
+g.add_edge('B', 'D')
+g.add_edge('C', 'D')
+
+print("Adjacency Matrix:")
+g.display()
+print(f"\nNeighbors of B: {g.neighbors('B')}")
+print(f"Edge A-D exists: {g.has_edge('A', 'D')}")</textarea>
+                <div class="code-figure-output" id="outputcode5"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.5:</strong> Adjacency matrix uses O(V²) space but provides O(1) edge lookup.
+                </div>
+            </div>
+            
+            <h3>Comparison</h3>
+            
+            <table>
+                <tr>
+                    <th>Operation</th>
+                    <th>Adjacency List</th>
+                    <th>Adjacency Matrix</th>
+                </tr>
+                <tr>
+                    <td>Space</td>
+                    <td>O(V + E)</td>
+                    <td>O(V²)</td>
+                </tr>
+                <tr>
+                    <td>Add edge</td>
+                    <td>O(1)</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td>Check edge</td>
+                    <td>O(degree)</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td>Get neighbors</td>
+                    <td>O(degree)</td>
+                    <td>O(V)</td>
+                </tr>
+                <tr>
+                    <td>Best for</td>
+                    <td>Sparse graphs</td>
+                    <td>Dense graphs</td>
+                </tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.6 — Edge List Representation</span>
+                    <button class="code-figure-run" onclick="runCode('code6')">▶ Run</button>
+                </div>
+                <textarea id="code6" spellcheck="false"># Edge list - simple but less efficient for queries
+edges = [
+    ('A', 'B', 4),
+    ('A', 'C', 2),
+    ('B', 'C', 1),
+    ('B', 'D', 5),
+    ('C', 'D', 8)
+]
+
+print("Edge list:")
+for u, v, w in edges:
+    print(f"  {u} --{w}--> {v}")
+
+# Convert edge list to adjacency list
+def edges_to_adj_list(edges, directed=False):
+    adj = defaultdict(list)
+    for u, v, w in edges:
+        adj[u].append((v, w))
+        if not directed:
+            adj[v].append((u, w))
+    return dict(adj)
+
+adj = edges_to_adj_list(edges)
+print(f"\nAs adjacency list: {adj}")
+
+# Convert adjacency list to edge list
+def adj_list_to_edges(adj, directed=False):
+    edges = []
+    seen = set()
+    for u in adj:
+        for v, w in adj[u]:
+            edge = (min(u, v), max(u, v), w) if not directed else (u, v, w)
+            if edge not in seen:
+                edges.append((u, v, w))
+                if not directed:
+                    seen.add(edge)
+    return edges
+
+from collections import defaultdict</textarea>
+                <div class="code-figure-output" id="outputcode6"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.6:</strong> Edge list is simple to store but O(E) for most queries. Good for algorithms like Kruskal's MST.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 4: BREADTH-FIRST SEARCH -->
+        <!-- ============================================== -->
+        <section id="bfs">
+            <h2>4. Breadth-First Search (BFS)</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Breadth-First Search</span> explores a graph level by level, visiting all neighbors of a vertex before moving deeper. It uses a queue and finds the shortest path (in terms of edges) in unweighted graphs.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.7 — BFS Implementation</span>
+                    <button class="code-figure-run" onclick="runCode('code7')">▶ Run</button>
+                </div>
+                <textarea id="code7" spellcheck="false">from collections import deque
+
+def bfs(graph, start):
+    """
+    Breadth-First Search traversal.
+    Time: O(V + E), Space: O(V)
+    """
+    visited = set()
+    queue = deque([start])
+    visited.add(start)
+    order = []
+    
+    while queue:
+        vertex = queue.popleft()
+        order.append(vertex)
+        
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    
+    return order
+
+# Test
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+
+print("Graph:")
+for v, neighbors in graph.items():
+    print(f"  {v}: {neighbors}")
+
+print(f"\nBFS from A: {bfs(graph, 'A')}")
+print("Level by level: A -> B,C -> D,E,F")</textarea>
+                <div class="code-figure-output" id="outputcode7"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.7:</strong> BFS visits vertices level by level using a queue. First discovered = first visited.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.8 — BFS Shortest Path</span>
+                    <button class="code-figure-run" onclick="runCode('code8')">▶ Run</button>
+                </div>
+                <textarea id="code8" spellcheck="false">from collections import deque
+
+def bfs_shortest_path(graph, start, end):
+    """
+    Find shortest path using BFS.
+    Returns path and distance.
+    """
+    if start == end:
+        return [start], 0
+    
+    visited = {start}
+    queue = deque([(start, [start])])  # (vertex, path)
+    
+    while queue:
+        vertex, path = queue.popleft()
+        
+        for neighbor in graph[vertex]:
+            if neighbor == end:
+                return path + [neighbor], len(path)
+            
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append((neighbor, path + [neighbor]))
+    
+    return None, -1  # No path found
+
+# Test
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+
+path, dist = bfs_shortest_path(graph, 'A', 'F')
+print(f"Shortest path A to F: {path}")
+print(f"Distance: {dist} edges")
+
+path, dist = bfs_shortest_path(graph, 'D', 'F')
+print(f"\nShortest path D to F: {path}")
+print(f"Distance: {dist} edges")</textarea>
+                <div class="code-figure-output" id="outputcode8"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.8:</strong> BFS naturally finds shortest path in unweighted graphs since it explores in order of distance.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.9 — BFS Level Order</span>
+                    <button class="code-figure-run" onclick="runCode('code9')">▶ Run</button>
+                </div>
+                <textarea id="code9" spellcheck="false">from collections import deque
+
+def bfs_levels(graph, start):
+    """BFS returning vertices grouped by level/distance."""
+    visited = {start}
+    queue = deque([start])
+    levels = []
+    
+    while queue:
+        level_size = len(queue)
+        current_level = []
+        
+        for _ in range(level_size):
+            vertex = queue.popleft()
+            current_level.append(vertex)
+            
+            for neighbor in graph[vertex]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        
+        levels.append(current_level)
+    
+    return levels
+
+# Test
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+
+levels = bfs_levels(graph, 'A')
+print("BFS levels from A:")
+for i, level in enumerate(levels):
+    print(f"  Distance {i}: {level}")</textarea>
+                <div class="code-figure-output" id="outputcode9"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.9:</strong> BFS can group vertices by their distance from the start vertex.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 5: DEPTH-FIRST SEARCH -->
+        <!-- ============================================== -->
+        <section id="dfs">
+            <h2>5. Depth-First Search (DFS)</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Depth-First Search</span> explores as deep as possible along each branch before backtracking. It uses a stack (or recursion) and is useful for detecting cycles, finding paths, and exploring all possibilities.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.10 — DFS Recursive</span>
+                    <button class="code-figure-run" onclick="runCode('code10')">▶ Run</button>
+                </div>
+                <textarea id="code10" spellcheck="false">def dfs_recursive(graph, start, visited=None):
+    """
+    Recursive DFS traversal.
+    Time: O(V + E), Space: O(V) for recursion stack
+    """
+    if visited is None:
+        visited = set()
+    
+    visited.add(start)
+    order = [start]
+    
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            order.extend(dfs_recursive(graph, neighbor, visited))
+    
+    return order
+
+# Test
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+
+print("DFS (recursive) from A:")
+print(dfs_recursive(graph, 'A'))
+print("\nGoes deep: A -> B -> D -> E -> F -> C")</textarea>
+                <div class="code-figure-output" id="outputcode10"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.10:</strong> Recursive DFS naturally follows depth-first exploration using the call stack.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.11 — DFS Iterative</span>
+                    <button class="code-figure-run" onclick="runCode('code11')">▶ Run</button>
+                </div>
+                <textarea id="code11" spellcheck="false">def dfs_iterative(graph, start):
+    """
+    Iterative DFS using explicit stack.
+    Avoids recursion limit for large graphs.
+    """
+    visited = set()
+    stack = [start]
+    order = []
+    
+    while stack:
+        vertex = stack.pop()
+        
+        if vertex in visited:
+            continue
+        
+        visited.add(vertex)
+        order.append(vertex)
+        
+        # Add neighbors in reverse for same order as recursive
+        for neighbor in reversed(graph[vertex]):
+            if neighbor not in visited:
+                stack.append(neighbor)
+    
+    return order
+
+# Compare recursive vs iterative
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+
+print(f"DFS recursive:  {dfs_recursive(graph, 'A')}")
+print(f"DFS iterative:  {dfs_iterative(graph, 'A')}")</textarea>
+                <div class="code-figure-output" id="outputcode11"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.11:</strong> Iterative DFS uses explicit stack, avoiding recursion limit issues.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.12 — DFS Path Finding</span>
+                    <button class="code-figure-run" onclick="runCode('code12')">▶ Run</button>
+                </div>
+                <textarea id="code12" spellcheck="false">def dfs_find_path(graph, start, end, path=None):
+    """Find any path from start to end using DFS."""
+    if path is None:
+        path = []
+    
+    path = path + [start]
+    
+    if start == end:
+        return path
+    
+    for neighbor in graph[start]:
+        if neighbor not in path:  # Avoid cycles
+            result = dfs_find_path(graph, neighbor, end, path)
+            if result:
+                return result
+    
+    return None  # No path found
+
+def dfs_all_paths(graph, start, end, path=None):
+    """Find ALL paths from start to end."""
+    if path is None:
+        path = []
+    
+    path = path + [start]
+    
+    if start == end:
+        return [path]
+    
+    paths = []
+    for neighbor in graph[start]:
+        if neighbor not in path:
+            new_paths = dfs_all_paths(graph, neighbor, end, path)
+            paths.extend(new_paths)
+    
+    return paths
+
+# Test
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+
+print(f"One path A to F: {dfs_find_path(graph, 'A', 'F')}")
+print(f"\nAll paths A to F:")
+for path in dfs_all_paths(graph, 'A', 'F'):
+    print(f"  {path}")</textarea>
+                <div class="code-figure-output" id="outputcode12"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.12:</strong> DFS can find one path or all paths between two vertices.
+                </div>
+            </div>
+            
+            <div class="important">
+                <strong>BFS vs DFS:</strong><br>
+                • <strong>BFS:</strong> Finds shortest path, level-order, uses queue, O(V) space<br>
+                • <strong>DFS:</strong> Goes deep first, uses stack/recursion, better for cycles, O(V) space
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 6: CONNECTED COMPONENTS -->
+        <!-- ============================================== -->
+        <section id="connected">
+            <h2>6. Connected Components</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.13 — Finding Connected Components</span>
+                    <button class="code-figure-run" onclick="runCode('code13')">▶ Run</button>
+                </div>
+                <textarea id="code13" spellcheck="false">def find_connected_components(graph):
+    """
+    Find all connected components in undirected graph.
+    Returns list of components (each a set of vertices).
+    """
+    visited = set()
+    components = []
+    
+    def dfs(vertex, component):
+        visited.add(vertex)
+        component.add(vertex)
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                dfs(neighbor, component)
+    
+    for vertex in graph:
+        if vertex not in visited:
+            component = set()
+            dfs(vertex, component)
+            components.append(component)
+    
+    return components
+
+# Test with disconnected graph
+graph = {
+    'A': ['B'],
+    'B': ['A', 'C'],
+    'C': ['B'],
+    'D': ['E'],
+    'E': ['D'],
+    'F': []  # Isolated vertex
+}
+
+components = find_connected_components(graph)
+print(f"Number of components: {len(components)}")
+for i, comp in enumerate(components):
+    print(f"  Component {i + 1}: {comp}")</textarea>
+                <div class="code-figure-output" id="outputcode13"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.13:</strong> DFS from each unvisited vertex discovers a new connected component.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.14 — Union-Find for Components</span>
+                    <button class="code-figure-run" onclick="runCode('code14')">▶ Run</button>
+                </div>
+                <textarea id="code14" spellcheck="false">class UnionFind:
+    """
+    Union-Find (Disjoint Set Union) data structure.
+    Efficient for dynamic connectivity queries.
+    """
+    
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+        self.count = n  # Number of components
+    
+    def find(self, x):
+        """Find root with path compression."""
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+    
+    def union(self, x, y):
+        """Union by rank."""
+        px, py = self.find(x), self.find(y)
+        if px == py:
+            return False  # Already connected
+        
+        if self.rank[px] < self.rank[py]:
+            px, py = py, px
+        self.parent[py] = px
+        if self.rank[px] == self.rank[py]:
+            self.rank[px] += 1
+        
+        self.count -= 1
+        return True
+    
+    def connected(self, x, y):
+        return self.find(x) == self.find(y)
+
+# Test
+edges = [(0, 1), (1, 2), (3, 4)]
+uf = UnionFind(5)
+
+print("Processing edges:")
+for u, v in edges:
+    uf.union(u, v)
+    print(f"  Union({u}, {v}): {uf.count} components")
+
+print(f"\n0 connected to 2: {uf.connected(0, 2)}")
+print(f"0 connected to 3: {uf.connected(0, 3)}")</textarea>
+                <div class="code-figure-output" id="outputcode14"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.14:</strong> Union-Find provides near O(1) operations for connectivity queries.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 7: CYCLE DETECTION -->
+        <!-- ============================================== -->
+        <section id="cycle">
+            <h2>7. Cycle Detection</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.15 — Cycle Detection in Undirected Graph</span>
+                    <button class="code-figure-run" onclick="runCode('code15')">▶ Run</button>
+                </div>
+                <textarea id="code15" spellcheck="false">def has_cycle_undirected(graph):
+    """
+    Detect cycle in undirected graph using DFS.
+    A cycle exists if we visit a vertex that's already visited
+    and it's not the parent we came from.
+    """
+    visited = set()
+    
+    def dfs(vertex, parent):
+        visited.add(vertex)
+        
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                if dfs(neighbor, vertex):
+                    return True
+            elif neighbor != parent:
+                return True  # Found cycle
+        
+        return False
+    
+    # Check all components
+    for vertex in graph:
+        if vertex not in visited:
+            if dfs(vertex, None):
+                return True
+    
+    return False
+
+# Test
+graph_with_cycle = {
+    'A': ['B', 'C'],
+    'B': ['A', 'C'],  # Cycle: A-B-C-A
+    'C': ['A', 'B']
+}
+
+graph_no_cycle = {
+    'A': ['B', 'C'],
+    'B': ['A'],
+    'C': ['A']
+}
+
+print(f"Graph with cycle: {has_cycle_undirected(graph_with_cycle)}")
+print(f"Graph without cycle: {has_cycle_undirected(graph_no_cycle)}")</textarea>
+                <div class="code-figure-output" id="outputcode15"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.15:</strong> In undirected graphs, track parent to distinguish back edges from the edge we came from.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.16 — Cycle Detection in Directed Graph</span>
+                    <button class="code-figure-run" onclick="runCode('code16')">▶ Run</button>
+                </div>
+                <textarea id="code16" spellcheck="false">def has_cycle_directed(graph):
+    """
+    Detect cycle in directed graph using DFS coloring.
+    White (0): unvisited
+    Gray (1): in current path (recursion stack)
+    Black (2): completely processed
+    """
+    WHITE, GRAY, BLACK = 0, 1, 2
+    color = {v: WHITE for v in graph}
+    
+    def dfs(vertex):
+        color[vertex] = GRAY
+        
+        for neighbor in graph[vertex]:
+            if color[neighbor] == GRAY:
+                return True  # Back edge = cycle
+            if color[neighbor] == WHITE:
+                if dfs(neighbor):
+                    return True
+        
+        color[vertex] = BLACK
+        return False
+    
+    for vertex in graph:
+        if color[vertex] == WHITE:
+            if dfs(vertex):
+                return True
+    
+    return False
+
+# Test
+directed_with_cycle = {
+    'A': ['B'],
+    'B': ['C'],
+    'C': ['A']  # Cycle: A -> B -> C -> A
+}
+
+directed_no_cycle = {
+    'A': ['B', 'C'],
+    'B': ['C'],
+    'C': []
+}
+
+print(f"Directed with cycle: {has_cycle_directed(directed_with_cycle)}")
+print(f"Directed without cycle (DAG): {has_cycle_directed(directed_no_cycle)}")</textarea>
+                <div class="code-figure-output" id="outputcode16"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.16:</strong> In directed graphs, a cycle exists if we find a back edge to a gray (in-progress) vertex.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 8: TOPOLOGICAL SORT -->
+        <!-- ============================================== -->
+        <section id="topological">
+            <h2>8. Topological Sort</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">topological sort</span> of a DAG (Directed Acyclic Graph) is a linear ordering of vertices such that for every directed edge u→v, vertex u comes before v in the ordering. Used for task scheduling, build systems, course prerequisites.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.17 — Topological Sort (DFS)</span>
+                    <button class="code-figure-run" onclick="runCode('code17')">▶ Run</button>
+                </div>
+                <textarea id="code17" spellcheck="false">def topological_sort_dfs(graph):
+    """
+    Topological sort using DFS.
+    Add vertex to result after all descendants processed.
+    """
+    visited = set()
+    result = []
+    
+    def dfs(vertex):
+        visited.add(vertex)
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                dfs(neighbor)
+        result.append(vertex)  # Add after processing descendants
+    
+    for vertex in graph:
+        if vertex not in visited:
+            dfs(vertex)
+    
+    return result[::-1]  # Reverse for topological order
+
+# Course prerequisites
+courses = {
+    'Calculus I': [],
+    'Calculus II': ['Calculus I'],
+    'Linear Algebra': ['Calculus I'],
+    'Differential Equations': ['Calculus II', 'Linear Algebra'],
+    'Statistics': ['Calculus I'],
+}
+
+# Convert to adjacency list (prerequisite -> course)
+graph = {course: [] for course in courses}
+for course, prereqs in courses.items():
+    for prereq in prereqs:
+        graph[prereq].append(course)
+
+order = topological_sort_dfs(graph)
+print("Course order (take courses in this sequence):")
+for i, course in enumerate(order, 1):
+    print(f"  {i}. {course}")</textarea>
+                <div class="code-figure-output" id="outputcode17"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.17:</strong> DFS-based topological sort adds vertices to result in post-order, then reverses.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.18 — Topological Sort (Kahn's Algorithm)</span>
+                    <button class="code-figure-run" onclick="runCode('code18')">▶ Run</button>
+                </div>
+                <textarea id="code18" spellcheck="false">from collections import deque
+
+def topological_sort_kahn(graph):
+    """
+    Kahn's algorithm: BFS-based topological sort.
+    Start with vertices having no incoming edges.
+    """
+    # Calculate in-degrees
+    in_degree = {v: 0 for v in graph}
+    for v in graph:
+        for neighbor in graph[v]:
+            in_degree[neighbor] += 1
+    
+    # Start with zero in-degree vertices
+    queue = deque([v for v in graph if in_degree[v] == 0])
+    result = []
+    
+    while queue:
+        vertex = queue.popleft()
+        result.append(vertex)
+        
+        for neighbor in graph[vertex]:
+            in_degree[neighbor] -= 1
+            if in_degree[neighbor] == 0:
+                queue.append(neighbor)
+    
+    # Check for cycle
+    if len(result) != len(graph):
+        return None  # Cycle detected
+    
+    return result
+
+# Build order example
+tasks = {
+    'design': ['code'],
+    'code': ['test', 'docs'],
+    'test': ['deploy'],
+    'docs': ['deploy'],
+    'deploy': []
+}
+
+order = topological_sort_kahn(tasks)
+print("Build order:")
+for i, task in enumerate(order, 1):
+    print(f"  {i}. {task}")</textarea>
+                <div class="code-figure-output" id="outputcode18"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.18:</strong> Kahn's algorithm processes vertices with zero in-degree, detecting cycles if not all vertices are processed.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 9: GRAPH APPLICATIONS -->
+        <!-- ============================================== -->
+        <section id="applications">
+            <h2>9. Graph Applications</h2>
+            
+            <h3>Application 1: Bipartite Check</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.19 — Bipartite Graph Check</span>
+                    <button class="code-figure-run" onclick="runCode('code19')">▶ Run</button>
+                </div>
+                <textarea id="code19" spellcheck="false">from collections import deque
+
+def is_bipartite(graph):
+    """
+    Check if graph is bipartite (2-colorable).
+    A graph is bipartite if vertices can be divided into two sets
+    such that no edge connects vertices in the same set.
+    """
+    color = {}
+    
+    for start in graph:
+        if start in color:
+            continue
+        
+        queue = deque([start])
+        color[start] = 0
+        
+        while queue:
+            vertex = queue.popleft()
+            for neighbor in graph[vertex]:
+                if neighbor not in color:
+                    color[neighbor] = 1 - color[vertex]
+                    queue.append(neighbor)
+                elif color[neighbor] == color[vertex]:
+                    return False  # Same color = not bipartite
+    
+    return True
+
+# Test
+bipartite_graph = {
+    1: [2, 4],
+    2: [1, 3],
+    3: [2, 4],
+    4: [1, 3]
+}  # Square: can be 2-colored
+
+not_bipartite = {
+    1: [2, 3],
+    2: [1, 3],
+    3: [1, 2]
+}  # Triangle: cannot be 2-colored
+
+print(f"Square graph is bipartite: {is_bipartite(bipartite_graph)}")
+print(f"Triangle graph is bipartite: {is_bipartite(not_bipartite)}")</textarea>
+                <div class="code-figure-output" id="outputcode19"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.19:</strong> Bipartite check uses BFS coloring. If neighbors have same color, not bipartite.
+                </div>
+            </div>
+            
+            <h3>Application 2: Clone Graph</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.20 — Deep Copy of Graph</span>
+                    <button class="code-figure-run" onclick="runCode('code20')">▶ Run</button>
+                </div>
+                <textarea id="code20" spellcheck="false">class Node:
+    def __init__(self, val, neighbors=None):
+        self.val = val
+        self.neighbors = neighbors if neighbors else []
+    
+    def __repr__(self):
+        return f"Node({self.val})"
+
+def clone_graph(node):
+    """
+    Deep copy a graph using DFS and hash map.
+    Map original nodes to clones to handle cycles.
+    """
+    if not node:
+        return None
+    
+    cloned = {}  # original -> clone
+    
+    def dfs(orig):
+        if orig in cloned:
+            return cloned[orig]
+        
+        copy = Node(orig.val)
+        cloned[orig] = copy
+        
+        for neighbor in orig.neighbors:
+            copy.neighbors.append(dfs(neighbor))
+        
+        return copy
+    
+    return dfs(node)
+
+# Create a small graph: 1 -- 2
+#                       |    |
+#                       4 -- 3
+n1, n2, n3, n4 = Node(1), Node(2), Node(3), Node(4)
+n1.neighbors = [n2, n4]
+n2.neighbors = [n1, n3]
+n3.neighbors = [n2, n4]
+n4.neighbors = [n1, n3]
+
+clone = clone_graph(n1)
+print(f"Original node 1: {n1}, neighbors: {n1.neighbors}")
+print(f"Cloned node 1: {clone}, neighbors: {clone.neighbors}")
+print(f"Same object? {n1 is clone}")
+print(f"Same values? {n1.val == clone.val}")</textarea>
+                <div class="code-figure-output" id="outputcode20"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.20:</strong> Graph cloning uses a hash map to track cloned nodes and handle cycles.
+                </div>
+            </div>
+            
+            <h3>Application 3: Word Ladder</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.21 — Word Ladder (BFS)</span>
+                    <button class="code-figure-run" onclick="runCode('code21')">▶ Run</button>
+                </div>
+                <textarea id="code21" spellcheck="false">from collections import deque
+
+def word_ladder(begin_word, end_word, word_list):
+    """
+    Find shortest transformation sequence from begin to end.
+    Each step changes one letter, intermediate words must be in list.
+    """
+    word_set = set(word_list)
+    if end_word not in word_set:
+        return 0
+    
+    queue = deque([(begin_word, 1)])
+    visited = {begin_word}
+    
+    while queue:
+        word, length = queue.popleft()
+        
+        if word == end_word:
+            return length
+        
+        # Try changing each character
+        for i in range(len(word)):
+            for c in 'abcdefghijklmnopqrstuvwxyz':
+                new_word = word[:i] + c + word[i+1:]
+                
+                if new_word in word_set and new_word not in visited:
+                    visited.add(new_word)
+                    queue.append((new_word, length + 1))
+    
+    return 0  # No transformation found
+
+# Test
+begin = "hit"
+end = "cog"
+words = ["hot", "dot", "dog", "lot", "log", "cog"]
+
+result = word_ladder(begin, end, words)
+print(f"Transform '{begin}' to '{end}'")
+print(f"Word list: {words}")
+print(f"Shortest path length: {result}")
+print("Path: hit -> hot -> dot -> dog -> cog")</textarea>
+                <div class="code-figure-output" id="outputcode21"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.21:</strong> Word ladder is BFS on implicit graph where edges connect words differing by one letter.
+                </div>
+            </div>
+            
+            <h3>Application 4: Number of Islands</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.22 — Number of Islands (Grid DFS)</span>
+                    <button class="code-figure-run" onclick="runCode('code22')">▶ Run</button>
+                </div>
+                <textarea id="code22" spellcheck="false">def num_islands(grid):
+    """
+    Count islands (connected components of 1s) in a grid.
+    Grid is a 2D graph where adjacent cells are neighbors.
+    """
+    if not grid:
+        return 0
+    
+    rows, cols = len(grid), len(grid[0])
+    count = 0
+    
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols:
+            return
+        if grid[r][c] != '1':
+            return
+        
+        grid[r][c] = '#'  # Mark visited
+        
+        # Explore 4 directions
+        dfs(r + 1, c)
+        dfs(r - 1, c)
+        dfs(r, c + 1)
+        dfs(r, c - 1)
+    
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == '1':
+                count += 1
+                dfs(r, c)
+    
+    return count
+
+# Test
+grid = [
+    ['1', '1', '0', '0', '0'],
+    ['1', '1', '0', '0', '0'],
+    ['0', '0', '1', '0', '0'],
+    ['0', '0', '0', '1', '1']
+]
+
+print("Grid:")
+for row in grid:
+    print('  ' + ' '.join(row))
+
+# Make a copy for display
+grid_copy = [row[:] for row in grid]
+result = num_islands([row[:] for row in grid])
+print(f"\nNumber of islands: {result}")</textarea>
+                <div class="code-figure-output" id="outputcode22"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.22:</strong> Grid problems are graph problems! Each cell is a vertex, adjacent cells are edges.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 10: COMMON PATTERNS -->
+        <!-- ============================================== -->
+        <section id="patterns">
+            <h2>10. Common Patterns</h2>
+            
+            <h3>Pattern 1: Multi-Source BFS</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.23 — Rotting Oranges</span>
+                    <button class="code-figure-run" onclick="runCode('code23')">▶ Run</button>
+                </div>
+                <textarea id="code23" spellcheck="false">from collections import deque
+
+def oranges_rotting(grid):
+    """
+    Multi-source BFS: start from all rotten oranges simultaneously.
+    Return minutes until all oranges rot, or -1 if impossible.
+    """
+    rows, cols = len(grid), len(grid[0])
+    queue = deque()
+    fresh = 0
+    
+    # Find all rotten oranges and count fresh
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == 2:
+                queue.append((r, c, 0))  # (row, col, time)
+            elif grid[r][c] == 1:
+                fresh += 1
+    
+    if fresh == 0:
+        return 0
+    
+    directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+    max_time = 0
+    
+    while queue:
+        r, c, time = queue.popleft()
+        
+        for dr, dc in directions:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1:
+                grid[nr][nc] = 2
+                fresh -= 1
+                max_time = time + 1
+                queue.append((nr, nc, time + 1))
+    
+    return max_time if fresh == 0 else -1
+
+# Test
+grid = [
+    [2, 1, 1],
+    [1, 1, 0],
+    [0, 1, 1]
+]
+print(f"Minutes to rot all oranges: {oranges_rotting(grid)}")</textarea>
+                <div class="code-figure-output" id="outputcode23"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.23:</strong> Multi-source BFS starts from multiple sources simultaneously, useful for "spreading" problems.
+                </div>
+            </div>
+            
+            <h3>Pattern 2: Graph from Matrix</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.24 — Surrounded Regions</span>
+                    <button class="code-figure-run" onclick="runCode('code24')">▶ Run</button>
+                </div>
+                <textarea id="code24" spellcheck="false">def solve(board):
+    """
+    Capture surrounded regions: flip 'O' to 'X' if surrounded.
+    Key insight: 'O's connected to border cannot be captured.
+    """
+    if not board:
+        return
+    
+    rows, cols = len(board), len(board[0])
+    
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols:
+            return
+        if board[r][c] != 'O':
+            return
+        
+        board[r][c] = 'S'  # Mark as safe
+        dfs(r + 1, c)
+        dfs(r - 1, c)
+        dfs(r, c + 1)
+        dfs(r, c - 1)
+    
+    # Mark 'O's connected to border as safe
+    for r in range(rows):
+        dfs(r, 0)
+        dfs(r, cols - 1)
+    for c in range(cols):
+        dfs(0, c)
+        dfs(rows - 1, c)
+    
+    # Flip: 'O' -> 'X' (surrounded), 'S' -> 'O' (safe)
+    for r in range(rows):
+        for c in range(cols):
+            if board[r][c] == 'O':
+                board[r][c] = 'X'
+            elif board[r][c] == 'S':
+                board[r][c] = 'O'
+
+# Test
+board = [
+    ['X', 'X', 'X', 'X'],
+    ['X', 'O', 'O', 'X'],
+    ['X', 'X', 'O', 'X'],
+    ['X', 'O', 'X', 'X']
+]
+
+print("Before:")
+for row in board:
+    print('  ' + ' '.join(row))
+
+solve(board)
+print("\nAfter capturing surrounded regions:")
+for row in board:
+    print('  ' + ' '.join(row))</textarea>
+                <div class="code-figure-output" id="outputcode24"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.24:</strong> Sometimes it's easier to find what NOT to capture (border-connected) than what to capture.
+                </div>
+            </div>
+            
+            <h3>Pattern 3: Shortest Path in Weighted Graph</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.25 — Dijkstra's Algorithm</span>
+                    <button class="code-figure-run" onclick="runCode('code25')">▶ Run</button>
+                </div>
+                <textarea id="code25" spellcheck="false">import heapq
+
+def dijkstra(graph, start):
+    """
+    Find shortest paths from start to all vertices.
+    Time: O((V + E) log V) with heap.
+    """
+    distances = {v: float('inf') for v in graph}
+    distances[start] = 0
+    pq = [(0, start)]  # (distance, vertex)
+    
+    while pq:
+        dist, vertex = heapq.heappop(pq)
+        
+        if dist > distances[vertex]:
+            continue
+        
+        for neighbor, weight in graph[vertex]:
+            new_dist = dist + weight
+            if new_dist < distances[neighbor]:
+                distances[neighbor] = new_dist
+                heapq.heappush(pq, (new_dist, neighbor))
+    
+    return distances
+
+# Test
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('C', 1), ('D', 5)],
+    'C': [('A', 2), ('B', 1), ('D', 8)],
+    'D': [('B', 5), ('C', 8)]
+}
+
+distances = dijkstra(graph, 'A')
+print("Shortest distances from A:")
+for vertex, dist in sorted(distances.items()):
+    print(f"  A -> {vertex}: {dist}")</textarea>
+                <div class="code-figure-output" id="outputcode25"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.25:</strong> Dijkstra's algorithm uses a priority queue to always process the nearest unvisited vertex.
+                </div>
+            </div>
+            
+            <h3>Pattern 4: Course Schedule</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.26 — Course Schedule (Cycle Detection)</span>
+                    <button class="code-figure-run" onclick="runCode('code26')">▶ Run</button>
+                </div>
+                <textarea id="code26" spellcheck="false">from collections import defaultdict, deque
+
+def can_finish(num_courses, prerequisites):
+    """
+    Check if all courses can be finished (no circular dependencies).
+    Uses Kahn's algorithm for cycle detection.
+    """
+    graph = defaultdict(list)
+    in_degree = [0] * num_courses
+    
+    for course, prereq in prerequisites:
+        graph[prereq].append(course)
+        in_degree[course] += 1
+    
+    queue = deque([i for i in range(num_courses) if in_degree[i] == 0])
+    completed = 0
+    
+    while queue:
+        course = queue.popleft()
+        completed += 1
+        
+        for next_course in graph[course]:
+            in_degree[next_course] -= 1
+            if in_degree[next_course] == 0:
+                queue.append(next_course)
+    
+    return completed == num_courses
+
+# Test
+print("Can finish 2 courses with [[1,0]]:", can_finish(2, [[1, 0]]))
+print("Can finish 2 courses with [[1,0],[0,1]]:", can_finish(2, [[1, 0], [0, 1]]))</textarea>
+                <div class="code-figure-output" id="outputcode26"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.26:</strong> Course schedule is essentially cycle detection in a directed graph of prerequisites.
+                </div>
+            </div>
+            
+            <h3>Pattern 5: Shortest Path with Constraints</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.27 — Shortest Path with K Stops</span>
+                    <button class="code-figure-run" onclick="runCode('code27')">▶ Run</button>
+                </div>
+                <textarea id="code27" spellcheck="false">from collections import defaultdict
+import heapq
+
+def find_cheapest_price(n, flights, src, dst, k):
+    """
+    Find cheapest flight from src to dst with at most k stops.
+    Modified Dijkstra tracking (cost, stops, node).
+    """
+    graph = defaultdict(list)
+    for u, v, price in flights:
+        graph[u].append((v, price))
+    
+    # (cost, stops, node)
+    pq = [(0, 0, src)]
+    # Best cost to reach node with given stops
+    best = {}
+    
+    while pq:
+        cost, stops, node = heapq.heappop(pq)
+        
+        if node == dst:
+            return cost
+        
+        if stops > k:
+            continue
+        
+        # Skip if we've seen better path with fewer/equal stops
+        if (node, stops) in best and best[(node, stops)] <= cost:
+            continue
+        best[(node, stops)] = cost
+        
+        for neighbor, price in graph[node]:
+            heapq.heappush(pq, (cost + price, stops + 1, neighbor))
+    
+    return -1
+
+# Test
+flights = [[0,1,100],[1,2,100],[0,2,500]]
+print(f"Cheapest 0->2 with 1 stop: {find_cheapest_price(3, flights, 0, 2, 1)}")
+print(f"Cheapest 0->2 with 0 stops: {find_cheapest_price(3, flights, 0, 2, 0)}")</textarea>
+                <div class="code-figure-output" id="outputcode27"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.27:</strong> Modified Dijkstra tracks additional state (stops) to handle constraints.
+                </div>
+            </div>
+            
+            <h3>Pattern 6: Graph Coloring</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.28 — Possible Bipartition</span>
+                    <button class="code-figure-run" onclick="runCode('code28')">▶ Run</button>
+                </div>
+                <textarea id="code28" spellcheck="false">from collections import defaultdict, deque
+
+def possible_bipartition(n, dislikes):
+    """
+    Can we split n people into two groups where no two
+    people in the same group dislike each other?
+    This is bipartite checking!
+    """
+    graph = defaultdict(list)
+    for a, b in dislikes:
+        graph[a].append(b)
+        graph[b].append(a)
+    
+    color = {}
+    
+    for person in range(1, n + 1):
+        if person in color:
+            continue
+        
+        queue = deque([person])
+        color[person] = 0
+        
+        while queue:
+            curr = queue.popleft()
+            for enemy in graph[curr]:
+                if enemy not in color:
+                    color[enemy] = 1 - color[curr]
+                    queue.append(enemy)
+                elif color[enemy] == color[curr]:
+                    return False
+    
+    return True
+
+# Test
+print(f"4 people, dislikes [[1,2],[1,3],[2,4]]: {possible_bipartition(4, [[1,2],[1,3],[2,4]])}")
+print(f"3 people, dislikes [[1,2],[1,3],[2,3]]: {possible_bipartition(3, [[1,2],[1,3],[2,3]])}")</textarea>
+                <div class="code-figure-output" id="outputcode28"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.28:</strong> Many grouping problems reduce to bipartite checking (2-coloring).
+                </div>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-title">Key Takeaways</div>
+                <ul>
+                    <li><strong>Graph</strong> = vertices + edges; can be directed/undirected, weighted/unweighted</li>
+                    <li><strong>Adjacency list:</strong> O(V + E) space, best for sparse graphs</li>
+                    <li><strong>BFS:</strong> Level-order, shortest path (unweighted), uses queue</li>
+                    <li><strong>DFS:</strong> Goes deep first, cycle detection, uses stack/recursion</li>
+                    <li><strong>Topological sort:</strong> Order tasks with dependencies (DAG only)</li>
+                    <li><strong>Grid problems</strong> are graph problems with implicit edges</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 11: PITFALLS -->
+        <!-- ============================================== -->
+        <section id="pitfalls">
+            <h2>11. Common Pitfalls</h2>
+            
+            <h3>Pitfall 1: Forgetting to Mark Visited</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.29 — Visited Set Timing</span>
+                    <button class="code-figure-run" onclick="runCode('code29')">▶ Run</button>
+                </div>
+                <textarea id="code29" spellcheck="false">from collections import deque
+
+# WRONG: Mark visited when processing
+def bfs_wrong(graph, start):
+    visited = set()
+    queue = deque([start])
+    result = []
+    
+    while queue:
+        vertex = queue.popleft()
+        if vertex in visited:  # Check here
+            continue
+        visited.add(vertex)  # Mark here
+        result.append(vertex)
+        
+        for neighbor in graph[vertex]:
+            queue.append(neighbor)  # May add duplicates!
+    
+    return result
+
+# RIGHT: Mark visited when adding to queue
+def bfs_right(graph, start):
+    visited = {start}  # Mark immediately
+    queue = deque([start])
+    result = []
+    
+    while queue:
+        vertex = queue.popleft()
+        result.append(vertex)
+        
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                visited.add(neighbor)  # Mark before adding
+                queue.append(neighbor)
+    
+    return result
+
+graph = {'A': ['B', 'C'], 'B': ['A', 'C'], 'C': ['A', 'B']}
+print(f"Wrong approach processes more: queue operations")
+print(f"Right approach: O(V + E) operations")</textarea>
+                <div class="code-figure-output" id="outputcode29"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.29:</strong> Mark visited when adding to queue, not when processing, to avoid duplicate work.
+                </div>
+            </div>
+            
+            <h3>Pitfall 2: Wrong Cycle Detection in Undirected</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.30 — Parent Tracking</span>
+                    <button class="code-figure-run" onclick="runCode('code30')">▶ Run</button>
+                </div>
+                <textarea id="code30" spellcheck="false"># WRONG: Simple visited check (always finds "cycle")
+def has_cycle_wrong(graph, start, visited=None):
+    if visited is None:
+        visited = set()
+    
+    visited.add(start)
+    for neighbor in graph[start]:
+        if neighbor in visited:
+            return True  # Always true for undirected!
+        if has_cycle_wrong(graph, neighbor, visited):
+            return True
+    return False
+
+# RIGHT: Track parent to ignore edge we came from
+def has_cycle_right(graph, start, visited=None, parent=None):
+    if visited is None:
+        visited = set()
+    
+    visited.add(start)
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            if has_cycle_right(graph, neighbor, visited, start):
+                return True
+        elif neighbor != parent:  # Found visited that's not parent
+            return True
+    return False
+
+# Test on simple path (no cycle)
+path = {'A': ['B'], 'B': ['A', 'C'], 'C': ['B']}
+print(f"Path A-B-C has cycle (wrong): {has_cycle_wrong(path, 'A')}")
+print(f"Path A-B-C has cycle (right): {has_cycle_right(path, 'A')}")</textarea>
+                <div class="code-figure-output" id="outputcode30"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.30:</strong> In undirected graphs, the edge we came from doesn't count as a cycle.
+                </div>
+            </div>
+            
+            <h3>Pitfall 3: Modifying Graph During Traversal</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.31 — Safe Grid Modification</span>
+                    <button class="code-figure-run" onclick="runCode('code31')">▶ Run</button>
+                </div>
+                <textarea id="code31" spellcheck="false"># Grid DFS with in-place marking (common pattern)
+def flood_fill(grid, r, c, new_color):
+    """Safe: mark before recursing."""
+    rows, cols = len(grid), len(grid[0])
+    old_color = grid[r][c]
+    
+    if old_color == new_color:
+        return grid
+    
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols:
+            return
+        if grid[r][c] != old_color:
+            return
+        
+        grid[r][c] = new_color  # Mark BEFORE recursing
+        dfs(r + 1, c)
+        dfs(r - 1, c)
+        dfs(r, c + 1)
+        dfs(r, c - 1)
+    
+    dfs(r, c)
+    return grid
+
+# Test
+grid = [
+    [1, 1, 1],
+    [1, 1, 0],
+    [1, 0, 1]
+]
+result = flood_fill(grid, 1, 1, 2)
+print("Flood fill result:")
+for row in result:
+    print(f"  {row}")</textarea>
+                <div class="code-figure-output" id="outputcode31"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.31:</strong> In grid DFS, modify the cell before recursing to prevent infinite loops.
+                </div>
+            </div>
+            
+            <h3>Pitfall 4: BFS on Weighted Graphs</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.32 — BFS vs Dijkstra</span>
+                    <button class="code-figure-run" onclick="runCode('code32')">▶ Run</button>
+                </div>
+                <textarea id="code32" spellcheck="false">from collections import deque
+import heapq
+
+# WRONG: BFS for weighted graph
+def bfs_shortest_weighted(graph, start, end):
+    """BFS doesn't work for weighted graphs!"""
+    visited = {start}
+    queue = deque([(start, 0)])
+    
+    while queue:
+        vertex, dist = queue.popleft()
+        if vertex == end:
+            return dist
+        for neighbor, weight in graph[vertex]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append((neighbor, dist + weight))
+    return -1
+
+# RIGHT: Dijkstra for weighted graph
+def dijkstra_shortest(graph, start, end):
+    distances = {v: float('inf') for v in graph}
+    distances[start] = 0
+    pq = [(0, start)]
+    
+    while pq:
+        dist, vertex = heapq.heappop(pq)
+        if vertex == end:
+            return dist
+        if dist > distances[vertex]:
+            continue
+        for neighbor, weight in graph[vertex]:
+            new_dist = dist + weight
+            if new_dist < distances[neighbor]:
+                distances[neighbor] = new_dist
+                heapq.heappush(pq, (new_dist, neighbor))
+    return -1
+
+# Example where BFS fails
+graph = {
+    'A': [('B', 1), ('C', 5)],
+    'B': [('C', 1)],
+    'C': []
+}
+# Shortest A->C is A->B->C = 2, not A->C = 5
+
+print(f"BFS result A->C: {bfs_shortest_weighted(graph, 'A', 'C')}")  # May give 5
+print(f"Dijkstra result A->C: {dijkstra_shortest(graph, 'A', 'C')}")  # Gives 2</textarea>
+                <div class="code-figure-output" id="outputcode32"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.32:</strong> BFS only finds shortest path in unweighted graphs. Use Dijkstra for weighted graphs.
+                </div>
+            </div>
+            
+            <h3>Pitfall 5: Disconnected Graphs</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 9.33 — Handling Disconnected Graphs</span>
+                    <button class="code-figure-run" onclick="runCode('code33')">▶ Run</button>
+                </div>
+                <textarea id="code33" spellcheck="false"># WRONG: Only traverses from one start vertex
+def visit_all_wrong(graph, start):
+    visited = set()
+    def dfs(v):
+        visited.add(v)
+        for neighbor in graph[v]:
+            if neighbor not in visited:
+                dfs(neighbor)
+    dfs(start)
+    return visited
+
+# RIGHT: Start DFS from each unvisited vertex
+def visit_all_right(graph):
+    visited = set()
+    def dfs(v):
+        visited.add(v)
+        for neighbor in graph[v]:
+            if neighbor not in visited:
+                dfs(neighbor)
+    
+    for vertex in graph:
+        if vertex not in visited:
+            dfs(vertex)
+    
+    return visited
+
+# Test with disconnected graph
+disconnected = {
+    'A': ['B'],
+    'B': ['A'],
+    'C': ['D'],  # Separate component
+    'D': ['C']
+}
+
+print(f"Starting from A only: {visit_all_wrong(disconnected, 'A')}")
+print(f"Visiting all components: {visit_all_right(disconnected)}")</textarea>
+                <div class="code-figure-output" id="outputcode33"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 9.33:</strong> Always iterate through all vertices to handle disconnected graphs.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 12: EXERCISES -->
+        <!-- ============================================== -->
+        <section id="exercises">
+            <h2>12. Exercises</h2>
+            
+            <!-- Exercise 1 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 1: Valid Path</div>
+                <p>Given n vertices (0 to n-1) and edges, determine if there's a valid path from source to destination.</p>
+                <p class="answer">(Hint: Use BFS or DFS from source, check if destination is reachable)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 1 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex1')">▶ Run</button>
+                </div>
+                <textarea id="ex1" spellcheck="false"># HINT 1: Build adjacency list from edges
+# HINT 2: BFS or DFS from source
+# HINT 3: Return True if destination visited
+
+def valid_path(n, edges, source, destination):
+    # Your code here
+    pass
+
+# Test your implementation
+# n = 6
+# edges = [[0,1],[0,2],[3,5],[5,4],[4,3]]
+# print(valid_path(n, edges, 0, 5))  # False
+# print(valid_path(n, edges, 0, 2))  # True</textarea>
+                <div class="code-figure-output" id="outputex1"></div>
+            </div>
+            
+            <!-- Exercise 2 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 2: All Paths from Source to Target</div>
+                <p>Given a DAG with n vertices (0 to n-1), find all paths from vertex 0 to vertex n-1.</p>
+                <p class="answer">(Hint: DFS with backtracking, no need for visited set since it's a DAG)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 2 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex2')">▶ Run</button>
+                </div>
+                <textarea id="ex2" spellcheck="false"># HINT 1: DFS from node 0
+# HINT 2: Track current path
+# HINT 3: Add to result when reaching n-1
+
+def all_paths_source_target(graph):
+    # Your code here
+    pass
+
+# Test your implementation
+# graph = [[1,2],[3],[3],[]]  # 0->1,2; 1->3; 2->3; 3->none
+# print(all_paths_source_target(graph))  # [[0,1,3],[0,2,3]]</textarea>
+                <div class="code-figure-output" id="outputex2"></div>
+            </div>
+            
+            <!-- Exercise 3 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 3: Pacific Atlantic Water Flow</div>
+                <p>Given an m×n matrix of heights, find cells where water can flow to both Pacific (top/left) and Atlantic (bottom/right) oceans.</p>
+                <p class="answer">(Hint: BFS/DFS from ocean borders inward, find intersection)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 3 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex3')">▶ Run</button>
+                </div>
+                <textarea id="ex3" spellcheck="false"># HINT 1: DFS from Pacific border (top + left)
+# HINT 2: DFS from Atlantic border (bottom + right)
+# HINT 3: Water flows uphill in reverse, so check height >= current
+# HINT 4: Return cells reachable from BOTH oceans
+
+def pacific_atlantic(heights):
+    # Your code here
+    pass
+
+# Test your implementation
+# heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]
+# print(pacific_atlantic(heights))</textarea>
+                <div class="code-figure-output" id="outputex3"></div>
+            </div>
+            
+            <!-- Exercise 4 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 4: Course Schedule II</div>
+                <p>Return the order to take courses (topological sort), or empty array if impossible.</p>
+                <p class="answer">(Hint: Kahn's algorithm, return order instead of just True/False)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 4 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex4')">▶ Run</button>
+                </div>
+                <textarea id="ex4" spellcheck="false"># HINT 1: Build graph and compute in-degrees
+# HINT 2: Start with courses having no prerequisites
+# HINT 3: Process in BFS order, track order
+# HINT 4: Return [] if not all courses processed (cycle)
+
+def find_order(num_courses, prerequisites):
+    # Your code here
+    pass
+
+# Test your implementation
+# print(find_order(4, [[1,0],[2,0],[3,1],[3,2]]))  # [0,1,2,3] or [0,2,1,3]
+# print(find_order(2, [[1,0],[0,1]]))  # [] (cycle)</textarea>
+                <div class="code-figure-output" id="outputex4"></div>
+            </div>
+            
+            <!-- Exercise 5 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 5: Minimum Knight Moves</div>
+                <p>Find minimum moves for a knight to reach (x, y) from (0, 0) on an infinite chess board.</p>
+                <p class="answer">(Hint: BFS from origin, knight moves in L-shape: ±1,±2 or ±2,±1)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 5 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex5')">▶ Run</button>
+                </div>
+                <textarea id="ex5" spellcheck="false"># HINT 1: BFS from (0, 0)
+# HINT 2: 8 possible knight moves
+# HINT 3: Use abs(x), abs(y) for symmetry optimization
+# HINT 4: Limit search space (target + small margin)
+
+def min_knight_moves(x, y):
+    # Your code here
+    pass
+
+# Test your implementation
+# print(min_knight_moves(2, 1))  # 1
+# print(min_knight_moves(5, 5))  # 4</textarea>
+                <div class="code-figure-output" id="outputex5"></div>
+            </div>
+        </section>
+
+        <!-- SUBMIT SECTION -->
+        <section class="submit-section">
+            <h2>Submit Your Work</h2>
+            <p>After completing the exercises, submit your attendance below.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student ID</label>
+                    <input type="text" id="studentId" placeholder="Enter your student ID">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" placeholder="Enter your full name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email (@istun.edu.tr)</label>
+                    <input type="email" id="studentEmail" placeholder="your.email@istun.edu.tr">
+                </div>
+                <div class="form-group">
+                    <label>Class Code</label>
+                    <input type="text" id="classCode" placeholder="From instructor">
+                </div>
+            </div>
+            <input type="text" id="hp" class="hp" tabindex="-1" autocomplete="off">
+            <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
+            <div class="submit-status" id="submitStatus"></div>
+        </section>
+    </main>
+
+    <script>
+        const pageLoadTime = Date.now();
+        
+        async function runCode(codeId) {
+            const codeEl = document.getElementById(codeId);
+            const outputEl = document.getElementById('output' + codeId);
+            const code = codeEl.value;
+            outputEl.classList.add('show');
+            outputEl.textContent = 'Running...';
+            
+            try {
+                const escaped = code.replace(/\\/g, '\\\\').replace(/"""/g, '\\"\\"\\"');
+                const result = await pyscript.interpreter.runPython(`
+import sys
+from io import StringIO
+_code = """` + escaped + `"""
+_old_stdout = sys.stdout
+sys.stdout = StringIO()
+try:
+    exec(_code)
+    _output = sys.stdout.getvalue()
+except Exception as e:
+    _output = f"Error: {e}"
+finally:
+    sys.stdout = _old_stdout
+_output
+`);
+                outputEl.textContent = result || '(no output)';
+            } catch(e) {
+                outputEl.textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        function submitWork() {
+            const status = document.getElementById('submitStatus');
+            const data = {
+                week: 'Week_09',
+                student_id: document.getElementById('studentId').value.trim(),
+                student_name: document.getElementById('studentName').value.trim(),
+                student_email: document.getElementById('studentEmail').value.trim().toLowerCase(),
+                classCode: document.getElementById('classCode').value.trim().toUpperCase(),
+                timeOnPage: Math.floor((Date.now() - pageLoadTime) / 1000)
+            };
+            
+            if (document.getElementById('hp').value) {
+                status.textContent = 'Submission rejected.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (data.timeOnPage < 60) {
+                status.textContent = 'Please spend more time reviewing the material.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (!data.student_id || !data.student_name || !data.student_email || !data.classCode) {
+                status.textContent = 'All fields are required.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (!data.student_email.endsWith('@istun.edu.tr')) {
+                status.textContent = 'Use your @istun.edu.tr email.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            status.textContent = 'Submitting...';
+            status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
+            
+            fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(res => {
+                status.textContent = res.success ? 'Submitted successfully!' : res.message;
+                status.style.cssText = 'display:block;background:rgba(' + (res.success ? '74,222,128' : '239,68,68') + ',0.2);color:' + (res.success ? '#4ade80' : '#fca5a5');
+            })
+            .catch(() => {
+                fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(() => {
+                    status.textContent = 'Submission sent!';
+                    status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80';
+                });
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 10: Sorting Algorithms | DSA Course</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 19px;
+            background: #faf9f7;
+            color: #2c2c2c; 
+            line-height: 1.8;
+        }
+        
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .topbar .title { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 500; }
+        .topbar a { font-family: system-ui, sans-serif; color: white; text-decoration: none; font-size: 0.85rem; padding: 6px 14px; background: rgba(255,255,255,0.1); border-radius: 5px; }
+        .topbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .book { max-width: 750px; margin: 0 auto; padding: 60px 40px 100px; }
+        
+        .chapter-header { text-align: center; padding: 50px 0 60px; border-bottom: 1px solid #ddd; margin-bottom: 50px; }
+        .chapter-num { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: #7c3aed; margin-bottom: 15px; }
+        .chapter-header h1 { font-size: 2.8rem; font-weight: 600; color: #1a1a2e; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .chapter-header .subtitle { font-style: italic; color: #666; font-size: 1.1rem; }
+        
+        h2 { font-size: 1.6rem; font-weight: 600; color: #1a1a2e; margin: 60px 0 25px; padding-top: 30px; border-top: 1px solid #e5e5e5; }
+        h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+        h3 { font-size: 1.25rem; font-weight: 600; color: #333; margin: 40px 0 15px; }
+        h4 { font-size: 1.05rem; font-weight: 600; color: #555; margin: 30px 0 12px; }
+        
+        p { margin: 0 0 20px; text-align: justify; hyphens: auto; }
+        ul, ol { margin: 20px 0 25px 30px; }
+        li { margin: 10px 0; }
+        
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: #f0eeeb; padding: 2px 6px; border-radius: 3px; color: #7c3aed; }
+        .term { font-weight: 600; color: #1a1a2e; }
+        
+        .definition { background: #f8f7f5; border-left: 4px solid #7c3aed; padding: 20px 25px; margin: 30px 0; }
+        .definition-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 8px; font-weight: 600; }
+        .definition p { margin: 0; }
+        
+        .margin-note { background: #fffbeb; border: 1px solid #fcd34d; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .margin-note::before { content: "💡 "; }
+        
+        .important { background: #fef2f2; border: 1px solid #fca5a5; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .important::before { content: "⚠️ "; }
+        
+        .example { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; padding: 25px; margin: 30px 0; }
+        .example-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 15px; font-weight: 600; }
+        
+        .code-figure { margin: 35px 0; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background: #1e1e2e; }
+        .code-figure-header { background: #28283c; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
+        .code-figure-label { font-family: system-ui, sans-serif; font-size: 0.75rem; color: #a0a0b0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .code-figure-run { font-family: system-ui, sans-serif; background: #7c3aed; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
+        .code-figure-run:hover { background: #6d28d9; }
+        .code-figure textarea { width: 100%; min-height: 100px; padding: 18px; background: #1e1e2e; color: #e0e0e0; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; }
+        .code-figure textarea:focus { outline: none; }
+        .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; }
+        .code-figure-output.show { display: block; }
+        .code-figure-caption { background: #f8f8f8; padding: 12px 18px; font-size: 0.85rem; color: #666; border-top: 1px solid #e0e0e0; }
+        .code-figure-caption strong { color: #333; }
+        
+        .summary { background: linear-gradient(135deg, #7c3aed10, #7c3aed05); border: 1px solid #7c3aed30; border-radius: 8px; padding: 25px 30px; margin: 40px 0; }
+        .summary-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 12px; font-weight: 600; }
+        .summary ul { margin: 0; }
+        
+        .exercise { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 25px 30px; margin: 40px 0 20px; }
+        .exercise-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #16a34a; margin-bottom: 12px; font-weight: 600; }
+        .exercise p { margin: 0; }
+        .exercise .answer { margin-top: 12px; font-size: 0.9rem; color: #166534; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 0.95rem; }
+        th, td { border: 1px solid #ddd; padding: 12px 15px; text-align: left; }
+        th { background: #f5f5f5; font-weight: 600; }
+        
+        .submit-section { background: #1a1a2e; color: white; padding: 40px; border-radius: 10px; margin-top: 60px; }
+        .submit-section h2 { color: white; border: none; margin: 0 0 20px; padding: 0; font-size: 1.4rem; }
+        .submit-section p { color: #a0a0b0; text-align: left; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-family: system-ui, sans-serif; font-size: 0.85rem; color: #a0a0b0; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: white; font-size: 1rem; font-family: system-ui, sans-serif; }
+        .form-group input:focus { outline: none; border-color: #7c3aed; }
+        .submit-btn { background: #7c3aed; color: white; border: none; padding: 14px 30px; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; font-family: system-ui, sans-serif; margin-top: 10px; }
+        .submit-btn:hover { background: #6d28d9; }
+        .submit-status { margin-top: 15px; padding: 12px; border-radius: 5px; display: none; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+        .hp { position: absolute; left: -9999px; }
+        
+        .toc { background: #f8f7f5; padding: 30px 35px; margin: 0 0 50px; border-radius: 6px; }
+        .toc-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 15px; }
+        .toc ol { margin: 0; padding-left: 20px; }
+        .toc li { margin: 8px 0; }
+        .toc a { color: #7c3aed; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        
+        @media (max-width: 600px) {
+            .book { padding: 30px 20px; }
+            .chapter-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.4rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="topbar">
+        <span class="title">Data Structures &amp; Algorithms</span>
+        <a href="index.html">← Course Home</a>
+    </nav>
+    
+    <main class="book">
+        <header class="chapter-header">
+            <div class="chapter-num">Week Ten</div>
+            <h1>Sorting Algorithms</h1>
+            <p class="subtitle">Organizing data efficiently for search and analysis</p>
+        </header>
+        
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <ol>
+                <li><a href="#intro">Introduction to Sorting</a></li>
+                <li><a href="#bubble">Bubble Sort</a></li>
+                <li><a href="#selection">Selection Sort</a></li>
+                <li><a href="#insertion">Insertion Sort</a></li>
+                <li><a href="#merge">Merge Sort</a></li>
+                <li><a href="#quick">Quick Sort</a></li>
+                <li><a href="#heap">Heap Sort</a></li>
+                <li><a href="#counting">Counting &amp; Radix Sort</a></li>
+                <li><a href="#python">Python's Built-in Sorting</a></li>
+                <li><a href="#patterns">Common Patterns</a></li>
+                <li><a href="#pitfalls">Common Pitfalls</a></li>
+                <li><a href="#exercises">Exercises</a></li>
+            </ol>
+        </nav>
+
+        <!-- ============================================== -->
+        <!-- SECTION 1: INTRODUCTION TO SORTING -->
+        <!-- ============================================== -->
+        <section id="intro">
+            <h2>1. Introduction to Sorting</h2>
+            
+            <p>Sorting is one of the most fundamental operations in computer science. It transforms an unordered collection into an ordered one, enabling efficient searching, duplicate detection, and data analysis. The choice of sorting algorithm depends on data size, memory constraints, and whether the data is nearly sorted.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">sorting algorithm</span> rearranges elements of a collection into a specific order (typically ascending or descending). Key properties include: <span class="term">stability</span> (preserves relative order of equal elements), <span class="term">in-place</span> (uses O(1) extra space), and <span class="term">adaptivity</span> (faster on partially sorted input).</p>
+            </div>
+            
+            <h3>Sorting Algorithm Comparison</h3>
+            
+            <table>
+                <tr>
+                    <th>Algorithm</th>
+                    <th>Best</th>
+                    <th>Average</th>
+                    <th>Worst</th>
+                    <th>Space</th>
+                    <th>Stable</th>
+                </tr>
+                <tr>
+                    <td>Bubble Sort</td>
+                    <td>O(n)</td>
+                    <td>O(n²)</td>
+                    <td>O(n²)</td>
+                    <td>O(1)</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>Selection Sort</td>
+                    <td>O(n²)</td>
+                    <td>O(n²)</td>
+                    <td>O(n²)</td>
+                    <td>O(1)</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>Insertion Sort</td>
+                    <td>O(n)</td>
+                    <td>O(n²)</td>
+                    <td>O(n²)</td>
+                    <td>O(1)</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>Merge Sort</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n)</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>Quick Sort</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n²)</td>
+                    <td>O(log n)</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>Heap Sort</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(1)</td>
+                    <td>No</td>
+                </tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.1 — Sorting Performance Comparison</span>
+                    <button class="code-figure-run" onclick="runCode('code1')">▶ Run</button>
+                </div>
+                <textarea id="code1" spellcheck="false">import time
+import random
+
+def measure_sort(sort_func, arr):
+    """Measure sorting time."""
+    arr_copy = arr.copy()
+    start = time.perf_counter()
+    sort_func(arr_copy)
+    return time.perf_counter() - start
+
+# Simple O(n²) sorts for comparison
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j+1] = arr[j]
+            j -= 1
+        arr[j+1] = key
+
+# Test with small array (O(n²) is slow!)
+n = 1000
+arr = [random.randint(0, 10000) for _ in range(n)]
+
+print(f"Sorting {n} elements:")
+print(f"  Bubble sort:    {measure_sort(bubble_sort, arr)*1000:.2f} ms")
+print(f"  Insertion sort: {measure_sort(insertion_sort, arr)*1000:.2f} ms")
+print(f"  Python sorted:  {measure_sort(sorted, arr)*1000:.4f} ms")
+print(f"\nPython's Timsort is ~100x faster!")</textarea>
+                <div class="code-figure-output" id="outputcode1"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.1:</strong> O(n²) algorithms are dramatically slower than O(n log n) for large inputs.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 2: BUBBLE SORT -->
+        <!-- ============================================== -->
+        <section id="bubble">
+            <h2>2. Bubble Sort</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Bubble Sort</span> repeatedly steps through the list, compares adjacent elements, and swaps them if they're in wrong order. The largest element "bubbles up" to its correct position each pass. Simple but inefficient—rarely used in practice.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.2 — Bubble Sort Basic</span>
+                    <button class="code-figure-run" onclick="runCode('code2')">▶ Run</button>
+                </div>
+                <textarea id="code2" spellcheck="false">def bubble_sort(arr):
+    """
+    Bubble Sort - O(n²) time, O(1) space, stable.
+    """
+    n = len(arr)
+    
+    for i in range(n):
+        # Last i elements are already sorted
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    
+    return arr
+
+# Trace execution
+arr = [64, 34, 25, 12, 22, 11, 90]
+print(f"Original: {arr}")
+
+n = len(arr)
+for i in range(n):
+    for j in range(0, n - i - 1):
+        if arr[j] > arr[j + 1]:
+            arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    print(f"Pass {i+1}:   {arr}  (largest {arr[n-i-1]} in place)")</textarea>
+                <div class="code-figure-output" id="outputcode2"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.2:</strong> Each pass moves the largest unsorted element to its final position.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.3 — Optimized Bubble Sort</span>
+                    <button class="code-figure-run" onclick="runCode('code3')">▶ Run</button>
+                </div>
+                <textarea id="code3" spellcheck="false">def bubble_sort_optimized(arr):
+    """
+    Optimized Bubble Sort - stops early if already sorted.
+    Best case O(n) for sorted input.
+    """
+    n = len(arr)
+    
+    for i in range(n):
+        swapped = False
+        
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        
+        # If no swaps, array is sorted
+        if not swapped:
+            print(f"  Early termination at pass {i+1}")
+            break
+    
+    return arr
+
+# Test on nearly sorted array
+nearly_sorted = [1, 2, 3, 5, 4, 6, 7, 8]
+print(f"Nearly sorted: {nearly_sorted}")
+result = bubble_sort_optimized(nearly_sorted.copy())
+print(f"Sorted: {result}")
+
+print("\nAlready sorted array:")
+sorted_arr = [1, 2, 3, 4, 5]
+bubble_sort_optimized(sorted_arr.copy())</textarea>
+                <div class="code-figure-output" id="outputcode3"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.3:</strong> Early termination optimization makes bubble sort O(n) for already-sorted input.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 3: SELECTION SORT -->
+        <!-- ============================================== -->
+        <section id="selection">
+            <h2>3. Selection Sort</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Selection Sort</span> divides the array into sorted and unsorted portions. It repeatedly finds the minimum element from the unsorted portion and moves it to the end of the sorted portion. Makes minimum number of swaps (n-1).</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.4 — Selection Sort</span>
+                    <button class="code-figure-run" onclick="runCode('code4')">▶ Run</button>
+                </div>
+                <textarea id="code4" spellcheck="false">def selection_sort(arr):
+    """
+    Selection Sort - O(n²) time, O(1) space, NOT stable.
+    """
+    n = len(arr)
+    
+    for i in range(n):
+        # Find minimum in unsorted portion
+        min_idx = i
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        
+        # Swap minimum with first unsorted element
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    
+    return arr
+
+# Trace execution
+arr = [64, 25, 12, 22, 11]
+print(f"Original: {arr}")
+
+n = len(arr)
+for i in range(n):
+    min_idx = i
+    for j in range(i + 1, n):
+        if arr[j] < arr[min_idx]:
+            min_idx = j
+    arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    print(f"Pass {i+1}: {arr}  (min {arr[i]} placed at index {i})")</textarea>
+                <div class="code-figure-output" id="outputcode4"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.4:</strong> Selection sort makes exactly n-1 swaps regardless of input order.
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                Selection sort is useful when swap operations are expensive (e.g., large objects). It minimizes data movement but still requires O(n²) comparisons.
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 4: INSERTION SORT -->
+        <!-- ============================================== -->
+        <section id="insertion">
+            <h2>4. Insertion Sort</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Insertion Sort</span> builds the sorted array one element at a time by inserting each element into its correct position among the previously sorted elements. Like sorting cards in your hand—efficient for small or nearly sorted data.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.5 — Insertion Sort</span>
+                    <button class="code-figure-run" onclick="runCode('code5')">▶ Run</button>
+                </div>
+                <textarea id="code5" spellcheck="false">def insertion_sort(arr):
+    """
+    Insertion Sort - O(n²) average, O(n) best, O(1) space, stable.
+    """
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        
+        # Shift elements greater than key
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        
+        # Insert key at correct position
+        arr[j + 1] = key
+    
+    return arr
+
+# Trace execution
+arr = [12, 11, 13, 5, 6]
+print(f"Original: {arr}")
+
+for i in range(1, len(arr)):
+    key = arr[i]
+    j = i - 1
+    while j >= 0 and arr[j] > key:
+        arr[j + 1] = arr[j]
+        j -= 1
+    arr[j + 1] = key
+    print(f"Insert {key}: {arr}  (sorted: {arr[:i+1]})")</textarea>
+                <div class="code-figure-output" id="outputcode5"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.5:</strong> Insertion sort maintains a sorted portion and inserts each new element into it.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.6 — Binary Insertion Sort</span>
+                    <button class="code-figure-run" onclick="runCode('code6')">▶ Run</button>
+                </div>
+                <textarea id="code6" spellcheck="false">import bisect
+
+def binary_insertion_sort(arr):
+    """
+    Binary Insertion Sort - O(n log n) comparisons, O(n²) shifts.
+    Uses binary search to find insertion position.
+    """
+    for i in range(1, len(arr)):
+        key = arr[i]
+        # Binary search for insertion point
+        pos = bisect.bisect_left(arr, key, 0, i)
+        # Shift elements and insert
+        arr[pos+1:i+1] = arr[pos:i]
+        arr[pos] = key
+    
+    return arr
+
+# Compare comparison counts
+def count_comparisons(arr):
+    """Count comparisons in standard insertion sort."""
+    comparisons = 0
+    arr = arr.copy()
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            comparisons += 1
+            arr[j + 1] = arr[j]
+            j -= 1
+        if j >= 0:
+            comparisons += 1
+        arr[j + 1] = key
+    return comparisons
+
+import random
+arr = [random.randint(0, 100) for _ in range(20)]
+print(f"Standard insertion: ~{count_comparisons(arr)} comparisons")
+print(f"Binary insertion: ~{20 * 4} comparisons (n * log n)")
+print(f"\nNote: Binary search reduces comparisons but not shifts")</textarea>
+                <div class="code-figure-output" id="outputcode6"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.6:</strong> Binary search reduces comparisons but shifting elements still takes O(n) per insertion.
+                </div>
+            </div>
+            
+            <div class="important">
+                <strong>When to use O(n²) sorts:</strong><br>
+                • Small arrays (n < 50): Overhead of divide-and-conquer not worth it<br>
+                • Nearly sorted data: Insertion sort is O(n) adaptive<br>
+                • Limited memory: All are in-place with O(1) extra space
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 5: MERGE SORT -->
+        <!-- ============================================== -->
+        <section id="merge">
+            <h2>5. Merge Sort</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Merge Sort</span> is a divide-and-conquer algorithm that splits the array in half, recursively sorts each half, then merges the sorted halves. Guaranteed O(n log n) but requires O(n) extra space. Stable and parallelizable.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.7 — Merge Sort</span>
+                    <button class="code-figure-run" onclick="runCode('code7')">▶ Run</button>
+                </div>
+                <textarea id="code7" spellcheck="false">def merge_sort(arr):
+    """
+    Merge Sort - O(n log n) time, O(n) space, stable.
+    """
+    if len(arr) <= 1:
+        return arr
+    
+    # Divide
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    
+    # Conquer (merge)
+    return merge(left, right)
+
+def merge(left, right):
+    """Merge two sorted arrays."""
+    result = []
+    i = j = 0
+    
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:  # <= for stability
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    
+    # Append remaining elements
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+# Test
+arr = [38, 27, 43, 3, 9, 82, 10]
+print(f"Original: {arr}")
+print(f"Sorted:   {merge_sort(arr)}")</textarea>
+                <div class="code-figure-output" id="outputcode7"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.7:</strong> Merge sort recursively divides, then merges sorted halves in O(n) time.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.8 — Merge Sort In-Place</span>
+                    <button class="code-figure-run" onclick="runCode('code8')">▶ Run</button>
+                </div>
+                <textarea id="code8" spellcheck="false">def merge_sort_inplace(arr, left=0, right=None):
+    """
+    In-place merge sort (still uses O(n) temp space for merge).
+    """
+    if right is None:
+        right = len(arr) - 1
+    
+    if left < right:
+        mid = (left + right) // 2
+        merge_sort_inplace(arr, left, mid)
+        merge_sort_inplace(arr, mid + 1, right)
+        merge_inplace(arr, left, mid, right)
+
+def merge_inplace(arr, left, mid, right):
+    """Merge arr[left:mid+1] and arr[mid+1:right+1]."""
+    # Create temp arrays
+    left_arr = arr[left:mid + 1]
+    right_arr = arr[mid + 1:right + 1]
+    
+    i = j = 0
+    k = left
+    
+    while i < len(left_arr) and j < len(right_arr):
+        if left_arr[i] <= right_arr[j]:
+            arr[k] = left_arr[i]
+            i += 1
+        else:
+            arr[k] = right_arr[j]
+            j += 1
+        k += 1
+    
+    while i < len(left_arr):
+        arr[k] = left_arr[i]
+        i += 1
+        k += 1
+    
+    while j < len(right_arr):
+        arr[k] = right_arr[j]
+        j += 1
+        k += 1
+
+# Test
+arr = [12, 11, 13, 5, 6, 7]
+print(f"Original: {arr}")
+merge_sort_inplace(arr)
+print(f"Sorted:   {arr}")</textarea>
+                <div class="code-figure-output" id="outputcode8"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.8:</strong> In-place merge sort modifies the original array but still needs O(n) temp space for merging.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.9 — Bottom-Up Merge Sort</span>
+                    <button class="code-figure-run" onclick="runCode('code9')">▶ Run</button>
+                </div>
+                <textarea id="code9" spellcheck="false">def merge_sort_bottom_up(arr):
+    """
+    Iterative (bottom-up) merge sort.
+    Avoids recursion overhead, same O(n log n) complexity.
+    """
+    n = len(arr)
+    
+    # Start with size 1, double each iteration
+    size = 1
+    while size < n:
+        for left in range(0, n, 2 * size):
+            mid = min(left + size - 1, n - 1)
+            right = min(left + 2 * size - 1, n - 1)
+            
+            if mid < right:
+                merge_inplace(arr, left, mid, right)
+        
+        print(f"Size {size}: {arr}")
+        size *= 2
+    
+    return arr
+
+def merge_inplace(arr, left, mid, right):
+    left_arr = arr[left:mid + 1]
+    right_arr = arr[mid + 1:right + 1]
+    i = j = 0
+    k = left
+    while i < len(left_arr) and j < len(right_arr):
+        if left_arr[i] <= right_arr[j]:
+            arr[k] = left_arr[i]
+            i += 1
+        else:
+            arr[k] = right_arr[j]
+            j += 1
+        k += 1
+    while i < len(left_arr):
+        arr[k] = left_arr[i]
+        i += 1
+        k += 1
+    while j < len(right_arr):
+        arr[k] = right_arr[j]
+        j += 1
+        k += 1
+
+# Test
+arr = [64, 34, 25, 12, 22, 11, 90, 8]
+print(f"Original: {arr}\n")
+merge_sort_bottom_up(arr)</textarea>
+                <div class="code-figure-output" id="outputcode9"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.9:</strong> Bottom-up merge sort merges pairs of size 1, then 2, then 4, etc.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 6: QUICK SORT -->
+        <!-- ============================================== -->
+        <section id="quick">
+            <h2>6. Quick Sort</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Quick Sort</span> selects a "pivot" element and partitions the array so elements less than pivot come before it, and elements greater come after. Recursively sorts the partitions. Average O(n log n), worst O(n²), but fastest in practice for most inputs.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.10 — Quick Sort Basic</span>
+                    <button class="code-figure-run" onclick="runCode('code10')">▶ Run</button>
+                </div>
+                <textarea id="code10" spellcheck="false">def quick_sort(arr):
+    """
+    Quick Sort - O(n log n) average, O(n²) worst, O(log n) space.
+    Simple implementation (not in-place).
+    """
+    if len(arr) <= 1:
+        return arr
+    
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    
+    return quick_sort(left) + middle + quick_sort(right)
+
+# Test
+arr = [3, 6, 8, 10, 1, 2, 1]
+print(f"Original: {arr}")
+print(f"Sorted:   {quick_sort(arr)}")</textarea>
+                <div class="code-figure-output" id="outputcode10"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.10:</strong> Simple quick sort creates new lists for partitions (not in-place but easy to understand).
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.11 — Quick Sort In-Place (Lomuto)</span>
+                    <button class="code-figure-run" onclick="runCode('code11')">▶ Run</button>
+                </div>
+                <textarea id="code11" spellcheck="false">def quick_sort_inplace(arr, low=0, high=None):
+    """In-place quick sort using Lomuto partition."""
+    if high is None:
+        high = len(arr) - 1
+    
+    if low < high:
+        pivot_idx = partition_lomuto(arr, low, high)
+        quick_sort_inplace(arr, low, pivot_idx - 1)
+        quick_sort_inplace(arr, pivot_idx + 1, high)
+
+def partition_lomuto(arr, low, high):
+    """
+    Lomuto partition scheme.
+    Pivot is last element, returns final pivot position.
+    """
+    pivot = arr[high]
+    i = low - 1  # Index of smaller element
+    
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+# Trace partition
+arr = [10, 7, 8, 9, 1, 5]
+print(f"Original: {arr}")
+print(f"Pivot (last element): {arr[-1]}")
+
+pivot_idx = partition_lomuto(arr, 0, len(arr) - 1)
+print(f"After partition: {arr}")
+print(f"Pivot index: {pivot_idx} (all left < {arr[pivot_idx]} < all right)")</textarea>
+                <div class="code-figure-output" id="outputcode11"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.11:</strong> Lomuto partition uses last element as pivot and maintains a boundary of smaller elements.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.12 — Quick Sort (Hoare Partition)</span>
+                    <button class="code-figure-run" onclick="runCode('code12')">▶ Run</button>
+                </div>
+                <textarea id="code12" spellcheck="false">def partition_hoare(arr, low, high):
+    """
+    Hoare partition scheme - more efficient than Lomuto.
+    Uses two pointers moving towards each other.
+    """
+    pivot = arr[(low + high) // 2]
+    i = low - 1
+    j = high + 1
+    
+    while True:
+        i += 1
+        while arr[i] < pivot:
+            i += 1
+        
+        j -= 1
+        while arr[j] > pivot:
+            j -= 1
+        
+        if i >= j:
+            return j
+        
+        arr[i], arr[j] = arr[j], arr[i]
+
+def quick_sort_hoare(arr, low=0, high=None):
+    """Quick sort using Hoare partition."""
+    if high is None:
+        high = len(arr) - 1
+    
+    if low < high:
+        p = partition_hoare(arr, low, high)
+        quick_sort_hoare(arr, low, p)
+        quick_sort_hoare(arr, p + 1, high)
+
+# Test
+arr = [8, 3, 1, 7, 0, 10, 2]
+print(f"Original: {arr}")
+quick_sort_hoare(arr)
+print(f"Sorted:   {arr}")</textarea>
+                <div class="code-figure-output" id="outputcode12"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.12:</strong> Hoare partition uses middle pivot and two pointers, making ~3x fewer swaps than Lomuto.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.13 — Quick Sort with Random Pivot</span>
+                    <button class="code-figure-run" onclick="runCode('code13')">▶ Run</button>
+                </div>
+                <textarea id="code13" spellcheck="false">import random
+
+def quick_sort_random(arr, low=0, high=None):
+    """Quick sort with random pivot to avoid worst case."""
+    if high is None:
+        high = len(arr) - 1
+    
+    if low < high:
+        pivot_idx = partition_random(arr, low, high)
+        quick_sort_random(arr, low, pivot_idx - 1)
+        quick_sort_random(arr, pivot_idx + 1, high)
+
+def partition_random(arr, low, high):
+    """Randomly select pivot, then use Lomuto."""
+    rand_idx = random.randint(low, high)
+    arr[rand_idx], arr[high] = arr[high], arr[rand_idx]
+    
+    pivot = arr[high]
+    i = low - 1
+    
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+# Test on sorted array (worst case for basic quick sort)
+arr = list(range(10))  # Already sorted
+print(f"Sorted input (worst case): {arr}")
+quick_sort_random(arr)
+print(f"Still works: {arr}")
+
+# Many duplicates
+arr = [3, 3, 3, 1, 1, 2, 2, 2]
+quick_sort_random(arr)
+print(f"With duplicates: {arr}")</textarea>
+                <div class="code-figure-output" id="outputcode13"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.13:</strong> Random pivot selection prevents O(n²) worst case on sorted or nearly-sorted input.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 7: HEAP SORT -->
+        <!-- ============================================== -->
+        <section id="heap">
+            <h2>7. Heap Sort</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Heap Sort</span> builds a max-heap from the array, then repeatedly extracts the maximum element. Guaranteed O(n log n) time, O(1) space, but not stable and has poor cache performance compared to quick sort.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.14 — Heap Sort</span>
+                    <button class="code-figure-run" onclick="runCode('code14')">▶ Run</button>
+                </div>
+                <textarea id="code14" spellcheck="false">def heap_sort(arr):
+    """
+    Heap Sort - O(n log n) time, O(1) space, NOT stable.
+    """
+    n = len(arr)
+    
+    # Build max heap
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+    
+    # Extract elements one by one
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]  # Move max to end
+        heapify(arr, i, 0)  # Restore heap property
+    
+    return arr
+
+def heapify(arr, n, i):
+    """Maintain max-heap property for subtree rooted at i."""
+    largest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+    
+    if left < n and arr[left] > arr[largest]:
+        largest = left
+    
+    if right < n and arr[right] > arr[largest]:
+        largest = right
+    
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest)
+
+# Test
+arr = [12, 11, 13, 5, 6, 7]
+print(f"Original: {arr}")
+heap_sort(arr)
+print(f"Sorted:   {arr}")</textarea>
+                <div class="code-figure-output" id="outputcode14"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.14:</strong> Heap sort builds max-heap in O(n), then extracts max n times for O(n log n) total.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.15 — Heap Sort with heapq</span>
+                    <button class="code-figure-run" onclick="runCode('code15')">▶ Run</button>
+                </div>
+                <textarea id="code15" spellcheck="false">import heapq
+
+def heap_sort_heapq(arr):
+    """Heap sort using Python's heapq (min-heap)."""
+    heapq.heapify(arr)  # O(n)
+    return [heapq.heappop(arr) for _ in range(len(arr))]  # O(n log n)
+
+# Using nsmallest (even simpler)
+def heap_sort_simple(arr):
+    """Simplest heap sort using nsmallest."""
+    return heapq.nsmallest(len(arr), arr)
+
+arr = [3, 1, 4, 1, 5, 9, 2, 6]
+print(f"Original: {arr}")
+print(f"Using heapq: {heap_sort_heapq(arr.copy())}")
+print(f"Using nsmallest: {heap_sort_simple(arr.copy())}")</textarea>
+                <div class="code-figure-output" id="outputcode15"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.15:</strong> Python's heapq provides simple heap sort, though it's not in-place.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 8: COUNTING & RADIX SORT -->
+        <!-- ============================================== -->
+        <section id="counting">
+            <h2>8. Counting &amp; Radix Sort</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Counting Sort</span> counts occurrences of each value and uses cumulative counts to place elements. O(n + k) where k is the range of values. <span class="term">Radix Sort</span> sorts by each digit using counting sort as a subroutine, achieving O(d(n + k)) for d digits.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.16 — Counting Sort</span>
+                    <button class="code-figure-run" onclick="runCode('code16')">▶ Run</button>
+                </div>
+                <textarea id="code16" spellcheck="false">def counting_sort(arr, max_val=None):
+    """
+    Counting Sort - O(n + k) time, O(k) space, stable.
+    Only for non-negative integers with known range.
+    """
+    if not arr:
+        return arr
+    
+    if max_val is None:
+        max_val = max(arr)
+    
+    # Count occurrences
+    count = [0] * (max_val + 1)
+    for num in arr:
+        count[num] += 1
+    
+    # Cumulative count (position of each element)
+    for i in range(1, len(count)):
+        count[i] += count[i - 1]
+    
+    # Build output array (traverse in reverse for stability)
+    output = [0] * len(arr)
+    for num in reversed(arr):
+        output[count[num] - 1] = num
+        count[num] -= 1
+    
+    return output
+
+# Test
+arr = [4, 2, 2, 8, 3, 3, 1]
+print(f"Original: {arr}")
+print(f"Sorted:   {counting_sort(arr)}")
+
+# When it's efficient
+arr = [1, 4, 1, 2, 7, 5, 2]  # Range 1-7, n=7
+print(f"\nSmall range (1-7): Counting sort is O(n)")</textarea>
+                <div class="code-figure-output" id="outputcode16"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.16:</strong> Counting sort is O(n) when the range of values is O(n).
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.17 — Radix Sort</span>
+                    <button class="code-figure-run" onclick="runCode('code17')">▶ Run</button>
+                </div>
+                <textarea id="code17" spellcheck="false">def radix_sort(arr):
+    """
+    Radix Sort - O(d * n) time where d = number of digits.
+    Uses counting sort for each digit position.
+    """
+    if not arr:
+        return arr
+    
+    max_val = max(arr)
+    exp = 1  # Current digit position (1, 10, 100, ...)
+    
+    while max_val // exp > 0:
+        counting_sort_by_digit(arr, exp)
+        exp *= 10
+    
+    return arr
+
+def counting_sort_by_digit(arr, exp):
+    """Counting sort based on digit at exp position."""
+    n = len(arr)
+    output = [0] * n
+    count = [0] * 10
+    
+    # Count occurrences of digits
+    for num in arr:
+        digit = (num // exp) % 10
+        count[digit] += 1
+    
+    # Cumulative count
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+    
+    # Build output (reverse for stability)
+    for i in range(n - 1, -1, -1):
+        digit = (arr[i] // exp) % 10
+        output[count[digit] - 1] = arr[i]
+        count[digit] -= 1
+    
+    # Copy back
+    for i in range(n):
+        arr[i] = output[i]
+
+# Test
+arr = [170, 45, 75, 90, 802, 24, 2, 66]
+print(f"Original: {arr}")
+
+# Trace each pass
+arr_copy = arr.copy()
+max_val = max(arr_copy)
+exp = 1
+while max_val // exp > 0:
+    counting_sort_by_digit(arr_copy, exp)
+    print(f"After sorting by {exp}'s place: {arr_copy}")
+    exp *= 10</textarea>
+                <div class="code-figure-output" id="outputcode17"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.17:</strong> Radix sort processes digits from least significant to most significant.
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                Counting and radix sort can beat O(n log n) comparison sorts for integers with limited range. They're linear time but not comparison-based—they exploit the structure of integer data.
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 9: PYTHON'S BUILT-IN SORTING -->
+        <!-- ============================================== -->
+        <section id="python">
+            <h2>9. Python's Built-in Sorting</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.18 — sorted() vs list.sort()</span>
+                    <button class="code-figure-run" onclick="runCode('code18')">▶ Run</button>
+                </div>
+                <textarea id="code18" spellcheck="false"># sorted() - returns new list, original unchanged
+arr = [3, 1, 4, 1, 5, 9, 2, 6]
+sorted_arr = sorted(arr)
+print(f"Original after sorted(): {arr}")
+print(f"New sorted list: {sorted_arr}")
+
+# list.sort() - modifies in place, returns None
+arr = [3, 1, 4, 1, 5, 9, 2, 6]
+result = arr.sort()
+print(f"\nOriginal after .sort(): {arr}")
+print(f"Return value: {result}")  # None!
+
+# Reverse order
+arr = [3, 1, 4, 1, 5]
+print(f"\nDescending: {sorted(arr, reverse=True)}")</textarea>
+                <div class="code-figure-output" id="outputcode18"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.18:</strong> sorted() creates new list; list.sort() modifies in-place and returns None.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.19 — Custom Sort Keys</span>
+                    <button class="code-figure-run" onclick="runCode('code19')">▶ Run</button>
+                </div>
+                <textarea id="code19" spellcheck="false"># Sort by custom key function
+words = ["banana", "pie", "apple", "cherry"]
+
+# By length
+print(f"By length: {sorted(words, key=len)}")
+
+# By last character
+print(f"By last char: {sorted(words, key=lambda x: x[-1])}")
+
+# Multiple criteria: length, then alphabetically
+print(f"By (length, alpha): {sorted(words, key=lambda x: (len(x), x))}")
+
+# Sort objects
+students = [
+    {"name": "Alice", "grade": 85},
+    {"name": "Bob", "grade": 90},
+    {"name": "Charlie", "grade": 85}
+]
+
+# By grade (descending), then name
+sorted_students = sorted(students, key=lambda s: (-s["grade"], s["name"]))
+print(f"\nBy grade desc, name asc:")
+for s in sorted_students:
+    print(f"  {s['name']}: {s['grade']}")</textarea>
+                <div class="code-figure-output" id="outputcode19"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.19:</strong> The key parameter extracts comparison keys. Use tuples for multi-field sorting.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.20 — Timsort Characteristics</span>
+                    <button class="code-figure-run" onclick="runCode('code20')">▶ Run</button>
+                </div>
+                <textarea id="code20" spellcheck="false">import time
+import random
+
+def measure(arr, desc):
+    start = time.perf_counter()
+    sorted(arr)
+    elapsed = time.perf_counter() - start
+    print(f"  {desc}: {elapsed*1000:.2f} ms")
+
+n = 100000
+
+# Timsort adapts to input patterns
+print(f"Sorting {n} elements:")
+
+# Random - O(n log n)
+measure([random.randint(0, n) for _ in range(n)], "Random")
+
+# Already sorted - O(n) !
+measure(list(range(n)), "Sorted")
+
+# Reverse sorted - O(n) !
+measure(list(range(n, 0, -1)), "Reverse")
+
+# Few unique values
+measure([random.randint(0, 10) for _ in range(n)], "Few unique")
+
+print("\nTimsort is adaptive and exploits existing order!")</textarea>
+                <div class="code-figure-output" id="outputcode20"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.20:</strong> Timsort detects sorted runs and merges them, achieving O(n) on sorted input.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.21 — Stable Sort Property</span>
+                    <button class="code-figure-run" onclick="runCode('code21')">▶ Run</button>
+                </div>
+                <textarea id="code21" spellcheck="false"># Python's sort is stable - preserves relative order of equal elements
+
+data = [
+    ("Alice", 3),
+    ("Bob", 1),
+    ("Charlie", 3),
+    ("David", 2),
+    ("Eve", 1)
+]
+
+# Sort by score (second element)
+by_score = sorted(data, key=lambda x: x[1])
+print("Sorted by score (stable):")
+for name, score in by_score:
+    print(f"  {name}: {score}")
+
+print("\nNotice: Alice comes before Charlie (both score 3)")
+print("Bob comes before Eve (both score 1)")
+print("This is the original relative order - stability!")
+
+# Multi-level sort using stability
+# Sort by name first, then by score
+by_name = sorted(data, key=lambda x: x[0])
+by_score_then_name = sorted(by_name, key=lambda x: x[1])
+print("\nBy score, then name (via two stable sorts):")
+for name, score in by_score_then_name:
+    print(f"  {name}: {score}")</textarea>
+                <div class="code-figure-output" id="outputcode21"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.21:</strong> Stable sorts maintain relative order of equal elements, enabling multi-pass sorting.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 10: COMMON PATTERNS -->
+        <!-- ============================================== -->
+        <section id="patterns">
+            <h2>10. Common Patterns</h2>
+            
+            <h3>Pattern 1: Sort then Search</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.22 — Two Sum with Sorting</span>
+                    <button class="code-figure-run" onclick="runCode('code22')">▶ Run</button>
+                </div>
+                <textarea id="code22" spellcheck="false">def two_sum_sorted(nums, target):
+    """
+    Find pair summing to target using sorting + two pointers.
+    Time: O(n log n), Space: O(1) if we can sort in-place.
+    """
+    nums_sorted = sorted(enumerate(nums), key=lambda x: x[1])
+    left, right = 0, len(nums) - 1
+    
+    while left < right:
+        current_sum = nums_sorted[left][1] + nums_sorted[right][1]
+        
+        if current_sum == target:
+            return [nums_sorted[left][0], nums_sorted[right][0]]
+        elif current_sum < target:
+            left += 1
+        else:
+            right -= 1
+    
+    return []
+
+# Test
+nums = [2, 7, 11, 15]
+target = 9
+print(f"nums = {nums}, target = {target}")
+print(f"Indices: {two_sum_sorted(nums, target)}")</textarea>
+                <div class="code-figure-output" id="outputcode22"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.22:</strong> Sorting enables two-pointer technique for pair finding.
+                </div>
+            </div>
+            
+            <h3>Pattern 2: Sort by Custom Criteria</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.23 — Largest Number</span>
+                    <button class="code-figure-run" onclick="runCode('code23')">▶ Run</button>
+                </div>
+                <textarea id="code23" spellcheck="false">from functools import cmp_to_key
+
+def largest_number(nums):
+    """
+    Arrange numbers to form largest possible number.
+    Custom comparator: compare "ab" vs "ba".
+    """
+    def compare(a, b):
+        if a + b > b + a:
+            return -1
+        elif a + b < b + a:
+            return 1
+        return 0
+    
+    # Convert to strings and sort with custom comparator
+    nums_str = [str(n) for n in nums]
+    nums_str.sort(key=cmp_to_key(compare))
+    
+    # Handle edge case of all zeros
+    if nums_str[0] == "0":
+        return "0"
+    
+    return "".join(nums_str)
+
+# Test
+nums = [3, 30, 34, 5, 9]
+print(f"nums = {nums}")
+print(f"Largest number: {largest_number(nums)}")
+
+nums = [10, 2]
+print(f"\nnums = {nums}")
+print(f"Largest number: {largest_number(nums)}")</textarea>
+                <div class="code-figure-output" id="outputcode23"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.23:</strong> Custom comparator determines ordering based on concatenation result.
+                </div>
+            </div>
+            
+            <h3>Pattern 3: Interval Problems</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.24 — Merge Intervals</span>
+                    <button class="code-figure-run" onclick="runCode('code24')">▶ Run</button>
+                </div>
+                <textarea id="code24" spellcheck="false">def merge_intervals(intervals):
+    """
+    Merge overlapping intervals.
+    Key insight: sort by start, then scan.
+    """
+    if not intervals:
+        return []
+    
+    # Sort by start time
+    intervals.sort(key=lambda x: x[0])
+    
+    merged = [intervals[0]]
+    
+    for start, end in intervals[1:]:
+        last_end = merged[-1][1]
+        
+        if start <= last_end:  # Overlapping
+            merged[-1][1] = max(last_end, end)
+        else:
+            merged.append([start, end])
+    
+    return merged
+
+# Test
+intervals = [[1, 3], [2, 6], [8, 10], [15, 18]]
+print(f"Original: {intervals}")
+print(f"Merged:   {merge_intervals(intervals)}")</textarea>
+                <div class="code-figure-output" id="outputcode24"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.24:</strong> Sorting by start time simplifies interval merging to a single pass.
+                </div>
+            </div>
+            
+            <h3>Pattern 4: Meeting Rooms</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.25 — Meeting Rooms II</span>
+                    <button class="code-figure-run" onclick="runCode('code25')">▶ Run</button>
+                </div>
+                <textarea id="code25" spellcheck="false">import heapq
+
+def min_meeting_rooms(intervals):
+    """
+    Find minimum meeting rooms needed.
+    Track end times with min-heap.
+    """
+    if not intervals:
+        return 0
+    
+    # Sort by start time
+    intervals.sort(key=lambda x: x[0])
+    
+    # Min-heap of end times
+    heap = []
+    
+    for start, end in intervals:
+        # If earliest ending room is free, reuse it
+        if heap and heap[0] <= start:
+            heapq.heappop(heap)
+        
+        heapq.heappush(heap, end)
+    
+    return len(heap)
+
+# Test
+intervals = [[0, 30], [5, 10], [15, 20]]
+print(f"Meetings: {intervals}")
+print(f"Rooms needed: {min_meeting_rooms(intervals)}")
+
+intervals = [[7, 10], [2, 4]]
+print(f"\nMeetings: {intervals}")
+print(f"Rooms needed: {min_meeting_rooms(intervals)}")</textarea>
+                <div class="code-figure-output" id="outputcode25"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.25:</strong> Sort by start, use heap to track room availability by end times.
+                </div>
+            </div>
+            
+            <h3>Pattern 5: Kth Element</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.26 — Kth Largest (Quick Select)</span>
+                    <button class="code-figure-run" onclick="runCode('code26')">▶ Run</button>
+                </div>
+                <textarea id="code26" spellcheck="false">import random
+
+def find_kth_largest(nums, k):
+    """
+    Find kth largest element using Quick Select.
+    Average O(n), worst O(n²).
+    """
+    k = len(nums) - k  # Convert to kth smallest
+    
+    def quick_select(left, right):
+        pivot_idx = partition(left, right)
+        
+        if pivot_idx == k:
+            return nums[k]
+        elif pivot_idx < k:
+            return quick_select(pivot_idx + 1, right)
+        else:
+            return quick_select(left, pivot_idx - 1)
+    
+    def partition(left, right):
+        # Random pivot
+        rand_idx = random.randint(left, right)
+        nums[rand_idx], nums[right] = nums[right], nums[rand_idx]
+        
+        pivot = nums[right]
+        i = left
+        
+        for j in range(left, right):
+            if nums[j] <= pivot:
+                nums[i], nums[j] = nums[j], nums[i]
+                i += 1
+        
+        nums[i], nums[right] = nums[right], nums[i]
+        return i
+    
+    return quick_select(0, len(nums) - 1)
+
+# Test
+nums = [3, 2, 1, 5, 6, 4]
+k = 2
+print(f"nums = {nums}, k = {k}")
+print(f"{k}th largest: {find_kth_largest(nums.copy(), k)}")
+
+# Compare with sorted
+print(f"Verification: {sorted(nums, reverse=True)[k-1]}")</textarea>
+                <div class="code-figure-output" id="outputcode26"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.26:</strong> Quick Select finds kth element in O(n) average without fully sorting.
+                </div>
+            </div>
+            
+            <h3>Pattern 6: Sort and Greedy</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.27 — Non-overlapping Intervals</span>
+                    <button class="code-figure-run" onclick="runCode('code27')">▶ Run</button>
+                </div>
+                <textarea id="code27" spellcheck="false">def erase_overlap_intervals(intervals):
+    """
+    Find minimum intervals to remove for non-overlapping set.
+    Greedy: sort by end time, keep intervals that end earliest.
+    """
+    if not intervals:
+        return 0
+    
+    # Sort by end time
+    intervals.sort(key=lambda x: x[1])
+    
+    removals = 0
+    prev_end = intervals[0][1]
+    
+    for i in range(1, len(intervals)):
+        start, end = intervals[i]
+        
+        if start < prev_end:  # Overlap
+            removals += 1
+            # Keep interval with earlier end (already have it)
+        else:
+            prev_end = end
+    
+    return removals
+
+# Test
+intervals = [[1, 2], [2, 3], [3, 4], [1, 3]]
+print(f"Intervals: {intervals}")
+print(f"Remove {erase_overlap_intervals(intervals)} for non-overlapping")
+
+intervals = [[1, 2], [1, 2], [1, 2]]
+print(f"\nIntervals: {intervals}")
+print(f"Remove {erase_overlap_intervals(intervals)} for non-overlapping")</textarea>
+                <div class="code-figure-output" id="outputcode27"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.27:</strong> Sort by end time for interval scheduling—greedy choice keeps earliest-ending intervals.
+                </div>
+            </div>
+            
+            <h3>Pattern 7: Bucket Sort for Special Cases</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.28 — Maximum Gap</span>
+                    <button class="code-figure-run" onclick="runCode('code28')">▶ Run</button>
+                </div>
+                <textarea id="code28" spellcheck="false">def maximum_gap(nums):
+    """
+    Find maximum gap between successive elements in sorted form.
+    Must be O(n) time - use bucket sort idea.
+    """
+    if len(nums) < 2:
+        return 0
+    
+    min_val, max_val = min(nums), max(nums)
+    n = len(nums)
+    
+    if min_val == max_val:
+        return 0
+    
+    # Bucket size ensures max gap is between buckets
+    bucket_size = max(1, (max_val - min_val) // (n - 1))
+    bucket_count = (max_val - min_val) // bucket_size + 1
+    
+    # Each bucket stores (min, max) of elements in it
+    buckets = [[float('inf'), float('-inf')] for _ in range(bucket_count)]
+    
+    for num in nums:
+        idx = (num - min_val) // bucket_size
+        buckets[idx][0] = min(buckets[idx][0], num)
+        buckets[idx][1] = max(buckets[idx][1], num)
+    
+    # Max gap is between adjacent non-empty buckets
+    max_gap = 0
+    prev_max = min_val
+    
+    for bucket_min, bucket_max in buckets:
+        if bucket_min == float('inf'):  # Empty bucket
+            continue
+        max_gap = max(max_gap, bucket_min - prev_max)
+        prev_max = bucket_max
+    
+    return max_gap
+
+# Test
+nums = [3, 6, 9, 1]
+print(f"nums = {nums}")
+print(f"Sorted: {sorted(nums)}")
+print(f"Maximum gap: {maximum_gap(nums)}")  # 3 (between 6 and 9)</textarea>
+                <div class="code-figure-output" id="outputcode28"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.28:</strong> Bucket sort achieves O(n) for maximum gap by exploiting the pigeonhole principle.
+                </div>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-title">Key Takeaways</div>
+                <ul>
+                    <li><strong>O(n²) sorts:</strong> Bubble, selection, insertion—simple but slow for large data</li>
+                    <li><strong>O(n log n) sorts:</strong> Merge (stable, extra space), Quick (fastest avg), Heap (in-place)</li>
+                    <li><strong>Linear sorts:</strong> Counting, Radix—for integers with limited range</li>
+                    <li><strong>Python's Timsort:</strong> Hybrid merge+insertion, adaptive, stable, use it!</li>
+                    <li><strong>Custom keys:</strong> Use lambda or key function for complex sorting</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 11: PITFALLS -->
+        <!-- ============================================== -->
+        <section id="pitfalls">
+            <h2>11. Common Pitfalls</h2>
+            
+            <h3>Pitfall 1: Forgetting sort() Returns None</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.29 — sort() vs sorted()</span>
+                    <button class="code-figure-run" onclick="runCode('code29')">▶ Run</button>
+                </div>
+                <textarea id="code29" spellcheck="false"># WRONG: list.sort() returns None!
+arr = [3, 1, 2]
+result = arr.sort()
+print(f"result = arr.sort(): {result}")  # None!
+
+# RIGHT: Use sorted() if you need the result
+arr = [3, 1, 2]
+result = sorted(arr)
+print(f"result = sorted(arr): {result}")
+
+# Or call sort() separately
+arr = [3, 1, 2]
+arr.sort()
+print(f"After arr.sort(): {arr}")</textarea>
+                <div class="code-figure-output" id="outputcode29"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.29:</strong> list.sort() modifies in-place and returns None. Use sorted() for chaining.
+                </div>
+            </div>
+            
+            <h3>Pitfall 2: Unstable Sort Breaking Ties</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.30 — Stability Matters</span>
+                    <button class="code-figure-run" onclick="runCode('code30')">▶ Run</button>
+                </div>
+                <textarea id="code30" spellcheck="false"># When stability matters: preserve original order for ties
+
+# Example: Sort students by score, keep alphabetical for ties
+students = [
+    ("Alice", 85),
+    ("Bob", 90),
+    ("Charlie", 85),
+    ("David", 85)
+]
+
+# Python's sort IS stable
+by_score = sorted(students, key=lambda x: x[1])
+print("Stable sort (preserves A, C, D order for score 85):")
+for name, score in by_score:
+    print(f"  {name}: {score}")
+
+# Quick sort is NOT stable - would mix up Alice, Charlie, David
+print("\nIf using unstable sort, explicitly add secondary key:")
+by_score_name = sorted(students, key=lambda x: (x[1], x[0]))
+for name, score in by_score_name:
+    print(f"  {name}: {score}")</textarea>
+                <div class="code-figure-output" id="outputcode30"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.30:</strong> Use stable sort or add secondary keys to maintain deterministic ordering.
+                </div>
+            </div>
+            
+            <h3>Pitfall 3: Wrong Pivot Selection</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.31 — Quick Sort Worst Case</span>
+                    <button class="code-figure-run" onclick="runCode('code31')">▶ Run</button>
+                </div>
+                <textarea id="code31" spellcheck="false">import sys
+sys.setrecursionlimit(2000)
+
+def quick_sort_bad_pivot(arr, low, high, depth=0):
+    """Quick sort with first element as pivot - worst case on sorted."""
+    if low < high:
+        pivot_idx = partition_first(arr, low, high)
+        quick_sort_bad_pivot(arr, low, pivot_idx - 1, depth + 1)
+        quick_sort_bad_pivot(arr, pivot_idx + 1, high, depth + 1)
+    return depth
+
+def partition_first(arr, low, high):
+    pivot = arr[low]  # BAD: first element
+    i = high + 1
+    for j in range(high, low, -1):
+        if arr[j] >= pivot:
+            i -= 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i - 1], arr[low] = arr[low], arr[i - 1]
+    return i - 1
+
+# On sorted input, recursion depth = n (worst case!)
+n = 100
+arr = list(range(n))
+print(f"Sorting {n} already-sorted elements:")
+print(f"Bad pivot (first element): O(n²) partitions")
+print(f"Random pivot: O(n log n) partitions")
+print(f"\nAlways use random or median-of-three pivot selection!")</textarea>
+                <div class="code-figure-output" id="outputcode31"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.31:</strong> First/last element pivot degrades to O(n²) on sorted input. Use random pivot.
+                </div>
+            </div>
+            
+            <h3>Pitfall 4: Modifying While Sorting</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.32 — Key Function Side Effects</span>
+                    <button class="code-figure-run" onclick="runCode('code32')">▶ Run</button>
+                </div>
+                <textarea id="code32" spellcheck="false"># WRONG: Key function with side effects
+call_count = 0
+
+def bad_key(x):
+    global call_count
+    call_count += 1
+    return x
+
+arr = [3, 1, 4, 1, 5]
+sorted(arr, key=bad_key)
+print(f"Key function called {call_count} times for {len(arr)} elements")
+print("Key is called multiple times per element during sorting!")
+
+# WRONG: Key function that modifies data
+data = [{"val": 3}, {"val": 1}, {"val": 2}]
+def mutating_key(d):
+    d["val"] *= 2  # DON'T DO THIS!
+    return d["val"]
+
+# This corrupts the data
+# sorted(data, key=mutating_key)  # Don't run this!
+
+print("\nKey functions should be:")
+print("  - Pure (no side effects)")
+print("  - Fast (called multiple times)")
+print("  - Deterministic (same input -> same output)")</textarea>
+                <div class="code-figure-output" id="outputcode32"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.32:</strong> Key functions are called multiple times. Keep them pure and fast.
+                </div>
+            </div>
+            
+            <h3>Pitfall 5: Incorrect Comparison</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 10.33 — Comparison Consistency</span>
+                    <button class="code-figure-run" onclick="runCode('code33')">▶ Run</button>
+                </div>
+                <textarea id="code33" spellcheck="false">from functools import cmp_to_key
+
+# WRONG: Inconsistent comparison
+def bad_compare(a, b):
+    # This violates transitivity!
+    import random
+    return random.choice([-1, 0, 1])
+
+# This will give unpredictable results
+# sorted([3, 1, 2], key=cmp_to_key(bad_compare))
+
+# RIGHT: Consistent comparison
+def good_compare(a, b):
+    if a < b:
+        return -1
+    elif a > b:
+        return 1
+    return 0
+
+arr = [3, 1, 2]
+print(f"With consistent compare: {sorted(arr, key=cmp_to_key(good_compare))}")
+
+# Comparison must satisfy:
+print("\nComparison requirements:")
+print("  1. Antisymmetric: if a < b then b > a")
+print("  2. Transitive: if a < b and b < c then a < c")
+print("  3. Reflexive equality: a == a")</textarea>
+                <div class="code-figure-output" id="outputcode33"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 10.33:</strong> Custom comparators must be consistent—antisymmetric, transitive, reflexive.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 12: EXERCISES -->
+        <!-- ============================================== -->
+        <section id="exercises">
+            <h2>12. Exercises</h2>
+            
+            <!-- Exercise 1 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 1: Sort Colors (Dutch National Flag)</div>
+                <p>Given an array with n objects colored red, white, or blue (represented as 0, 1, 2), sort them in-place in one pass.</p>
+                <p class="answer">(Hint: Use three pointers for low, mid, high regions)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 1 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex1')">▶ Run</button>
+                </div>
+                <textarea id="ex1" spellcheck="false"># HINT 1: Three pointers: low (0s end), mid (current), high (2s start)
+# HINT 2: If mid sees 0, swap with low; if 2, swap with high
+# HINT 3: Only increment mid when value is 0 or 1
+
+def sort_colors(nums):
+    # Your code here
+    pass
+
+# Test your implementation
+# nums = [2, 0, 2, 1, 1, 0]
+# sort_colors(nums)
+# print(nums)  # [0, 0, 1, 1, 2, 2]</textarea>
+                <div class="code-figure-output" id="outputex1"></div>
+            </div>
+            
+            <!-- Exercise 2 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 2: Sort Array by Parity</div>
+                <p>Given an integer array, move all even integers to the beginning, followed by all odd integers. Any order within even/odd groups is acceptable.</p>
+                <p class="answer">(Hint: Two pointers from both ends, swap when even on right and odd on left)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 2 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex2')">▶ Run</button>
+                </div>
+                <textarea id="ex2" spellcheck="false"># HINT 1: Two pointers: left and right
+# HINT 2: Move left right while even, move right left while odd
+# HINT 3: Swap when left points to odd and right points to even
+
+def sort_array_by_parity(nums):
+    # Your code here
+    pass
+
+# Test your implementation
+# nums = [3, 1, 2, 4]
+# result = sort_array_by_parity(nums)
+# print(result)  # [2, 4, 3, 1] or [4, 2, 1, 3] etc.</textarea>
+                <div class="code-figure-output" id="outputex2"></div>
+            </div>
+            
+            <!-- Exercise 3 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 3: Relative Sort Array</div>
+                <p>Sort arr1 such that elements in arr2 appear first (in arr2's order), followed by remaining elements in ascending order.</p>
+                <p class="answer">(Hint: Use a dict to track arr2 order, custom key with fallback for missing elements)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 3 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex3')">▶ Run</button>
+                </div>
+                <textarea id="ex3" spellcheck="false"># HINT 1: Create dict mapping arr2 elements to their indices
+# HINT 2: Elements in arr2 sort by their index
+# HINT 3: Elements not in arr2 sort after, by value
+
+def relative_sort_array(arr1, arr2):
+    # Your code here
+    pass
+
+# Test your implementation
+# arr1 = [2,3,1,3,2,4,6,7,9,2,19]
+# arr2 = [2,1,4,3,9,6]
+# print(relative_sort_array(arr1, arr2))  # [2,2,2,1,4,3,3,9,6,7,19]</textarea>
+                <div class="code-figure-output" id="outputex3"></div>
+            </div>
+            
+            <!-- Exercise 4 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 4: Wiggle Sort II</div>
+                <p>Reorder array such that nums[0] < nums[1] > nums[2] < nums[3]... (strict inequality). Assume valid answer always exists.</p>
+                <p class="answer">(Hint: Sort, then interleave smaller half with larger half from specific positions)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 4 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex4')">▶ Run</button>
+                </div>
+                <textarea id="ex4" spellcheck="false"># HINT 1: Sort the array
+# HINT 2: Split into two halves (smaller and larger)
+# HINT 3: Interleave: smaller goes to even indices, larger to odd
+# HINT 4: Place from end of each half to handle duplicates
+
+def wiggle_sort(nums):
+    # Your code here
+    pass
+
+# Test your implementation
+# nums = [1, 5, 1, 1, 6, 4]
+# wiggle_sort(nums)
+# print(nums)  # e.g., [1, 6, 1, 5, 1, 4]</textarea>
+                <div class="code-figure-output" id="outputex4"></div>
+            </div>
+            
+            <!-- Exercise 5 -->
+            <div class="exercise">
+                <div class="exercise-title">Exercise 5: Merge Sorted Arrays</div>
+                <p>Given two sorted arrays nums1 (with extra space) and nums2, merge nums2 into nums1 in-place maintaining sorted order.</p>
+                <p class="answer">(Hint: Start from the end of both arrays, fill from end of nums1)</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 5 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex5')">▶ Run</button>
+                </div>
+                <textarea id="ex5" spellcheck="false"># HINT 1: Three pointers: p1 at end of nums1 data, p2 at end of nums2, p at end of nums1
+# HINT 2: Compare nums1[p1] and nums2[p2], place larger at p
+# HINT 3: Decrement appropriate pointers
+# HINT 4: Handle remaining nums2 elements if any
+
+def merge(nums1, m, nums2, n):
+    # Your code here
+    pass
+
+# Test your implementation
+# nums1 = [1,2,3,0,0,0]
+# m = 3
+# nums2 = [2,5,6]
+# n = 3
+# merge(nums1, m, nums2, n)
+# print(nums1)  # [1,2,2,3,5,6]</textarea>
+                <div class="code-figure-output" id="outputex5"></div>
+            </div>
+        </section>
+
+        <!-- SUBMIT SECTION -->
+        <section class="submit-section">
+            <h2>Submit Your Work</h2>
+            <p>After completing the exercises, submit your attendance below.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student ID</label>
+                    <input type="text" id="studentId" placeholder="Enter your student ID">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" placeholder="Enter your full name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email (@istun.edu.tr)</label>
+                    <input type="email" id="studentEmail" placeholder="your.email@istun.edu.tr">
+                </div>
+                <div class="form-group">
+                    <label>Class Code</label>
+                    <input type="text" id="classCode" placeholder="From instructor">
+                </div>
+            </div>
+            <input type="text" id="hp" class="hp" tabindex="-1" autocomplete="off">
+            <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
+            <div class="submit-status" id="submitStatus"></div>
+        </section>
+    </main>
+
+    <script>
+        const pageLoadTime = Date.now();
+        
+        async function runCode(codeId) {
+            const codeEl = document.getElementById(codeId);
+            const outputEl = document.getElementById('output' + codeId);
+            const code = codeEl.value;
+            outputEl.classList.add('show');
+            outputEl.textContent = 'Running...';
+            
+            try {
+                const escaped = code.replace(/\\/g, '\\\\').replace(/"""/g, '\\"\\"\\"');
+                const result = await pyscript.interpreter.runPython(`
+import sys
+from io import StringIO
+_code = """` + escaped + `"""
+_old_stdout = sys.stdout
+sys.stdout = StringIO()
+try:
+    exec(_code)
+    _output = sys.stdout.getvalue()
+except Exception as e:
+    _output = f"Error: {e}"
+finally:
+    sys.stdout = _old_stdout
+_output
+`);
+                outputEl.textContent = result || '(no output)';
+            } catch(e) {
+                outputEl.textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        function submitWork() {
+            const status = document.getElementById('submitStatus');
+            const data = {
+                week: 'Week_10',
+                student_id: document.getElementById('studentId').value.trim(),
+                student_name: document.getElementById('studentName').value.trim(),
+                student_email: document.getElementById('studentEmail').value.trim().toLowerCase(),
+                classCode: document.getElementById('classCode').value.trim().toUpperCase(),
+                timeOnPage: Math.floor((Date.now() - pageLoadTime) / 1000)
+            };
+            
+            if (document.getElementById('hp').value) {
+                status.textContent = 'Submission rejected.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (data.timeOnPage < 60) {
+                status.textContent = 'Please spend more time reviewing the material.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (!data.student_id || !data.student_name || !data.student_email || !data.classCode) {
+                status.textContent = 'All fields are required.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            if (!data.student_email.endsWith('@istun.edu.tr')) {
+                status.textContent = 'Use your @istun.edu.tr email.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            status.textContent = 'Submitting...';
+            status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
+            
+            fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(res => {
+                status.textContent = res.success ? 'Submitted successfully!' : res.message;
+                status.style.cssText = 'display:block;background:rgba(' + (res.success ? '74,222,128' : '239,68,68') + ',0.2);color:' + (res.success ? '#4ade80' : '#fca5a5');
+            })
+            .catch(() => {
+                fetch('https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec', {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(() => {
+                    status.textContent = 'Submission sent!';
+                    status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
