@@ -30,63 +30,139 @@
         .topbar .title { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 500; }
         .topbar .subtitle { font-family: system-ui, sans-serif; font-size: 0.75rem; color: #a0a0b0; }
         
-        .book { max-width: 850px; margin: 0 auto; padding: 60px 40px 100px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 60px 40px 100px; }
         
-        .chapter-header { text-align: center; padding: 50px 0 60px; border-bottom: 1px solid #ddd; margin-bottom: 50px; }
-        .chapter-num { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: #7c3aed; margin-bottom: 15px; }
-        .chapter-header h1 { font-size: 2.8rem; font-weight: 600; color: #1a1a2e; margin-bottom: 15px; letter-spacing: -0.5px; }
-        .chapter-header .subtitle { font-style: italic; color: #666; font-size: 1.1rem; }
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 40px 0 60px;
+        }
+        .course-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 25px;
+            font-family: system-ui, sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+        .hero .subtitle {
+            font-style: italic;
+            color: #666;
+            font-size: 1.2rem;
+        }
         
-        h2 { font-size: 1.6rem; font-weight: 600; color: #1a1a2e; margin: 60px 0 25px; padding-top: 30px; border-top: 1px solid #e5e5e5; }
-        h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
-        h3 { font-size: 1.25rem; font-weight: 600; color: #333; margin: 40px 0 15px; }
+        /* Welcome Section */
+        .welcome {
+            max-width: 900px;
+            margin: 0 auto 50px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #444;
+        }
         
-        p { margin: 0 0 20px; text-align: justify; hyphens: auto; }
-        
+        /* Info Cards Grid */
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin: 30px 0 50px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin: 40px 0 60px;
         }
         
         .info-card {
-            background: #f8f7f5;
-            border-left: 4px solid #7c3aed;
-            padding: 20px 25px;
-            border-radius: 0 6px 6px 0;
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-left: 4px solid #10b981;
+            padding: 25px 30px;
+            border-radius: 0 10px 10px 0;
         }
         .info-card h3 {
             font-family: system-ui, sans-serif;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #7c3aed;
-            margin: 0 0 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin: 0 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .info-card ul, .info-card ol {
+        .info-card h3 .icon {
+            font-size: 1.3rem;
+        }
+        .info-card ul {
             margin: 0;
-            padding-left: 20px;
+            padding-left: 0;
+            list-style: none;
             font-size: 0.95rem;
         }
-        .info-card li { margin: 8px 0; }
+        .info-card li { 
+            margin: 10px 0; 
+            padding-left: 8px;
+            position: relative;
+        }
+        .info-card li::before {
+            content: "•";
+            color: #10b981;
+            font-weight: bold;
+            position: absolute;
+            left: -10px;
+        }
+        .info-card.workflow {
+            border-left-color: #8b5cf6;
+        }
+        .info-card.workflow li::before { color: #8b5cf6; }
         .info-card.warning {
-            background: #fffbeb;
             border-left-color: #f59e0b;
         }
         .info-card.warning h3 { color: #b45309; }
+        .info-card.warning li::before { color: #f59e0b; }
         
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin: 60px 0 30px;
+        }
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+        .section-header p {
+            color: #666;
+            font-size: 1.05rem;
+        }
+        
+        /* Week Grid - 3 columns */
         .week-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin: 30px 0;
+        }
+        
+        @media (max-width: 1024px) {
+            .week-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 640px) {
+            .week-grid { grid-template-columns: 1fr; }
         }
         
         .week-card {
             background: white;
             border: 1px solid #e5e5e5;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 24px;
             text-decoration: none;
             color: inherit;
@@ -94,9 +170,9 @@
             display: block;
         }
         .week-card:hover {
-            border-color: #7c3aed;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.1);
-            transform: translateY(-2px);
+            border-color: #10b981;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
+            transform: translateY(-3px);
         }
         
         .week-card-header {
@@ -108,9 +184,9 @@
         
         .week-badge {
             font-family: system-ui, sans-serif;
-            background: rgba(124, 58, 237, 0.1);
-            color: #7c3aed;
-            padding: 4px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            padding: 5px 14px;
             border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 600;
@@ -124,15 +200,15 @@
         
         .status-badge {
             font-family: system-ui, sans-serif;
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
         }
-        .status-badge.open { background: rgba(34, 197, 94, 0.1); color: #16a34a; }
+        .status-badge.open { background: rgba(34, 197, 94, 0.15); color: #16a34a; }
         .status-badge.upcoming { background: rgba(59, 130, 246, 0.1); color: #2563eb; }
-        .status-badge.closed { background: rgba(0, 0, 0, 0.05); color: #666; }
+        .status-badge.closed { background: rgba(0, 0, 0, 0.05); color: #888; }
         
         .week-card h4 {
             font-size: 1.15rem;
@@ -158,7 +234,7 @@
             color: #888;
         }
         .arrow {
-            color: #7c3aed;
+            color: #10b981;
             font-size: 1.2rem;
             font-weight: bold;
         }
@@ -174,31 +250,33 @@
             border-color: rgba(245, 158, 11, 0.3);
         }
         
+        /* Footer */
         .footer {
             background: #1a1a2e;
             color: white;
             padding: 40px;
-            border-radius: 10px;
+            border-radius: 12px;
             margin-top: 60px;
             text-align: center;
         }
-        .footer h3 {
-            color: white;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-        .footer p {
+        .footer h3 { 
+            font-family: system-ui, sans-serif; 
+            font-size: 1rem; 
+            margin-bottom: 15px; 
             color: #a0a0b0;
-            font-size: 0.95rem;
-            margin: 8px 0;
-            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .footer strong { color: white; }
+        .footer p { 
+            margin: 8px 0; 
+            font-size: 1rem;
+            color: #e0e0e0;
+        }
+        .footer strong { color: #10b981; }
         
-        @media (max-width: 600px) {
-            .book { padding: 30px 20px; }
-            .chapter-header h1 { font-size: 2rem; }
-            .week-grid { grid-template-columns: 1fr; }
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px; }
+            .hero h1 { font-size: 2.2rem; }
             .info-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -206,60 +284,62 @@
 <body>
     <nav class="topbar">
         <div>
-            <span class="title">Data Structures &amp; Algorithms</span>
-            <div class="subtitle">Mechatronics Engineering</div>
+            <span class="title">Data Structures & Algorithms</span>
+            <div class="subtitle">DSA • Spring 2026</div>
         </div>
     </nav>
-    
-    <main class="book">
-        <header class="chapter-header">
-            <div class="chapter-num">Interactive Python Course</div>
-            <h1>Data Structures &amp; Algorithms</h1>
-            <p class="subtitle">Istanbul Health and Technology University</p>
-        </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="course-badge">Interactive Python Course</div>
+            <h1>Data Structures & Algorithms</h1>
+            <p class="subtitle">Istanbul Health and Technology University • Mechatronics Engineering</p>
+        </div>
         
-        <section>
-            <h2>Welcome</h2>
-            <p>Welcome to the Data Structures and Algorithms course. This interactive textbook provides comprehensive coverage of fundamental computer science concepts through hands-on Python programming. Each week's material includes explanations, runnable code examples, and practice exercises.</p>
-            
-            <div class="info-grid">
-                <div class="info-card">
-                    <h3>How to Learn</h3>
-                    <ul>
-                        <li><strong>Read</strong> the explanations and examples</li>
-                        <li><strong>Run</strong> code directly in your browser</li>
-                        <li><strong>Practice</strong> with the exercises</li>
-                        <li><strong>Submit</strong> during the designated week</li>
-                    </ul>
-                </div>
-                <div class="info-card">
-                    <h3>Workflow</h3>
-                    <ol>
-                        <li><strong>Study:</strong> Read content and run examples</li>
-                        <li><strong>Practice:</strong> Complete all exercises</li>
-                        <li><strong>Attend:</strong> Get submission code in class</li>
-                        <li><strong>Submit:</strong> Fill form at page bottom</li>
-                    </ol>
-                </div>
-                <div class="info-card warning">
-                    <h3>Submission Rules</h3>
-                    <ul>
-                        <li>Submit <strong>only during the open window</strong></li>
-                        <li>Need <strong>class code</strong> from instructor</li>
-                        <li>Use your <strong>@istun.edu.tr</strong> email</li>
-                        <li><strong>One submission</strong> per student per week</li>
-                    </ul>
-                </div>
+        <!-- Welcome Text -->
+        <p class="welcome">Welcome to Data Structures & Algorithms! This course covers fundamental computer science concepts through hands-on Python programming. Each week's content includes explanations, interactive code examples you can run directly in your browser, and exercises to practice.</p>
+        
+        <!-- Info Cards -->
+        <div class="info-grid">
+            <div class="info-card">
+                <h3><span class="icon">📖</span> How to Learn</h3>
+                <ul>
+                    <li><strong>Read</strong> the explanations carefully</li>
+                    <li><strong>Run</strong> code examples in your browser</li>
+                    <li><strong>Experiment</strong> by modifying the code</li>
+                    <li><strong>Practice</strong> with the exercises</li>
+                </ul>
             </div>
-        </section>
+            <div class="info-card workflow">
+                <h3><span class="icon">📋</span> Workflow</h3>
+                <ul>
+                    <li><strong>Study:</strong> Read content & run examples</li>
+                    <li><strong>Practice:</strong> Complete all exercises</li>
+                    <li><strong>Get code:</strong> Attend class for submission code</li>
+                    <li><strong>Submit:</strong> Fill the form at page bottom</li>
+                </ul>
+            </div>
+            <div class="info-card warning">
+                <h3><span class="icon">⚠️</span> Submission Rules</h3>
+                <ul>
+                    <li>Submit <strong>only during the open window</strong></li>
+                    <li>Need <strong>class code</strong> from instructor</li>
+                    <li>Use your <strong>@istun.edu.tr</strong> email</li>
+                    <li><strong>One submission</strong> per week allowed</li>
+                </ul>
+            </div>
+        </div>
         
-        <section>
-            <h2>Course Contents &amp; Schedule</h2>
-            <p>Click on any week to access the interactive textbook. Each module contains comprehensive explanations, runnable code examples, and practice exercises.</p>
-            
-            <div class="week-grid" id="weekGrid"></div>
-        </section>
+        <!-- Course Contents -->
+        <div class="section-header">
+            <h2>Course Contents & Schedule</h2>
+            <p>Click on any week to access the interactive textbook</p>
+        </div>
         
+        <div class="week-grid" id="weekGrid"></div>
+        
+        <!-- Footer -->
         <footer class="footer">
             <h3>Course Information</h3>
             <p><strong>Instructor:</strong> Dr. Arif Solmaz</p>
@@ -383,7 +463,7 @@
             
             const msg = document.createElement('div');
             msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a2e;color:white;padding:30px 50px;border-radius:10px;font-family:system-ui;text-align:center;z-index:9999;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
-            msg.innerHTML = '<div style="font-size:1.2rem;margin-bottom:10px;">Redirecting to this week\'s content...</div><div style="color:#a78bfa;">' + currentWeekFile.replace('.html','').replace('Week','Week ') + '</div>';
+            msg.innerHTML = '<div style="font-size:1.2rem;margin-bottom:10px;">Redirecting to this week\'s content...</div><div style="color:#10b981;">' + currentWeekFile.replace('.html','').replace('Week_','Week ') + '</div>';
             document.body.appendChild(msg);
             
             setTimeout(() => {
