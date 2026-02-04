@@ -2545,6 +2545,15 @@ class MyHashMap:
         const pasteAttempts = {};
         
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if already submitted
+            const weekKey = 'dsa_submitted_' + document.querySelector('[data-exercise]').closest('section').previousElementSibling?.id || 'Week_08';
+            if (localStorage.getItem('dsa_submitted_Week_08')) {
+                const btn = document.querySelector('.submit-btn');
+                const status = document.getElementById('submitStatus');
+                if (btn) { btn.disabled = true; btn.textContent = '✓ Already Submitted'; btn.style.opacity = '0.6'; btn.style.cursor = 'not-allowed'; }
+                if (status) { status.textContent = '✅ You have already submitted this week.'; status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80'; }
+            }
+
             document.querySelectorAll('textarea[id^="ex"]').forEach(textarea => {
                 const exId = textarea.id;
                 originalExerciseCode[exId] = textarea.value;
@@ -2650,6 +2659,12 @@ sys.stdout = StringIO()
         
         // ============ SUBMIT ============
         async function submitWork() {
+            // Prevent double-click
+            const submitBtn = document.querySelector('.submit-btn');
+            if (submitBtn.disabled) return;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Submitting...';
+
             const status = document.getElementById('submitStatus');
             status.style.display = 'none';
             const studentId = document.getElementById('studentId').value.trim();
@@ -2704,13 +2719,13 @@ sys.stdout = StringIO()
             fetch(scriptUrl, { method: 'POST', mode: 'cors', cache: 'no-cache', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) })
             .then(response => response.json())
             .then(res => {
-                if (res.success) { status.textContent = '✅ Submitted successfully! Check your email for confirmation.'; status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80'; }
-                else { status.textContent = '❌ ' + (res.message || 'Submission failed.'); status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; }
+                if (res.success) { localStorage.setItem('dsa_submitted_Week_08', Date.now()); submitBtn.textContent = '✓ Submitted'; status.textContent = '✅ Submitted successfully! Check your email for confirmation.'; status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80'; }
+                else { submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ ' + (res.message || 'Submission failed.'); status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; }
             })
             .catch(error => {
                 fetch(scriptUrl, { method: 'POST', mode: 'no-cors', cache: 'no-cache', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) })
                 .then(() => { status.textContent = '⏳ Request sent. Check your email.'; status.style.cssText = 'display:block;background:rgba(251,191,36,0.2);color:#fbbf24'; })
-                .catch(() => { status.textContent = '❌ Connection error.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; });
+                .catch(() => { submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Connection error.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; });
             });
         }
     </script>
