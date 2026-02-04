@@ -2296,38 +2296,38 @@ sys.stdout = StringIO()
             const honeypot = document.getElementById('hp').value;
             
             if (honeypot) {
-                status.textContent = '❌ Submission rejected.';
+                submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Submission rejected.';
                 status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
                 return;
             }
             
             const timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000);
             if (timeOnPage < 60) {
-                status.textContent = '❌ Please spend more time reviewing the material.';
+                submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Please spend more time reviewing the material.';
                 status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
                 return;
             }
             
             if (!studentId || !studentName || !studentEmail || !classCode) {
-                status.textContent = '❌ All fields are required.';
+                submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ All fields are required.';
                 status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
                 return;
             }
             
             if (!validateStudentId(studentId)) {
-                status.textContent = '❌ Invalid Student ID (must be 6-10 digits).';
+                submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Invalid Student ID (must be 6-10 digits).';
                 status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
                 return;
             }
             
             if (!validateName(studentName)) {
-                status.textContent = '❌ Please use your real information.';
+                submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Please use your real information.';
                 status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
                 return;
             }
             
             if (!validateEmail(studentEmail)) {
-                status.textContent = '❌ Use your @istun.edu.tr email.';
+                submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Use your @istun.edu.tr email.';
                 status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
                 return;
             }

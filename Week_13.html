@@ -2430,13 +2430,13 @@ sys.stdout = StringIO()
             const classCode = document.getElementById('classCode').value.trim().toUpperCase();
             const honeypot = document.getElementById('hp').value;
             
-            if (honeypot) { status.textContent = '❌ Submission rejected.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (honeypot) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Submission rejected.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
             const timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000);
-            if (timeOnPage < 60) { status.textContent = '❌ Please spend more time reviewing the material.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
-            if (!studentId || !studentName || !studentEmail || !classCode) { status.textContent = '❌ All fields are required.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
-            if (!validateStudentId(studentId)) { status.textContent = '❌ Invalid Student ID (must be 6-10 digits).'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
-            if (!validateName(studentName)) { status.textContent = '❌ Please use your real information.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
-            if (!validateEmail(studentEmail)) { status.textContent = '❌ Use your @istun.edu.tr email.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (timeOnPage < 60) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Please spend more time reviewing the material.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!studentId || !studentName || !studentEmail || !classCode) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ All fields are required.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!validateStudentId(studentId)) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Invalid Student ID (must be 6-10 digits).'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!validateName(studentName)) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Please use your real information.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!validateEmail(studentEmail)) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Use your @istun.edu.tr email.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
             
             status.textContent = '⏳ Collecting answers and submitting...';
             status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
