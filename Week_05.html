@@ -1,0 +1,2780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 05: Stacks &amp; Queues | DSA Course</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <script type="module">
+        // Wait for PyScript to be ready
+        const pyReady = new Promise((resolve) => {
+            const check = setInterval(() => {
+                if (typeof pyscript !== 'undefined' && pyscript.interpreter) {
+                    clearInterval(check);
+                    resolve();
+                }
+            }, 100);
+            // Timeout after 15 seconds
+            setTimeout(() => { clearInterval(check); resolve(); }, 15000);
+        });
+        window.pyReady = pyReady;
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 19px;
+            background: #faf9f7;
+            color: #2c2c2c; 
+            line-height: 1.8;
+        }
+        
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .topbar .title { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 500; }
+        .topbar a { font-family: system-ui, sans-serif; color: white; text-decoration: none; font-size: 0.85rem; padding: 6px 14px; background: rgba(255,255,255,0.1); border-radius: 5px; }
+        .topbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .book { max-width: 750px; margin: 0 auto; padding: 60px 40px 100px; }
+        
+        .chapter-header { text-align: center; padding: 50px 0 60px; border-bottom: 1px solid #ddd; margin-bottom: 50px; }
+        .chapter-num { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: #7c3aed; margin-bottom: 15px; }
+        .chapter-header h1 { font-size: 2.8rem; font-weight: 600; color: #1a1a2e; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .chapter-header .subtitle { font-style: italic; color: #666; font-size: 1.1rem; }
+        
+        h2 { font-size: 1.6rem; font-weight: 600; color: #1a1a2e; margin: 60px 0 25px; padding-top: 30px; border-top: 1px solid #e5e5e5; }
+        h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+        h3 { font-size: 1.25rem; font-weight: 600; color: #333; margin: 40px 0 15px; }
+        h4 { font-size: 1.05rem; font-weight: 600; color: #555; margin: 30px 0 12px; }
+        
+        p { margin: 0 0 20px; text-align: justify; hyphens: auto; }
+        ul, ol { margin: 20px 0 25px 30px; }
+        li { margin: 10px 0; }
+        
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: #f0eeeb; padding: 2px 6px; border-radius: 3px; color: #7c3aed; }
+        .term { font-weight: 600; color: #1a1a2e; }
+        
+        .definition { background: #f8f7f5; border-left: 4px solid #7c3aed; padding: 20px 25px; margin: 30px 0; }
+        .definition-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 8px; font-weight: 600; }
+        .definition p { margin: 0; }
+        
+        .margin-note { background: #fffbeb; border: 1px solid #fcd34d; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .margin-note::before { content: "💡 "; }
+        
+        .important { background: #fef2f2; border: 1px solid #fca5a5; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .important::before { content: "⚠️ "; }
+        
+        .example { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; padding: 25px; margin: 30px 0; }
+        .example-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 15px; font-weight: 600; }
+        
+        .code-figure { margin: 35px 0; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background: #1e1e2e; }
+        .code-figure-header { background: #28283c; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
+        .code-figure-label { font-family: system-ui, sans-serif; font-size: 0.75rem; color: #a0a0b0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .code-figure-run { font-family: system-ui, sans-serif; background: #7c3aed; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
+        .code-figure-run:hover { background: #6d28d9; }
+        .code-figure textarea { width: 100%; min-height: 100px; padding: 18px; background: #1e1e2e; color: #e0e0e0; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; }
+        .code-figure textarea:focus { outline: none; }
+        .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; }
+        .code-figure-output.show { display: block; }
+        .code-figure-caption { background: #f8f8f8; padding: 12px 18px; font-size: 0.85rem; color: #666; border-top: 1px solid #e0e0e0; }
+        .code-figure-caption strong { color: #333; }
+        
+        .summary { background: linear-gradient(135deg, #7c3aed10, #7c3aed05); border: 1px solid #7c3aed30; border-radius: 8px; padding: 25px 30px; margin: 40px 0; }
+        .summary-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 12px; font-weight: 600; }
+        .summary ul { margin: 0; }
+        
+        .exercise { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 25px 30px; margin: 40px 0 20px; }
+        .exercise-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #16a34a; margin-bottom: 12px; font-weight: 600; }
+        .exercise p { margin: 0; }
+        .exercise .answer { margin-top: 12px; font-size: 0.9rem; color: #166534; }
+        .exercise-description { margin-bottom: 15px; }
+        
+        /* Hint System */
+        .hint-section { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #bbf7d0; }
+        .hint-toggle { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-family: system-ui, sans-serif; font-weight: 500; transition: all 0.3s ease; margin-right: 8px; margin-bottom: 8px; }
+        .hint-toggle:hover { background: linear-gradient(135deg, #059669, #047857); transform: translateY(-1px); }
+        .hint-toggle.revealed { background: #6b7280; }
+        .hint-content { display: none; background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 15px 20px; margin-top: 12px; font-size: 0.9rem; color: #065f46; line-height: 1.6; }
+        .hint-content.show { display: block; animation: fadeIn 0.3s ease; }
+        .hint-content code { background: #d1fae5; color: #065f46; padding: 2px 6px; border-radius: 3px; font-size: 0.85em; }
+        .hint-content pre { background: #1e1e2e; color: #e0e0e0; padding: 12px 15px; border-radius: 6px; margin: 10px 0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .paste-warning { color: #f87171; font-size: 12px; margin-top: 5px; font-family: system-ui, sans-serif; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 0.95rem; }
+        th, td { border: 1px solid #ddd; padding: 12px 15px; text-align: left; }
+        th { background: #f5f5f5; font-weight: 600; }
+        
+        .submit-section { background: #1a1a2e; color: white; padding: 40px; border-radius: 10px; margin-top: 60px; }
+        .submit-section h2 { color: white; border: none; margin: 0 0 20px; padding: 0; font-size: 1.4rem; }
+        .submit-section p { color: #a0a0b0; text-align: left; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-family: system-ui, sans-serif; font-size: 0.85rem; color: #a0a0b0; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: white; font-size: 1rem; font-family: system-ui, sans-serif; }
+        .form-group input:focus { outline: none; border-color: #7c3aed; }
+        .submit-btn { background: #7c3aed; color: white; border: none; padding: 14px 30px; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; font-family: system-ui, sans-serif; margin-top: 10px; }
+        .submit-btn:hover { background: #6d28d9; }
+        .submit-status { margin-top: 15px; padding: 12px; border-radius: 5px; display: none; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+        .hp { position: absolute; left: -9999px; }
+        
+        .toc { background: #f8f7f5; padding: 30px 35px; margin: 0 0 50px; border-radius: 6px; }
+        .toc-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 15px; }
+        .toc ol { margin: 0; padding-left: 20px; }
+        .toc li { margin: 8px 0; }
+        .toc a { color: #7c3aed; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        
+        @media (max-width: 600px) {
+            .book { padding: 30px 20px; }
+            .chapter-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.4rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="topbar">
+        <span class="title">Data Structures &amp; Algorithms</span>
+        <a href="index.html?home=true">← Course Home</a>
+    </nav>
+    
+    <main class="book">
+        <header class="chapter-header">
+            <div class="chapter-num">Week Five</div>
+            <h1>Stacks &amp; Queues</h1>
+            <p class="subtitle">LIFO and FIFO abstract data types</p>
+        </header>
+        
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <ol>
+                <li><a href="#intro">Introduction to Stacks and Queues</a></li>
+                <li><a href="#stack-concept">The Stack: LIFO Principle</a></li>
+                <li><a href="#stack-impl">Stack Implementations</a></li>
+                <li><a href="#stack-apps">Stack Applications</a></li>
+                <li><a href="#queue-concept">The Queue: FIFO Principle</a></li>
+                <li><a href="#queue-impl">Queue Implementations</a></li>
+                <li><a href="#queue-variants">Queue Variants</a></li>
+                <li><a href="#queue-apps">Queue Applications</a></li>
+                <li><a href="#comparison">Stacks vs Queues</a></li>
+                <li><a href="#pitfalls">Common Pitfalls</a></li>
+                <li><a href="#exercises">Exercises</a></li>
+            </ol>
+        </nav>
+
+        <!-- ============================================== -->
+        <!-- SECTION 1: INTRODUCTION -->
+        <!-- ============================================== -->
+        <section id="intro">
+            <h2>1. Introduction to Stacks and Queues</h2>
+            
+            <p>In the previous weeks, we explored arrays and linked lists—fundamental data structures that store collections of elements. Now we introduce <span class="term">stacks</span> and <span class="term">queues</span>, which are <span class="term">abstract data types (ADTs)</span> that restrict how we access elements. These restrictions make them perfect for specific problems.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>An <span class="term">Abstract Data Type (ADT)</span> defines what operations can be performed on data, not how they're implemented. Stacks and queues are ADTs that can be implemented using arrays or linked lists, but they enforce specific access patterns: LIFO (Last In, First Out) for stacks, and FIFO (First In, First Out) for queues.</p>
+            </div>
+            
+            <h3>Real-World Analogies</h3>
+            
+            <div class="example">
+                <div class="example-title">Stack vs Queue in Daily Life</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+STACK (LIFO - Last In, First Out):
+┌─────────────────────────────────────────┐
+│  • Stack of plates in cafeteria         │
+│    → Take from top, add to top          │
+│  • Undo history in text editor          │
+│    → Last action is first to undo       │
+│  • Browser back button                  │
+│    → Last page visited, first to return │
+│  • Function call stack                  │
+│    → Last function called, first to end │
+└─────────────────────────────────────────┘
+
+QUEUE (FIFO - First In, First Out):
+┌─────────────────────────────────────────┐
+│  • Line at coffee shop                  │
+│    → First in line, first served        │
+│  • Print queue                          │
+│    → First document sent, first printed │
+│  • Task scheduling                      │
+│    → Tasks processed in order received  │
+│  • Breadth-first search                 │
+│    → Explore nodes level by level       │
+└─────────────────────────────────────────┘
+                </pre>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.1 — Stack vs Queue Behavior</span>
+                    <button class="code-figure-run" onclick="runCode('code1')">▶ Run</button>
+                </div>
+                <textarea id="code1" spellcheck="false"># Demonstrate the key difference between stacks and queues
+from collections import deque
+
+# Add elements 1, 2, 3 to both
+stack = []  # Use list as stack
+queue = deque()  # Use deque as queue
+
+for x in [1, 2, 3]:
+    stack.append(x)
+    queue.append(x)
+
+print("After adding 1, 2, 3:")
+print(f"  Stack: {stack}")
+print(f"  Queue: {list(queue)}")
+
+# Remove elements
+print("\nRemoving elements:")
+print(f"  Stack removes: {stack.pop()}, {stack.pop()}, {stack.pop()}")  # 3, 2, 1
+
+queue = deque([1, 2, 3])  # Reset queue
+print(f"  Queue removes: {queue.popleft()}, {queue.popleft()}, {queue.popleft()}")  # 1, 2, 3
+
+print("\nStack: Last In = First Out (LIFO)")
+print("Queue: First In = First Out (FIFO)")</textarea>
+                <div class="code-figure-output" id="outputcode1"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.1:</strong> Same elements added, but removal order differs: stack removes most recent, queue removes oldest.
+                </div>
+            </div>
+            
+            <h3>Why Restrict Access?</h3>
+            
+            <p>You might wonder: why limit ourselves when arrays give us full access? The restrictions of stacks and queues actually provide benefits:</p>
+            
+            <ul>
+                <li><strong>Simplicity:</strong> Fewer operations mean simpler code and fewer bugs</li>
+                <li><strong>Efficiency:</strong> All operations are O(1)</li>
+                <li><strong>Correctness:</strong> The structure enforces the right access pattern for your algorithm</li>
+                <li><strong>Clarity:</strong> Code intent is clear—a stack says "I need LIFO behavior"</li>
+            </ul>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 2: STACK CONCEPT -->
+        <!-- ============================================== -->
+        <section id="stack-concept">
+            <h2>2. The Stack: LIFO Principle</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">stack</span> is a linear data structure that follows the <span class="term">Last In, First Out (LIFO)</span> principle. Elements can only be added to (pushed) or removed from (popped) the top of the stack. Think of it as a stack of plates—you can only access the top plate.</p>
+            </div>
+            
+            <h3>Stack Operations</h3>
+            
+            <table>
+                <tr>
+                    <th>Operation</th>
+                    <th>Description</th>
+                    <th>Time</th>
+                </tr>
+                <tr>
+                    <td><code>push(x)</code></td>
+                    <td>Add element x to top of stack</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td><code>pop()</code></td>
+                    <td>Remove and return top element</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td><code>peek()</code> / <code>top()</code></td>
+                    <td>Return top element without removing</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td><code>is_empty()</code></td>
+                    <td>Check if stack has no elements</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td><code>size()</code></td>
+                    <td>Return number of elements</td>
+                    <td>O(1)</td>
+                </tr>
+            </table>
+            
+            <div class="example">
+                <div class="example-title">Stack Operations Visualization</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+Empty stack:     push(10):       push(20):       push(30):
+    ┌───┐           ┌───┐           ┌───┐           ┌───┐
+    │   │           │   │           │   │           │30 │ ← top
+    ├───┤           ├───┤           ├───┤           ├───┤
+    │   │           │   │           │20 │ ← top     │20 │
+    ├───┤           ├───┤           ├───┤           ├───┤
+    │   │           │10 │ ← top     │10 │           │10 │
+    └───┘           └───┘           └───┘           └───┘
+
+pop() returns 30:    pop() returns 20:    peek() returns 10:
+    ┌───┐               ┌───┐               ┌───┐
+    │   │               │   │               │   │
+    ├───┤               ├───┤               ├───┤
+    │20 │ ← top         │   │               │   │
+    ├───┤               ├───┤               ├───┤
+    │10 │               │10 │ ← top         │10 │ ← top (unchanged)
+    └───┘               └───┘               └───┘
+                </pre>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.2 — Basic Stack Operations</span>
+                    <button class="code-figure-run" onclick="runCode('code2')">▶ Run</button>
+                </div>
+                <textarea id="code2" spellcheck="false"># Python list as a stack (most common approach)
+stack = []
+
+# push() - use append()
+stack.append(10)
+stack.append(20)
+stack.append(30)
+print(f"After pushing 10, 20, 30: {stack}")
+
+# peek() - access last element
+print(f"Peek (top element): {stack[-1]}")
+
+# pop() - removes and returns
+top = stack.pop()
+print(f"Popped: {top}")
+print(f"Stack after pop: {stack}")
+
+# is_empty() - check length
+print(f"Is empty: {len(stack) == 0}")
+
+# size()
+print(f"Size: {len(stack)}")
+
+# Pop all remaining
+while stack:
+    print(f"Popping: {stack.pop()}")
+    
+print(f"Final stack: {stack}")</textarea>
+                <div class="code-figure-output" id="outputcode2"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.2:</strong> Python lists support efficient stack operations via <code>append()</code> and <code>pop()</code>.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.3 — Stack Performance Comparison</span>
+                    <button class="code-figure-run" onclick="runCode('code2a')">▶ Run</button>
+                </div>
+                <textarea id="code2a" spellcheck="false">import time
+
+n = 5000
+
+# Correct: append/pop at end - O(1)
+stack = []
+start = time.perf_counter()
+for i in range(n):
+    stack.append(i)
+for i in range(n):
+    stack.pop()
+correct_time = time.perf_counter() - start
+
+# Wrong: insert/pop at beginning - O(n)
+stack = []
+start = time.perf_counter()
+for i in range(n):
+    stack.insert(0, i)  # O(n) each time!
+for i in range(n):
+    stack.pop(0)        # O(n) each time!
+wrong_time = time.perf_counter() - start
+
+print(f"Stack operations ({n} push + {n} pop):")
+print(f"  Correct (append/pop):    {correct_time*1000:.2f} ms")
+print(f"  Wrong (insert(0)/pop(0)): {wrong_time*1000:.2f} ms")
+print(f"  Speedup: {wrong_time/correct_time:.0f}x")
+print(f"\nAlways use the correct end of the list!")</textarea>
+                <div class="code-figure-output" id="outputcode2a"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.3:</strong> Using the wrong end of a list makes operations O(n) instead of O(1).
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                In Python, use <code>list.append()</code> for push and <code>list.pop()</code> for pop. Both are O(1) amortized. Don't use <code>insert(0, x)</code> or <code>pop(0)</code>—those are O(n)!
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 3: STACK IMPLEMENTATIONS -->
+        <!-- ============================================== -->
+        <section id="stack-impl">
+            <h2>3. Stack Implementations</h2>
+            
+            <h3>Implementation 1: Array-Based Stack</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.3 — Array-Based Stack Class</span>
+                    <button class="code-figure-run" onclick="runCode('code3')">▶ Run</button>
+                </div>
+                <textarea id="code3" spellcheck="false">class ArrayStack:
+    """Stack implementation using a Python list."""
+    
+    def __init__(self):
+        self._data = []
+    
+    def __len__(self):
+        return len(self._data)
+    
+    def __str__(self):
+        return f"Stack({self._data})"
+    
+    def is_empty(self):
+        return len(self._data) == 0
+    
+    def push(self, item):
+        """Add item to top of stack - O(1) amortized."""
+        self._data.append(item)
+    
+    def pop(self):
+        """Remove and return top item - O(1)."""
+        if self.is_empty():
+            raise IndexError("Pop from empty stack")
+        return self._data.pop()
+    
+    def peek(self):
+        """Return top item without removing - O(1)."""
+        if self.is_empty():
+            raise IndexError("Peek at empty stack")
+        return self._data[-1]
+
+# Test
+stack = ArrayStack()
+for x in [1, 2, 3, 4, 5]:
+    stack.push(x)
+    
+print(f"Stack: {stack}")
+print(f"Size: {len(stack)}")
+print(f"Peek: {stack.peek()}")
+print(f"Pop: {stack.pop()}")
+print(f"After pop: {stack}")</textarea>
+                <div class="code-figure-output" id="outputcode3"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.3:</strong> Array-based stack is simple and cache-friendly. Dynamic array handles resizing automatically.
+                </div>
+            </div>
+            
+            <h3>Implementation 2: Linked List-Based Stack</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.4 — Linked List-Based Stack</span>
+                    <button class="code-figure-run" onclick="runCode('code4')">▶ Run</button>
+                </div>
+                <textarea id="code4" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class LinkedStack:
+    """Stack implementation using a singly linked list."""
+    
+    def __init__(self):
+        self._head = None
+        self._size = 0
+    
+    def __len__(self):
+        return self._size
+    
+    def __str__(self):
+        items = []
+        current = self._head
+        while current:
+            items.append(str(current.data))
+            current = current.next
+        return f"Stack[{' -> '.join(items)}]"
+    
+    def is_empty(self):
+        return self._head is None
+    
+    def push(self, item):
+        """Add item to top (front of list) - O(1)."""
+        new_node = Node(item)
+        new_node.next = self._head
+        self._head = new_node
+        self._size += 1
+    
+    def pop(self):
+        """Remove and return top item - O(1)."""
+        if self.is_empty():
+            raise IndexError("Pop from empty stack")
+        data = self._head.data
+        self._head = self._head.next
+        self._size -= 1
+        return data
+    
+    def peek(self):
+        """Return top item without removing - O(1)."""
+        if self.is_empty():
+            raise IndexError("Peek at empty stack")
+        return self._head.data
+
+# Test
+stack = LinkedStack()
+for x in ['A', 'B', 'C', 'D']:
+    stack.push(x)
+    
+print(f"Stack: {stack}")
+print(f"Peek: {stack.peek()}")
+print(f"Pop: {stack.pop()}")
+print(f"After pop: {stack}")</textarea>
+                <div class="code-figure-output" id="outputcode4"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.4:</strong> Linked list stack uses the head as the top. Push/pop at head gives O(1) without amortization.
+                </div>
+            </div>
+            
+            <h3>Comparison: Array vs Linked List Stack</h3>
+            
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Array-Based</th>
+                    <th>Linked List-Based</th>
+                </tr>
+                <tr>
+                    <td>push()</td>
+                    <td>O(1) amortized</td>
+                    <td>O(1) worst case</td>
+                </tr>
+                <tr>
+                    <td>pop()</td>
+                    <td>O(1)</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td>Memory</td>
+                    <td>Compact, cache-friendly</td>
+                    <td>Extra pointer overhead</td>
+                </tr>
+                <tr>
+                    <td>Max size</td>
+                    <td>Can resize (or fixed)</td>
+                    <td>Limited only by memory</td>
+                </tr>
+                <tr>
+                    <td>Best for</td>
+                    <td>Most general use</td>
+                    <td>When worst-case O(1) required</td>
+                </tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.5 — Fixed-Size Array Stack</span>
+                    <button class="code-figure-run" onclick="runCode('code5')">▶ Run</button>
+                </div>
+                <textarea id="code5" spellcheck="false">class FixedStack:
+    """Stack with maximum capacity (no resizing)."""
+    
+    def __init__(self, capacity):
+        self._data = [None] * capacity
+        self._capacity = capacity
+        self._top = -1  # Index of top element (-1 = empty)
+    
+    def __len__(self):
+        return self._top + 1
+    
+    def is_empty(self):
+        return self._top == -1
+    
+    def is_full(self):
+        return self._top == self._capacity - 1
+    
+    def push(self, item):
+        if self.is_full():
+            raise OverflowError("Stack is full")
+        self._top += 1
+        self._data[self._top] = item
+    
+    def pop(self):
+        if self.is_empty():
+            raise IndexError("Pop from empty stack")
+        item = self._data[self._top]
+        self._data[self._top] = None  # Help garbage collection
+        self._top -= 1
+        return item
+    
+    def peek(self):
+        if self.is_empty():
+            raise IndexError("Peek at empty stack")
+        return self._data[self._top]
+
+# Test with capacity 3
+stack = FixedStack(3)
+print(f"Capacity: 3, Empty: {stack.is_empty()}")
+
+stack.push(1)
+stack.push(2)
+stack.push(3)
+print(f"After pushing 1,2,3: Full={stack.is_full()}")
+
+try:
+    stack.push(4)
+except OverflowError as e:
+    print(f"Error on push(4): {e}")
+
+print(f"Popped: {stack.pop()}")
+print(f"Now full: {stack.is_full()}")</textarea>
+                <div class="code-figure-output" id="outputcode5"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.5:</strong> Fixed-size stack is useful when you know the maximum size and want guaranteed O(1) without resizing.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 4: STACK APPLICATIONS -->
+        <!-- ============================================== -->
+        <section id="stack-apps">
+            <h2>4. Stack Applications</h2>
+            
+            <h3>Application 1: Balanced Parentheses</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.6 — Balanced Parentheses Checker</span>
+                    <button class="code-figure-run" onclick="runCode('code6')">▶ Run</button>
+                </div>
+                <textarea id="code6" spellcheck="false">def is_balanced(s):
+    """
+    Check if brackets are balanced.
+    Supports (), [], {}
+    """
+    stack = []
+    matching = {')': '(', ']': '[', '}': '{'}
+    
+    for char in s:
+        if char in '([{':
+            stack.append(char)
+        elif char in ')]}':
+            if not stack:
+                return False  # Closing without opening
+            if stack.pop() != matching[char]:
+                return False  # Mismatched pair
+    
+    return len(stack) == 0  # Stack should be empty
+
+# Test cases
+test_cases = [
+    "()",
+    "()[]{}",
+    "(]",
+    "([)]",
+    "{[()]}",
+    "(((",
+    "a + (b * [c - d])",
+    "",
+]
+
+print("Balanced parentheses check:")
+for s in test_cases:
+    result = "✓" if is_balanced(s) else "✗"
+    display = f"'{s}'" if s else "empty"
+    print(f"  {result} {display}")</textarea>
+                <div class="code-figure-output" id="outputcode6"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.6:</strong> Classic stack application: push opening brackets, pop and match for closing brackets.
+                </div>
+            </div>
+            
+            <h3>Application 2: Reverse Polish Notation (RPN) Calculator</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.7 — RPN Calculator</span>
+                    <button class="code-figure-run" onclick="runCode('code7')">▶ Run</button>
+                </div>
+                <textarea id="code7" spellcheck="false">def evaluate_rpn(tokens):
+    """
+    Evaluate Reverse Polish Notation expression.
+    Example: ["2", "3", "+", "4", "*"] = (2 + 3) * 4 = 20
+    """
+    stack = []
+    operators = {
+        '+': lambda a, b: a + b,
+        '-': lambda a, b: a - b,
+        '*': lambda a, b: a * b,
+        '/': lambda a, b: int(a / b),  # Integer division toward zero
+    }
+    
+    for token in tokens:
+        if token in operators:
+            b = stack.pop()  # Second operand (popped first!)
+            a = stack.pop()  # First operand
+            result = operators[token](a, b)
+            stack.append(result)
+        else:
+            stack.append(int(token))
+    
+    return stack[0]
+
+# Test cases
+expressions = [
+    (["2", "3", "+"], "2 + 3"),
+    (["2", "3", "+", "4", "*"], "(2 + 3) * 4"),
+    (["4", "13", "5", "/", "+"], "4 + (13 / 5)"),
+    (["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"],
+     "complex expression"),
+]
+
+print("RPN Calculator:")
+for tokens, description in expressions:
+    result = evaluate_rpn(tokens)
+    print(f"  {' '.join(tokens)}")
+    print(f"    = {description} = {result}\n")</textarea>
+                <div class="code-figure-output" id="outputcode7"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.7:</strong> RPN eliminates parentheses by placing operators after operands. Stack makes evaluation simple.
+                </div>
+            </div>
+            
+            <h3>Application 3: Infix to Postfix Conversion</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.8 — Shunting Yard Algorithm</span>
+                    <button class="code-figure-run" onclick="runCode('code8')">▶ Run</button>
+                </div>
+                <textarea id="code8" spellcheck="false">def infix_to_postfix(expression):
+    """
+    Convert infix expression to postfix using Shunting Yard algorithm.
+    Example: "3 + 4 * 2" -> "3 4 2 * +"
+    """
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+    right_associative = {'^'}
+    
+    output = []
+    operator_stack = []
+    
+    tokens = expression.split()
+    
+    for token in tokens:
+        if token.isdigit():
+            output.append(token)
+        elif token in precedence:
+            while (operator_stack and 
+                   operator_stack[-1] != '(' and
+                   operator_stack[-1] in precedence and
+                   (precedence[operator_stack[-1]] > precedence[token] or
+                    (precedence[operator_stack[-1]] == precedence[token] and
+                     token not in right_associative))):
+                output.append(operator_stack.pop())
+            operator_stack.append(token)
+        elif token == '(':
+            operator_stack.append(token)
+        elif token == ')':
+            while operator_stack and operator_stack[-1] != '(':
+                output.append(operator_stack.pop())
+            operator_stack.pop()  # Remove '('
+    
+    while operator_stack:
+        output.append(operator_stack.pop())
+    
+    return ' '.join(output)
+
+# Test
+expressions = [
+    "3 + 4",
+    "3 + 4 * 2",
+    "( 3 + 4 ) * 2",
+    "3 + 4 * 2 / ( 1 - 5 )",
+]
+
+print("Infix to Postfix conversion:")
+for expr in expressions:
+    postfix = infix_to_postfix(expr)
+    print(f"  {expr}")
+    print(f"    → {postfix}\n")</textarea>
+                <div class="code-figure-output" id="outputcode8"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.10:</strong> Dijkstra's Shunting Yard algorithm converts infix to postfix using operator precedence.
+                </div>
+            </div>
+            
+            <h3>Application 4: Decode String</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.11 — Decode Encoded String</span>
+                    <button class="code-figure-run" onclick="runCode('code8a')">▶ Run</button>
+                </div>
+                <textarea id="code8a" spellcheck="false">def decode_string(s):
+    """
+    Decode string like "3[a2[c]]" -> "accaccacc"
+    Uses stack to handle nested brackets.
+    """
+    stack = []
+    current_string = ""
+    current_num = 0
+    
+    for char in s:
+        if char.isdigit():
+            current_num = current_num * 10 + int(char)
+        elif char == '[':
+            # Save current state and start fresh
+            stack.append((current_string, current_num))
+            current_string = ""
+            current_num = 0
+        elif char == ']':
+            # Pop and build repeated string
+            prev_string, num = stack.pop()
+            current_string = prev_string + current_string * num
+        else:
+            current_string += char
+    
+    return current_string
+
+# Test cases
+test_cases = [
+    "3[a]",
+    "3[a2[c]]",
+    "2[abc]3[cd]ef",
+    "10[a]",
+]
+
+print("Decode String:")
+for s in test_cases:
+    result = decode_string(s)
+    print(f"  '{s}' -> '{result}'")</textarea>
+                <div class="code-figure-output" id="outputcode8a"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.11:</strong> Nested encoding is handled by pushing state onto stack at each '['.
+                </div>
+            </div>
+            
+            <h3>Application 5: Basic Calculator</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.12 — Basic Calculator with +, -, (, )</span>
+                    <button class="code-figure-run" onclick="runCode('code8b')">▶ Run</button>
+                </div>
+                <textarea id="code8b" spellcheck="false">def calculate(s):
+    """
+    Evaluate expression with +, -, (, ).
+    Uses stack for parentheses handling.
+    """
+    stack = []
+    result = 0
+    num = 0
+    sign = 1
+    
+    for char in s:
+        if char.isdigit():
+            num = num * 10 + int(char)
+        elif char == '+':
+            result += sign * num
+            num = 0
+            sign = 1
+        elif char == '-':
+            result += sign * num
+            num = 0
+            sign = -1
+        elif char == '(':
+            # Save current result and sign
+            stack.append(result)
+            stack.append(sign)
+            result = 0
+            sign = 1
+        elif char == ')':
+            result += sign * num
+            num = 0
+            # Pop sign and previous result
+            result *= stack.pop()  # sign
+            result += stack.pop()  # previous result
+    
+    result += sign * num
+    return result
+
+# Test cases
+expressions = [
+    "1 + 1",
+    " 2-1 + 2 ",
+    "(1+(4+5+2)-3)+(6+8)",
+    "2-(5-6)",
+]
+
+print("Basic Calculator:")
+for expr in expressions:
+    result = calculate(expr)
+    print(f"  {expr} = {result}")</textarea>
+                <div class="code-figure-output" id="outputcode8b"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.12:</strong> Calculator uses stack to save state before each '(' and restore after ')'.
+                </div>
+            </div>
+            
+            <h3>Application 6: Function Call Stack Simulation</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.9 — Call Stack Visualization</span>
+                    <button class="code-figure-run" onclick="runCode('code9')">▶ Run</button>
+                </div>
+                <textarea id="code9" spellcheck="false"># Simulate how the call stack works during recursion
+call_stack = []
+
+def factorial(n, depth=0):
+    """Factorial with call stack visualization."""
+    # Push current call onto stack
+    call_stack.append(f"factorial({n})")
+    print(f"{'  ' * depth}CALL: factorial({n})")
+    print(f"{'  ' * depth}Stack: {call_stack}")
+    
+    if n <= 1:
+        result = 1
+    else:
+        result = n * factorial(n - 1, depth + 1)
+    
+    # Pop current call from stack
+    call_stack.pop()
+    print(f"{'  ' * depth}RETURN: factorial({n}) = {result}")
+    print(f"{'  ' * depth}Stack: {call_stack}")
+    
+    return result
+
+print("Call stack during factorial(4):\n")
+result = factorial(4)
+print(f"\nFinal result: {result}")</textarea>
+                <div class="code-figure-output" id="outputcode9"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.9:</strong> Every function call pushes a frame onto the call stack; every return pops it.
+                </div>
+            </div>
+            
+            <h3>Application 5: Undo/Redo Functionality</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.10 — Undo/Redo with Two Stacks</span>
+                    <button class="code-figure-run" onclick="runCode('code10')">▶ Run</button>
+                </div>
+                <textarea id="code10" spellcheck="false">class TextEditor:
+    """Simple text editor with undo/redo using two stacks."""
+    
+    def __init__(self):
+        self.text = ""
+        self.undo_stack = []  # Stores previous states
+        self.redo_stack = []  # Stores undone states
+    
+    def write(self, s):
+        """Add text."""
+        self.undo_stack.append(self.text)  # Save current state
+        self.redo_stack.clear()  # Clear redo after new action
+        self.text += s
+        print(f"Write '{s}': '{self.text}'")
+    
+    def undo(self):
+        """Undo last action."""
+        if not self.undo_stack:
+            print("Nothing to undo")
+            return
+        self.redo_stack.append(self.text)  # Save for redo
+        self.text = self.undo_stack.pop()  # Restore previous
+        print(f"Undo: '{self.text}'")
+    
+    def redo(self):
+        """Redo last undone action."""
+        if not self.redo_stack:
+            print("Nothing to redo")
+            return
+        self.undo_stack.append(self.text)
+        self.text = self.redo_stack.pop()
+        print(f"Redo: '{self.text}'")
+
+# Demo
+editor = TextEditor()
+editor.write("Hello")
+editor.write(" World")
+editor.write("!")
+print()
+editor.undo()
+editor.undo()
+print()
+editor.redo()
+print()
+editor.write(" Python")  # This clears redo stack
+editor.redo()  # Nothing to redo</textarea>
+                <div class="code-figure-output" id="outputcode10"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.10:</strong> Two stacks enable both undo and redo: undo pops from undo_stack to redo_stack, redo reverses.
+                </div>
+            </div>
+            
+            <h3>Application 6: Next Greater Element</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.11 — Monotonic Stack Pattern</span>
+                    <button class="code-figure-run" onclick="runCode('code11')">▶ Run</button>
+                </div>
+                <textarea id="code11" spellcheck="false">def next_greater_element(arr):
+    """
+    For each element, find the next element that is greater.
+    Return -1 if no greater element exists.
+    Uses a monotonic decreasing stack.
+    Time: O(n), Space: O(n)
+    """
+    n = len(arr)
+    result = [-1] * n
+    stack = []  # Stores indices of elements waiting for their NGE
+    
+    for i in range(n):
+        # While current element is greater than stack top
+        while stack and arr[i] > arr[stack[-1]]:
+            idx = stack.pop()
+            result[idx] = arr[i]
+        stack.append(i)
+    
+    return result
+
+def next_greater_circular(arr):
+    """Next greater element in circular array."""
+    n = len(arr)
+    result = [-1] * n
+    stack = []
+    
+    # Go around twice to handle circular nature
+    for i in range(2 * n):
+        while stack and arr[i % n] > arr[stack[-1]]:
+            idx = stack.pop()
+            result[idx] = arr[i % n]
+        if i < n:
+            stack.append(i)
+    
+    return result
+
+# Test
+arr = [4, 5, 2, 25, 7, 8]
+print(f"Array: {arr}")
+print(f"Next greater: {next_greater_element(arr)}")
+
+arr2 = [1, 2, 1]
+print(f"\nCircular array: {arr2}")
+print(f"Next greater (circular): {next_greater_circular(arr2)}")</textarea>
+                <div class="code-figure-output" id="outputcode11"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.11:</strong> Monotonic stack finds next greater/smaller elements in O(n) time.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 5: QUEUE CONCEPT -->
+        <!-- ============================================== -->
+        <section id="queue-concept">
+            <h2>5. The Queue: FIFO Principle</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">queue</span> is a linear data structure that follows the <span class="term">First In, First Out (FIFO)</span> principle. Elements are added at the <span class="term">rear</span> (enqueue) and removed from the <span class="term">front</span> (dequeue). Think of it as a line of people—first in line is first served.</p>
+            </div>
+            
+            <h3>Queue Operations</h3>
+            
+            <table>
+                <tr>
+                    <th>Operation</th>
+                    <th>Description</th>
+                    <th>Time</th>
+                </tr>
+                <tr>
+                    <td><code>enqueue(x)</code></td>
+                    <td>Add element x to rear</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td><code>dequeue()</code></td>
+                    <td>Remove and return front element</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td><code>front()</code> / <code>peek()</code></td>
+                    <td>Return front element without removing</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td><code>is_empty()</code></td>
+                    <td>Check if queue has no elements</td>
+                    <td>O(1)</td>
+                </tr>
+                <tr>
+                    <td><code>size()</code></td>
+                    <td>Return number of elements</td>
+                    <td>O(1)</td>
+                </tr>
+            </table>
+            
+            <div class="example">
+                <div class="example-title">Queue Operations Visualization</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+Empty queue:
+    front → [           ] ← rear
+
+enqueue(10):
+    front → [ 10        ] ← rear
+
+enqueue(20):
+    front → [ 10 | 20   ] ← rear
+
+enqueue(30):
+    front → [ 10 | 20 | 30 ] ← rear
+
+dequeue() returns 10:
+    front → [ 20 | 30   ] ← rear
+
+dequeue() returns 20:
+    front → [ 30        ] ← rear
+                </pre>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.12 — Basic Queue Operations</span>
+                    <button class="code-figure-run" onclick="runCode('code12')">▶ Run</button>
+                </div>
+                <textarea id="code12" spellcheck="false">from collections import deque
+
+# Python deque as a queue (recommended)
+queue = deque()
+
+# enqueue() - use append()
+queue.append(10)
+queue.append(20)
+queue.append(30)
+print(f"After enqueueing 10, 20, 30: {list(queue)}")
+
+# peek() - access first element
+print(f"Front element: {queue[0]}")
+
+# dequeue() - use popleft()
+front = queue.popleft()
+print(f"Dequeued: {front}")
+print(f"Queue after dequeue: {list(queue)}")
+
+# is_empty() - check length
+print(f"Is empty: {len(queue) == 0}")
+
+# Dequeue all
+print("\nDequeuing all:")
+while queue:
+    print(f"  Dequeued: {queue.popleft()}")
+    
+print(f"Final queue: {list(queue)}")</textarea>
+                <div class="code-figure-output" id="outputcode12"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.16:</strong> Python's <code>deque</code> provides O(1) operations at both ends—perfect for queues.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.17 — Queue Interface Comparison</span>
+                    <button class="code-figure-run" onclick="runCode('code12a')">▶ Run</button>
+                </div>
+                <textarea id="code12a" spellcheck="false">from collections import deque
+import queue
+
+# Three ways to use queues in Python
+
+# 1. collections.deque (most common for general use)
+q1 = deque()
+q1.append(1)
+q1.append(2)
+print(f"deque: {list(q1)}, popleft: {q1.popleft()}")
+
+# 2. queue.Queue (thread-safe, for multi-threading)
+q2 = queue.Queue()
+q2.put(1)
+q2.put(2)
+print(f"queue.Queue: get: {q2.get()}")
+
+# 3. queue.LifoQueue (thread-safe stack)
+q3 = queue.LifoQueue()
+q3.put(1)
+q3.put(2)
+print(f"LifoQueue (stack): get: {q3.get()}")
+
+# 4. queue.PriorityQueue (thread-safe priority queue)
+q4 = queue.PriorityQueue()
+q4.put((2, "medium"))
+q4.put((1, "high"))
+q4.put((3, "low"))
+print(f"PriorityQueue: get: {q4.get()}")
+
+print("\nUse deque for most cases, queue.* for thread-safety")</textarea>
+                <div class="code-figure-output" id="outputcode12a"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.17:</strong> Python offers multiple queue implementations for different use cases.
+                </div>
+            </div>
+            
+            <div class="important">
+                Don't use a plain Python list as a queue! While <code>list.append()</code> is O(1), <code>list.pop(0)</code> is O(n) because it shifts all elements. Always use <code>collections.deque</code> for queues.
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 6: QUEUE IMPLEMENTATIONS -->
+        <!-- ============================================== -->
+        <section id="queue-impl">
+            <h2>6. Queue Implementations</h2>
+            
+            <h3>Implementation 1: Linked List-Based Queue</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.13 — Linked List Queue</span>
+                    <button class="code-figure-run" onclick="runCode('code13')">▶ Run</button>
+                </div>
+                <textarea id="code13" spellcheck="false">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class LinkedQueue:
+    """Queue using singly linked list with head and tail."""
+    
+    def __init__(self):
+        self._head = None  # Front of queue
+        self._tail = None  # Rear of queue
+        self._size = 0
+    
+    def __len__(self):
+        return self._size
+    
+    def __str__(self):
+        items = []
+        current = self._head
+        while current:
+            items.append(str(current.data))
+            current = current.next
+        return f"Queue[{' <- '.join(items)}]"
+    
+    def is_empty(self):
+        return self._head is None
+    
+    def enqueue(self, item):
+        """Add to rear - O(1)."""
+        new_node = Node(item)
+        if self.is_empty():
+            self._head = self._tail = new_node
+        else:
+            self._tail.next = new_node
+            self._tail = new_node
+        self._size += 1
+    
+    def dequeue(self):
+        """Remove from front - O(1)."""
+        if self.is_empty():
+            raise IndexError("Dequeue from empty queue")
+        data = self._head.data
+        self._head = self._head.next
+        if self._head is None:
+            self._tail = None
+        self._size -= 1
+        return data
+    
+    def front(self):
+        """Peek at front - O(1)."""
+        if self.is_empty():
+            raise IndexError("Front of empty queue")
+        return self._head.data
+
+# Test
+queue = LinkedQueue()
+for x in ['A', 'B', 'C', 'D']:
+    queue.enqueue(x)
+    print(f"Enqueue '{x}': {queue}")
+
+print()
+while not queue.is_empty():
+    print(f"Dequeue: {queue.dequeue()}, Remaining: {queue}")</textarea>
+                <div class="code-figure-output" id="outputcode13"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.13:</strong> Linked queue adds at tail, removes from head—both O(1) with two pointers.
+                </div>
+            </div>
+            
+            <h3>Implementation 2: Circular Array Queue</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.14 — Circular Array Queue</span>
+                    <button class="code-figure-run" onclick="runCode('code14')">▶ Run</button>
+                </div>
+                <textarea id="code14" spellcheck="false">class CircularQueue:
+    """Fixed-size queue using circular array."""
+    
+    def __init__(self, capacity):
+        self._data = [None] * capacity
+        self._capacity = capacity
+        self._front = 0
+        self._size = 0
+    
+    def __len__(self):
+        return self._size
+    
+    def is_empty(self):
+        return self._size == 0
+    
+    def is_full(self):
+        return self._size == self._capacity
+    
+    def enqueue(self, item):
+        """Add to rear - O(1)."""
+        if self.is_full():
+            raise OverflowError("Queue is full")
+        rear = (self._front + self._size) % self._capacity
+        self._data[rear] = item
+        self._size += 1
+    
+    def dequeue(self):
+        """Remove from front - O(1)."""
+        if self.is_empty():
+            raise IndexError("Dequeue from empty queue")
+        item = self._data[self._front]
+        self._data[self._front] = None
+        self._front = (self._front + 1) % self._capacity
+        self._size -= 1
+        return item
+    
+    def front(self):
+        if self.is_empty():
+            raise IndexError("Front of empty queue")
+        return self._data[self._front]
+    
+    def display(self):
+        """Show internal array state."""
+        markers = ['F' if i == self._front else ' ' for i in range(self._capacity)]
+        rear = (self._front + self._size - 1) % self._capacity if self._size > 0 else -1
+        if rear >= 0:
+            markers[rear] = 'R' if markers[rear] == ' ' else 'FR'
+        return f"Array: {self._data}, Front={self._front}, Size={self._size}"
+
+# Test
+q = CircularQueue(5)
+print("Circular Queue Demo (capacity=5):\n")
+
+for x in [1, 2, 3]:
+    q.enqueue(x)
+    print(f"Enqueue {x}: {q.display()}")
+
+print(f"\nDequeue: {q.dequeue()}")
+print(f"Dequeue: {q.dequeue()}")
+print(f"{q.display()}")
+
+for x in [4, 5, 6]:
+    q.enqueue(x)
+    print(f"Enqueue {x}: {q.display()}")
+
+print("\nNotice how elements wrap around the circular array!")</textarea>
+                <div class="code-figure-output" id="outputcode14"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.14:</strong> Circular array queue wraps around using modulo arithmetic. No element shifting needed.
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                Circular arrays avoid the "shifting problem" of linear arrays. When front moves past the end, it wraps to index 0. The modulo operation <code>% capacity</code> handles this elegantly.
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 7: QUEUE VARIANTS -->
+        <!-- ============================================== -->
+        <section id="queue-variants">
+            <h2>7. Queue Variants</h2>
+            
+            <h3>Double-Ended Queue (Deque)</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.15 — Deque Operations</span>
+                    <button class="code-figure-run" onclick="runCode('code15')">▶ Run</button>
+                </div>
+                <textarea id="code15" spellcheck="false">from collections import deque
+
+# Deque allows O(1) operations at BOTH ends
+d = deque()
+
+# Add to both ends
+d.append(2)      # Add to right: [2]
+d.append(3)      # Add to right: [2, 3]
+d.appendleft(1)  # Add to left:  [1, 2, 3]
+d.appendleft(0)  # Add to left:  [0, 1, 2, 3]
+
+print(f"After additions: {list(d)}")
+
+# Remove from both ends
+right = d.pop()       # Remove from right
+left = d.popleft()    # Remove from left
+print(f"Popped right: {right}, left: {left}")
+print(f"Remaining: {list(d)}")
+
+# Rotation
+d = deque([1, 2, 3, 4, 5])
+print(f"\nOriginal: {list(d)}")
+
+d.rotate(2)  # Rotate right by 2
+print(f"Rotate right 2: {list(d)}")
+
+d.rotate(-3)  # Rotate left by 3
+print(f"Rotate left 3: {list(d)}")
+
+# Max length deque (sliding window)
+print("\nMax-length deque (maxlen=3):")
+bounded = deque(maxlen=3)
+for x in range(6):
+    bounded.append(x)
+    print(f"  Append {x}: {list(bounded)}")</textarea>
+                <div class="code-figure-output" id="outputcode15"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.15:</strong> Deque supports both stack and queue operations. The maxlen parameter creates a sliding window.
+                </div>
+            </div>
+            
+            <h3>Priority Queue</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.16 — Priority Queue with heapq</span>
+                    <button class="code-figure-run" onclick="runCode('code16')">▶ Run</button>
+                </div>
+                <textarea id="code16" spellcheck="false">import heapq
+
+# heapq implements a min-heap (smallest first)
+pq = []
+
+# Add items with priorities
+heapq.heappush(pq, (3, "Medium priority"))
+heapq.heappush(pq, (1, "High priority"))
+heapq.heappush(pq, (5, "Low priority"))
+heapq.heappush(pq, (2, "Higher priority"))
+
+print("Priority Queue (min-heap):")
+print(f"  Heap: {pq}\n")
+
+# Remove in priority order (lowest first)
+print("Removing in priority order:")
+while pq:
+    priority, task = heapq.heappop(pq)
+    print(f"  Priority {priority}: {task}")
+
+# For max-heap, negate priorities
+print("\nMax-Heap simulation (negate priorities):")
+max_pq = []
+for item in [(3, "C"), (1, "A"), (5, "E"), (2, "B")]:
+    heapq.heappush(max_pq, (-item[0], item[1]))
+
+while max_pq:
+    priority, value = heapq.heappop(max_pq)
+    print(f"  Priority {-priority}: {value}")</textarea>
+                <div class="code-figure-output" id="outputcode16"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.16:</strong> Priority queue serves highest-priority items first. Python's heapq is a min-heap by default.
+                </div>
+            </div>
+            
+            <h3>Monotonic Queue</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.17 — Sliding Window Maximum</span>
+                    <button class="code-figure-run" onclick="runCode('code17')">▶ Run</button>
+                </div>
+                <textarea id="code17" spellcheck="false">from collections import deque
+
+def sliding_window_max(nums, k):
+    """
+    Find maximum in each sliding window of size k.
+    Uses monotonic decreasing deque.
+    Time: O(n), Space: O(k)
+    """
+    result = []
+    dq = deque()  # Stores indices, values in decreasing order
+    
+    for i, num in enumerate(nums):
+        # Remove indices outside current window
+        while dq and dq[0] <= i - k:
+            dq.popleft()
+        
+        # Remove smaller elements (they can't be max)
+        while dq and nums[dq[-1]] < num:
+            dq.pop()
+        
+        dq.append(i)
+        
+        # Add to result once we have full window
+        if i >= k - 1:
+            result.append(nums[dq[0]])
+    
+    return result
+
+# Test
+nums = [1, 3, -1, -3, 5, 3, 6, 7]
+k = 3
+
+print(f"Array: {nums}")
+print(f"Window size: {k}")
+print(f"\nSliding windows and their max:")
+
+for i in range(len(nums) - k + 1):
+    window = nums[i:i+k]
+    print(f"  {window} -> max = {max(window)}")
+
+print(f"\nResult: {sliding_window_max(nums, k)}")</textarea>
+                <div class="code-figure-output" id="outputcode17"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.17:</strong> Monotonic deque maintains candidates for window maximum in decreasing order.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 8: QUEUE APPLICATIONS -->
+        <!-- ============================================== -->
+        <section id="queue-apps">
+            <h2>8. Queue Applications</h2>
+            
+            <h3>Application 1: Breadth-First Search (BFS)</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.18 — BFS with Queue</span>
+                    <button class="code-figure-run" onclick="runCode('code18')">▶ Run</button>
+                </div>
+                <textarea id="code18" spellcheck="false">from collections import deque
+
+def bfs(graph, start):
+    """
+    Breadth-First Search using a queue.
+    Visits nodes level by level.
+    """
+    visited = set()
+    queue = deque([start])
+    visited.add(start)
+    order = []
+    
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        
+        for neighbor in graph.get(node, []):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    
+    return order
+
+# Example graph
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+
+print("Graph:")
+for node, neighbors in graph.items():
+    print(f"  {node} -> {neighbors}")
+
+print(f"\nBFS from 'A': {bfs(graph, 'A')}")
+print("(Visits all nodes at distance 1 before distance 2, etc.)")</textarea>
+                <div class="code-figure-output" id="outputcode18"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.18:</strong> BFS uses a queue to explore nodes level by level—essential for shortest path in unweighted graphs.
+                </div>
+            </div>
+            
+            <h3>Application 2: Level Order Tree Traversal</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.19 — Level Order Traversal</span>
+                    <button class="code-figure-run" onclick="runCode('code19')">▶ Run</button>
+                </div>
+                <textarea id="code19" spellcheck="false">from collections import deque
+
+class TreeNode:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def level_order(root):
+    """
+    Return list of lists, each containing values at that level.
+    """
+    if not root:
+        return []
+    
+    result = []
+    queue = deque([root])
+    
+    while queue:
+        level_size = len(queue)
+        level_values = []
+        
+        for _ in range(level_size):
+            node = queue.popleft()
+            level_values.append(node.val)
+            
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        
+        result.append(level_values)
+    
+    return result
+
+# Build tree:
+#        1
+#       / \
+#      2   3
+#     / \   \
+#    4   5   6
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.left = TreeNode(4)
+root.left.right = TreeNode(5)
+root.right.right = TreeNode(6)
+
+print("Tree structure:")
+print("       1")
+print("      / \\")
+print("     2   3")
+print("    / \\   \\")
+print("   4   5   6")
+
+print(f"\nLevel order traversal: {level_order(root)}")</textarea>
+                <div class="code-figure-output" id="outputcode19"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.19:</strong> Level order traversal visits tree nodes layer by layer using a queue.
+                </div>
+            </div>
+            
+            <h3>Application 3: Task Scheduler</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.20 — Simple Task Queue</span>
+                    <button class="code-figure-run" onclick="runCode('code20')">▶ Run</button>
+                </div>
+                <textarea id="code20" spellcheck="false">from collections import deque
+import time
+
+class TaskScheduler:
+    """Simple FIFO task scheduler."""
+    
+    def __init__(self):
+        self.queue = deque()
+    
+    def add_task(self, task_name, task_func):
+        """Add task to queue."""
+        self.queue.append((task_name, task_func))
+        print(f"Added task: {task_name}")
+    
+    def run_all(self):
+        """Execute all tasks in FIFO order."""
+        print("\nExecuting tasks:")
+        while self.queue:
+            name, func = self.queue.popleft()
+            print(f"  Running: {name}")
+            func()
+        print("All tasks completed!")
+
+# Demo
+scheduler = TaskScheduler()
+
+scheduler.add_task("Download data", lambda: print("    → Data downloaded"))
+scheduler.add_task("Process data", lambda: print("    → Data processed"))
+scheduler.add_task("Generate report", lambda: print("    → Report generated"))
+scheduler.add_task("Send email", lambda: print("    → Email sent"))
+
+scheduler.run_all()</textarea>
+                <div class="code-figure-output" id="outputcode20"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.26:</strong> Task schedulers use queues to process jobs in the order they arrive.
+                </div>
+            </div>
+            
+            <h3>Application 4: Shortest Path in Binary Matrix</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.27 — BFS Shortest Path</span>
+                    <button class="code-figure-run" onclick="runCode('code20a')">▶ Run</button>
+                </div>
+                <textarea id="code20a" spellcheck="false">from collections import deque
+
+def shortest_path_binary_matrix(grid):
+    """
+    Find shortest path from top-left to bottom-right.
+    Can move in 8 directions. 0 = open, 1 = blocked.
+    """
+    n = len(grid)
+    if grid[0][0] == 1 or grid[n-1][n-1] == 1:
+        return -1
+    
+    # BFS with queue: (row, col, distance)
+    queue = deque([(0, 0, 1)])
+    grid[0][0] = 1  # Mark visited
+    
+    directions = [(-1,-1),(-1,0),(-1,1),(0,-1),
+                  (0,1),(1,-1),(1,0),(1,1)]
+    
+    while queue:
+        row, col, dist = queue.popleft()
+        
+        if row == n-1 and col == n-1:
+            return dist
+        
+        for dr, dc in directions:
+            new_row, new_col = row + dr, col + dc
+            if (0 <= new_row < n and 0 <= new_col < n and
+                grid[new_row][new_col] == 0):
+                grid[new_row][new_col] = 1  # Mark visited
+                queue.append((new_row, new_col, dist + 1))
+    
+    return -1
+
+# Test
+grid = [
+    [0, 0, 0],
+    [1, 1, 0],
+    [1, 1, 0]
+]
+
+print("Grid (0=open, 1=blocked):")
+for row in grid:
+    print(f"  {row}")
+
+# Make a copy since function modifies grid
+import copy
+grid_copy = copy.deepcopy(grid)
+result = shortest_path_binary_matrix(grid_copy)
+print(f"\nShortest path length: {result}")</textarea>
+                <div class="code-figure-output" id="outputcode20a"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.27:</strong> BFS naturally finds shortest paths in unweighted graphs/grids.
+                </div>
+            </div>
+            
+            <h3>Application 5: Generate Binary Numbers</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.28 — Generate Binary Numbers 1 to N</span>
+                    <button class="code-figure-run" onclick="runCode('code20b')">▶ Run</button>
+                </div>
+                <textarea id="code20b" spellcheck="false">from collections import deque
+
+def generate_binary_numbers(n):
+    """
+    Generate binary representations of numbers 1 to n.
+    Uses queue to build each binary number from previous.
+    """
+    result = []
+    queue = deque(['1'])
+    
+    for _ in range(n):
+        # Get front of queue
+        current = queue.popleft()
+        result.append(current)
+        
+        # Generate next two binary numbers
+        queue.append(current + '0')
+        queue.append(current + '1')
+    
+    return result
+
+# Test
+n = 10
+binaries = generate_binary_numbers(n)
+
+print(f"Binary numbers 1 to {n}:")
+for i, b in enumerate(binaries, 1):
+    print(f"  {i:2d} = {b}")</textarea>
+                <div class="code-figure-output" id="outputcode20b"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.28:</strong> Queue generates binary numbers by appending '0' and '1' to each dequeued value.
+                </div>
+            </div>
+            
+            <h3>Application 6: Hot Potato Game</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.21 — Hot Potato Simulation</span>
+                    <button class="code-figure-run" onclick="runCode('code21')">▶ Run</button>
+                </div>
+                <textarea id="code21" spellcheck="false">from collections import deque
+
+def hot_potato(names, num_passes):
+    """
+    Simulate hot potato game.
+    Pass potato around; every num_passes, that person is out.
+    """
+    queue = deque(names)
+    
+    print(f"Starting with: {list(queue)}")
+    print(f"Passing {num_passes} times before elimination\n")
+    
+    round_num = 1
+    while len(queue) > 1:
+        # Pass the potato num_passes times
+        for _ in range(num_passes):
+            queue.append(queue.popleft())  # Move front to back
+        
+        eliminated = queue.popleft()
+        print(f"Round {round_num}: {eliminated} is eliminated")
+        print(f"  Remaining: {list(queue)}")
+        round_num += 1
+    
+    winner = queue[0]
+    print(f"\n🏆 Winner: {winner}")
+    return winner
+
+# Play the game
+players = ["Alice", "Bob", "Charlie", "Diana", "Eve"]
+hot_potato(players, 7)</textarea>
+                <div class="code-figure-output" id="outputcode21"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.21:</strong> The hot potato game is a circular process naturally modeled by rotating a queue.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 9: COMPARISON -->
+        <!-- ============================================== -->
+        <section id="comparison">
+            <h2>9. Stacks vs Queues</h2>
+            
+            <h3>Side-by-Side Comparison</h3>
+            
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Stack</th>
+                    <th>Queue</th>
+                </tr>
+                <tr>
+                    <td>Principle</td>
+                    <td>LIFO (Last In, First Out)</td>
+                    <td>FIFO (First In, First Out)</td>
+                </tr>
+                <tr>
+                    <td>Add operation</td>
+                    <td>push() - to top</td>
+                    <td>enqueue() - to rear</td>
+                </tr>
+                <tr>
+                    <td>Remove operation</td>
+                    <td>pop() - from top</td>
+                    <td>dequeue() - from front</td>
+                </tr>
+                <tr>
+                    <td>Python built-in</td>
+                    <td>list (append/pop)</td>
+                    <td>collections.deque</td>
+                </tr>
+                <tr>
+                    <td>Use cases</td>
+                    <td>Undo, parsing, DFS, recursion</td>
+                    <td>BFS, scheduling, buffering</td>
+                </tr>
+                <tr>
+                    <td>Access pattern</td>
+                    <td>Most recent first</td>
+                    <td>Oldest first</td>
+                </tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.22 — Stack for DFS vs Queue for BFS</span>
+                    <button class="code-figure-run" onclick="runCode('code22')">▶ Run</button>
+                </div>
+                <textarea id="code22" spellcheck="false">from collections import deque
+
+def dfs_iterative(graph, start):
+    """DFS using a stack - goes deep first."""
+    visited = set()
+    stack = [start]
+    order = []
+    
+    while stack:
+        node = stack.pop()
+        if node not in visited:
+            visited.add(node)
+            order.append(node)
+            # Add neighbors (reversed to maintain left-to-right order)
+            for neighbor in reversed(graph.get(node, [])):
+                if neighbor not in visited:
+                    stack.append(neighbor)
+    return order
+
+def bfs(graph, start):
+    """BFS using a queue - goes wide first."""
+    visited = set()
+    queue = deque([start])
+    visited.add(start)
+    order = []
+    
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph.get(node, []):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+# Tree-like graph:
+#        A
+#       /|\
+#      B C D
+#     /|   |
+#    E F   G
+graph = {
+    'A': ['B', 'C', 'D'],
+    'B': ['E', 'F'],
+    'C': [],
+    'D': ['G'],
+    'E': [], 'F': [], 'G': []
+}
+
+print("Graph (tree structure):")
+print("       A")
+print("      /|\\")
+print("     B C D")
+print("    /|   |")
+print("   E F   G")
+print()
+print(f"DFS (stack): {dfs_iterative(graph, 'A')}")
+print(f"BFS (queue): {bfs(graph, 'A')}")</textarea>
+                <div class="code-figure-output" id="outputcode22"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.22:</strong> DFS with stack explores deeply; BFS with queue explores broadly. Same code structure, different data structure!
+                </div>
+            </div>
+            
+            <h3>Implementing Queue with Stacks</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.23 — Queue Using Two Stacks</span>
+                    <button class="code-figure-run" onclick="runCode('code23')">▶ Run</button>
+                </div>
+                <textarea id="code23" spellcheck="false">class QueueUsingStacks:
+    """
+    Implement queue using two stacks.
+    Push: O(1), Pop: O(1) amortized
+    """
+    
+    def __init__(self):
+        self.inbox = []   # For enqueue
+        self.outbox = []  # For dequeue
+    
+    def enqueue(self, x):
+        """Add to inbox stack."""
+        self.inbox.append(x)
+    
+    def dequeue(self):
+        """Transfer to outbox if empty, then pop."""
+        if not self.outbox:
+            while self.inbox:
+                self.outbox.append(self.inbox.pop())
+        if not self.outbox:
+            raise IndexError("Dequeue from empty queue")
+        return self.outbox.pop()
+    
+    def peek(self):
+        if not self.outbox:
+            while self.inbox:
+                self.outbox.append(self.inbox.pop())
+        if not self.outbox:
+            raise IndexError("Peek at empty queue")
+        return self.outbox[-1]
+
+# Demo
+q = QueueUsingStacks()
+print("Queue using two stacks:")
+
+for x in [1, 2, 3]:
+    q.enqueue(x)
+    print(f"  Enqueue {x}: inbox={q.inbox}, outbox={q.outbox}")
+
+print(f"\n  Dequeue: {q.dequeue()}")
+print(f"  After: inbox={q.inbox}, outbox={q.outbox}")
+
+q.enqueue(4)
+print(f"\n  Enqueue 4: inbox={q.inbox}, outbox={q.outbox}")
+
+print(f"\n  Dequeue: {q.dequeue()}")
+print(f"  Dequeue: {q.dequeue()}")
+print(f"  Dequeue: {q.dequeue()}")</textarea>
+                <div class="code-figure-output" id="outputcode23"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.23:</strong> Classic interview problem: queue from two stacks. Elements reverse when transferred.
+                </div>
+            </div>
+            
+            <h3>Implementing Stack with Queues</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.24 — Stack Using Two Queues</span>
+                    <button class="code-figure-run" onclick="runCode('code24')">▶ Run</button>
+                </div>
+                <textarea id="code24" spellcheck="false">from collections import deque
+
+class StackUsingQueues:
+    """
+    Implement stack using two queues.
+    Push: O(n), Pop: O(1)
+    """
+    
+    def __init__(self):
+        self.q1 = deque()
+        self.q2 = deque()
+    
+    def push(self, x):
+        """Add to q2, transfer all from q1 to q2, swap."""
+        self.q2.append(x)
+        while self.q1:
+            self.q2.append(self.q1.popleft())
+        self.q1, self.q2 = self.q2, self.q1
+    
+    def pop(self):
+        """Pop from q1."""
+        if not self.q1:
+            raise IndexError("Pop from empty stack")
+        return self.q1.popleft()
+    
+    def top(self):
+        if not self.q1:
+            raise IndexError("Top of empty stack")
+        return self.q1[0]
+
+# Demo
+s = StackUsingQueues()
+print("Stack using two queues:")
+
+for x in [1, 2, 3]:
+    s.push(x)
+    print(f"  Push {x}: q1={list(s.q1)}")
+
+print(f"\n  Pop: {s.pop()}")
+print(f"  Pop: {s.pop()}")
+print(f"  After pops: q1={list(s.q1)}")</textarea>
+                <div class="code-figure-output" id="outputcode24"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.24:</strong> Stack from two queues: each push rearranges so newest is always at front.
+                </div>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-title">Key Takeaways</div>
+                <ul>
+                    <li><strong>Stack (LIFO):</strong> push/pop at one end; use for undo, parsing, DFS, recursion</li>
+                    <li><strong>Queue (FIFO):</strong> enqueue at rear, dequeue at front; use for BFS, scheduling, buffering</li>
+                    <li><strong>Python:</strong> Use <code>list</code> for stacks, <code>collections.deque</code> for queues</li>
+                    <li><strong>All operations:</strong> O(1) when implemented correctly</li>
+                    <li><strong>Deque:</strong> Supports both stack and queue operations</li>
+                    <li><strong>Priority Queue:</strong> Removes highest-priority first (use <code>heapq</code>)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 10: PITFALLS -->
+        <!-- ============================================== -->
+        <section id="pitfalls">
+            <h2>10. Common Pitfalls</h2>
+            
+            <h3>Pitfall 1: Using List as Queue</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.25 — List vs Deque for Queue</span>
+                    <button class="code-figure-run" onclick="runCode('code25')">▶ Run</button>
+                </div>
+                <textarea id="code25" spellcheck="false">import time
+from collections import deque
+
+n = 10000
+
+# BAD: Using list as queue
+bad_queue = []
+start = time.perf_counter()
+for i in range(n):
+    bad_queue.append(i)
+for i in range(n):
+    bad_queue.pop(0)  # O(n) each time!
+bad_time = time.perf_counter() - start
+
+# GOOD: Using deque as queue
+good_queue = deque()
+start = time.perf_counter()
+for i in range(n):
+    good_queue.append(i)
+for i in range(n):
+    good_queue.popleft()  # O(1)
+good_time = time.perf_counter() - start
+
+print(f"Queue operations ({n} enqueue + {n} dequeue):")
+print(f"  list.pop(0):      {bad_time*1000:.2f} ms")
+print(f"  deque.popleft():  {good_time*1000:.2f} ms")
+print(f"  Speedup: {bad_time/good_time:.1f}x")
+print(f"\nAlways use deque for queues!")</textarea>
+                <div class="code-figure-output" id="outputcode25"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.25:</strong> <code>list.pop(0)</code> is O(n) because it shifts all elements. Use <code>deque.popleft()</code> for O(1).
+                </div>
+            </div>
+            
+            <h3>Pitfall 2: Stack Overflow in Recursion</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.26 — Recursion vs Explicit Stack</span>
+                    <button class="code-figure-run" onclick="runCode('code26')">▶ Run</button>
+                </div>
+                <textarea id="code26" spellcheck="false">import sys
+
+print(f"Default recursion limit: {sys.getrecursionlimit()}")
+
+# Recursive factorial - limited by call stack
+def factorial_recursive(n):
+    if n <= 1:
+        return 1
+    return n * factorial_recursive(n - 1)
+
+# Iterative with explicit stack - no limit
+def factorial_iterative(n):
+    stack = list(range(1, n + 1))
+    result = 1
+    while stack:
+        result *= stack.pop()
+    return result
+
+# Test
+print(f"\nFactorial of 10:")
+print(f"  Recursive: {factorial_recursive(10)}")
+print(f"  Iterative: {factorial_iterative(10)}")
+
+# Deep recursion example
+def deep_recursion(n):
+    if n == 0:
+        return 0
+    return deep_recursion(n - 1)
+
+# This would cause RecursionError for large n
+try:
+    deep_recursion(500)
+    print("\ndeep_recursion(500): Success")
+except RecursionError:
+    print("\ndeep_recursion(500): RecursionError!")
+
+print("\nTip: Convert deep recursion to iteration with explicit stack")</textarea>
+                <div class="code-figure-output" id="outputcode26"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.26:</strong> Python's recursion limit can cause RecursionError. Use an explicit stack for deep operations.
+                </div>
+            </div>
+            
+            <h3>Pitfall 3: Empty Stack/Queue Operations</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 5.27 — Safe Operations</span>
+                    <button class="code-figure-run" onclick="runCode('code27')">▶ Run</button>
+                </div>
+                <textarea id="code27" spellcheck="false">from collections import deque
+
+# BAD: Not checking empty before pop
+def bad_stack_usage():
+    stack = []
+    try:
+        stack.pop()  # IndexError!
+    except IndexError as e:
+        print(f"Error: {e}")
+
+# GOOD: Check before operating
+def good_stack_usage():
+    stack = []
+    if stack:  # Check if not empty
+        return stack.pop()
+    else:
+        return None  # Or handle gracefully
+
+# GOOD: Use try-except
+def safe_pop(stack):
+    try:
+        return stack.pop()
+    except IndexError:
+        return None
+
+print("Empty stack operations:")
+bad_stack_usage()
+
+stack = []
+print(f"safe_pop on empty: {safe_pop(stack)}")
+
+stack = [1, 2, 3]
+print(f"safe_pop on [1,2,3]: {safe_pop(stack)}")</textarea>
+                <div class="code-figure-output" id="outputcode27"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 5.27:</strong> Always check if stack/queue is empty before popping, or use try-except.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 11: EXERCISES -->
+        <!-- ============================================== -->
+        <section id="exercises">
+            <h2>11. Exercises</h2>
+            
+            <!-- Exercise 1 -->
+            <div class="exercise" data-exercise="ex1">
+                <div class="exercise-title">Exercise 1: Min Stack</div>
+                <p class="exercise-description">Design a stack that supports push, pop, top, and retrieving the minimum element in O(1) time.</p>
+                <p class="answer">(Expected: All operations should work in constant time)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex1-hint1">
+                        <strong>Hint 1 - Auxiliary Stack:</strong><br>
+                        Maintain a second stack <code>min_stack</code> to track minimum values.
+                    </div>
+                    <div class="hint-content" id="ex1-hint2">
+                        <strong>Hint 2 - Push Logic:</strong><br>
+                        Push to min_stack only when new value <= current min (or stack is empty).
+                    </div>
+                    <div class="hint-content" id="ex1-hint3">
+                        <strong>Hint 3 - Pop Logic:</strong><br>
+                        Pop from min_stack when the popped value equals the current minimum.
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 1 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex1')">▶ Run</button>
+                </div>
+                <textarea id="ex1" spellcheck="false"># Min Stack - O(1) push, pop, top, and getMin
+
+class MinStack:
+    def __init__(self):
+        # Your code here
+        pass
+    
+    def push(self, val):
+        # Your code here
+        pass
+    
+    def pop(self):
+        # Your code here
+        pass
+    
+    def top(self):
+        # Your code here
+        pass
+    
+    def get_min(self):
+        # Your code here
+        pass
+
+# Test your implementation (uncomment)
+# ms = MinStack()
+# ms.push(-2)
+# ms.push(0)
+# ms.push(-3)
+# print(f"getMin: {ms.get_min()}")  # -3
+# ms.pop()
+# print(f"top: {ms.top()}")  # 0
+# print(f"getMin: {ms.get_min()}")  # -2</textarea>
+                <div class="code-figure-output" id="outputex1"></div>
+            </div>
+            
+            <!-- Exercise 2 -->
+            <div class="exercise" data-exercise="ex2">
+                <div class="exercise-title">Exercise 2: Valid Parentheses with Multiple Types</div>
+                <p class="exercise-description">Extend the balanced parentheses checker to also verify that brackets are properly nested (e.g., <code>[{()}]</code> is valid but <code>[{(})]</code> is not).</p>
+                <p class="answer">(Expected: Proper nesting of (), [], {} brackets)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex2-hint1">
+                        <strong>Hint 1 - Create Mapping:</strong><br>
+                        Map closing brackets to opening: <code>{')': '(', ']': '[', '}': '{'}</code>
+                    </div>
+                    <div class="hint-content" id="ex2-hint2">
+                        <strong>Hint 2 - Push Opening:</strong><br>
+                        When you see an opening bracket, push it onto the stack.
+                    </div>
+                    <div class="hint-content" id="ex2-hint3">
+                        <strong>Hint 3 - Match Closing:</strong><br>
+                        For closing brackets, check if stack is non-empty and top matches the expected opening bracket.
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 2 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex2')">▶ Run</button>
+                </div>
+                <textarea id="ex2" spellcheck="false"># Valid Parentheses - Check proper nesting of (), [], {}
+
+def is_valid_nesting(s):
+    # Your code here
+    pass
+
+# Test your implementation (uncomment)
+# test_cases = ["[{()}]", "[{(})]", "((()))", "([)]", ""]
+# for s in test_cases:
+#     result = "✓" if is_valid_nesting(s) else "✗"
+#     print(f"{result} '{s}'")</textarea>
+                <div class="code-figure-output" id="outputex2"></div>
+            </div>
+            
+            <!-- Exercise 3 -->
+            <div class="exercise" data-exercise="ex3">
+                <div class="exercise-title">Exercise 3: Implement Circular Queue</div>
+                <p class="exercise-description">Implement a circular queue with operations: enqueue, dequeue, front, rear, isEmpty, isFull.</p>
+                <p class="answer">(Expected: Use modulo arithmetic for wrapping)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex3-hint1">
+                        <strong>Hint 1 - Track Position:</strong><br>
+                        Use front index and size (or front and rear pointers).
+                    </div>
+                    <div class="hint-content" id="ex3-hint2">
+                        <strong>Hint 2 - Modulo Wrapping:</strong><br>
+                        Calculate rear position as <code>(front + size) % capacity</code>
+                    </div>
+                    <div class="hint-content" id="ex3-hint3">
+                        <strong>Hint 3 - Full vs Empty:</strong><br>
+                        Full when <code>size == capacity</code>, empty when <code>size == 0</code>
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 3 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex3')">▶ Run</button>
+                </div>
+                <textarea id="ex3" spellcheck="false"># Circular Queue - Fixed size queue with wrapping
+
+class MyCircularQueue:
+    def __init__(self, k):
+        # Your code here
+        pass
+    
+    def enqueue(self, value):
+        # Your code here
+        pass
+    
+    def dequeue(self):
+        # Your code here
+        pass
+    
+    def front(self):
+        # Your code here
+        pass
+    
+    def rear(self):
+        # Your code here
+        pass
+
+# Test your implementation (uncomment)
+# cq = MyCircularQueue(3)
+# print(cq.enqueue(1))  # True
+# print(cq.enqueue(2))  # True
+# print(cq.enqueue(3))  # True
+# print(cq.enqueue(4))  # False (full)
+# print(cq.rear())      # 3
+# print(cq.dequeue())   # True
+# print(cq.enqueue(4))  # True
+# print(cq.rear())      # 4</textarea>
+                <div class="code-figure-output" id="outputex3"></div>
+            </div>
+            
+            <!-- Exercise 4 -->
+            <div class="exercise" data-exercise="ex4">
+                <div class="exercise-title">Exercise 4: Daily Temperatures</div>
+                <p class="exercise-description">Given daily temperatures, return an array where <code>answer[i]</code> is the number of days until a warmer temperature. Use a monotonic stack.</p>
+                <p class="answer">(Expected: [73,74,75,71,69,72,76,73] → [1,1,4,2,1,1,0,0])</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex4-hint1">
+                        <strong>Hint 1 - Store Indices:</strong><br>
+                        Use a stack to store indices of temperatures (not the temperatures themselves).
+                    </div>
+                    <div class="hint-content" id="ex4-hint2">
+                        <strong>Hint 2 - Monotonic Decreasing:</strong><br>
+                        Maintain a decreasing stack. Pop when current temp > temp at stack top index.
+                    </div>
+                    <div class="hint-content" id="ex4-hint3">
+                        <strong>Hint 3 - Calculate Days:</strong><br>
+                        When popping, the answer for that index is <code>current_index - popped_index</code>
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 4 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex4')">▶ Run</button>
+                </div>
+                <textarea id="ex4" spellcheck="false"># Daily Temperatures - Days until warmer temperature
+
+def daily_temperatures(temperatures):
+    # Your code here
+    pass
+
+# Test your implementation (uncomment)
+# temps = [73, 74, 75, 71, 69, 72, 76, 73]
+# print(f"Temperatures: {temps}")
+# print(f"Days to wait: {daily_temperatures(temps)}")
+# Expected: [1, 1, 4, 2, 1, 1, 0, 0]</textarea>
+                <div class="code-figure-output" id="outputex4"></div>
+            </div>
+            
+            <!-- Exercise 5 -->
+            <div class="exercise" data-exercise="ex5">
+                <div class="exercise-title">Exercise 5: Number of Recent Calls</div>
+                <p class="exercise-description">Implement a RecentCounter class that counts the number of calls made in the last 3000 milliseconds.</p>
+                <p class="answer">(Expected: Use a queue and remove old timestamps)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex5-hint1">
+                        <strong>Hint 1 - Use a Deque:</strong><br>
+                        Use <code>collections.deque</code> to store timestamps efficiently.
+                    </div>
+                    <div class="hint-content" id="ex5-hint2">
+                        <strong>Hint 2 - Add and Clean:</strong><br>
+                        On each ping, add the new timestamp, then remove old ones.
+                    </div>
+                    <div class="hint-content" id="ex5-hint3">
+                        <strong>Hint 3 - Time Window:</strong><br>
+                        Remove timestamps that are older than <code>t - 3000</code> (outside the window).
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 5 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex5')">▶ Run</button>
+                </div>
+                <textarea id="ex5" spellcheck="false"># Number of Recent Calls - Count calls in last 3000ms
+
+from collections import deque
+
+class RecentCounter:
+    def __init__(self):
+        # Your code here
+        pass
+    
+    def ping(self, t):
+        """
+        Add new request at time t.
+        Return number of requests in [t-3000, t].
+        """
+        # Your code here
+        pass
+
+# Test your implementation (uncomment)
+# rc = RecentCounter()
+# print(rc.ping(1))     # 1 (requests in [0, 1])
+# print(rc.ping(100))   # 2 (requests in [0, 100])
+# print(rc.ping(3001))  # 3 (requests in [1, 3001])
+# print(rc.ping(3002))  # 3 (requests in [2, 3002], 1 is out)</textarea>
+                <div class="code-figure-output" id="outputex5"></div>
+            </div>
+        </section>
+
+        <!-- SUBMIT SECTION -->
+        <section class="submit-section">
+            <h2>Submit Your Work</h2>
+            <p>After completing the exercises, submit your attendance below.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student ID</label>
+                    <input type="text" id="studentId" placeholder="Enter your student ID">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" placeholder="Enter your full name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email (@istun.edu.tr)</label>
+                    <input type="email" id="studentEmail" placeholder="your.email@istun.edu.tr">
+                </div>
+                <div class="form-group">
+                    <label>Class Code</label>
+                    <input type="text" id="classCode" placeholder="From instructor">
+                </div>
+            </div>
+            <input type="text" id="hp" class="hp" tabindex="-1" autocomplete="off">
+            <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
+            <div class="submit-status" id="submitStatus"></div>
+        </section>
+    </main>
+
+    <script>
+        const pageLoadTime = Date.now();
+        
+        // ============ HINT SYSTEM ============
+        function toggleHint(exerciseId, hintNum) {
+            const hintId = exerciseId + '-hint' + hintNum;
+            const hintEl = document.getElementById(hintId);
+            const btn = event.target;
+            if (hintEl.classList.contains('show')) {
+                hintEl.classList.remove('show');
+                btn.classList.remove('revealed');
+            } else {
+                hintEl.classList.add('show');
+                btn.classList.add('revealed');
+            }
+        }
+        
+        // ============ ANTI-CHEAT SYSTEM ============
+        const originalExerciseCode = {};
+        const keystrokeCounts = {};
+        const pasteAttempts = {};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('textarea[id^="ex"]').forEach(textarea => {
+                const exId = textarea.id;
+                originalExerciseCode[exId] = textarea.value;
+                keystrokeCounts[exId] = 0;
+                pasteAttempts[exId] = 0;
+                
+                textarea.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    pasteAttempts[exId]++;
+                    const warning = document.createElement('div');
+                    warning.textContent = '⚠️ Paste is disabled. Please type your code.';
+                    warning.className = 'paste-warning';
+                    const existingWarning = textarea.parentElement.querySelector('.paste-warning');
+                    if (existingWarning) existingWarning.remove();
+                    textarea.parentElement.appendChild(warning);
+                    setTimeout(() => warning.remove(), 3000);
+                });
+                textarea.addEventListener('drop', function(e) { e.preventDefault(); });
+                textarea.addEventListener('keydown', function(e) {
+                    if (e.key.length === 1 || ['Backspace', 'Delete', 'Enter', 'Tab'].includes(e.key)) {
+                        keystrokeCounts[exId]++;
+                    }
+                });
+            });
+        });
+        
+        function isCodeModified(exId, currentCode) {
+            const original = originalExerciseCode[exId] || '';
+            const keystrokes = keystrokeCounts[exId] || 0;
+            const normalizedOriginal = original.trim().replace(/\s+/g, ' ');
+            const normalizedCurrent = currentCode.trim().replace(/\s+/g, ' ');
+            if (normalizedOriginal === normalizedCurrent) return false;
+            if (keystrokes < 20) return false;
+            const withoutComments = currentCode.replace(/#.*$/gm, '').replace(/"""[\s\S]*?"""/g, '').replace(/'''[\s\S]*?'''/g, '').trim();
+            const originalWithoutComments = original.replace(/#.*$/gm, '').replace(/"""[\s\S]*?"""/g, '').replace(/'''[\s\S]*?'''/g, '').trim();
+            if (withoutComments.length <= originalWithoutComments.length + 10) return false;
+            return true;
+        }
+        
+        // ============ PYODIDE CODE RUNNER ============
+        async function runCode(codeId) {
+            const codeEl = document.getElementById(codeId);
+            const outputEl = document.getElementById('output' + codeId);
+            const code = codeEl.value;
+            outputEl.classList.add('show');
+            outputEl.textContent = 'Loading Python...';
+            
+            try {
+                if (!window.pyodideReady) {
+                    if (typeof loadPyodide === 'undefined') {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
+                        document.head.appendChild(script);
+                        await new Promise((resolve, reject) => {
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            setTimeout(reject, 10000);
+                        });
+                    }
+                    outputEl.textContent = 'Initializing Python (first run may take a moment)...';
+                    window.pyodide = await loadPyodide();
+                    window.pyodideReady = true;
+                }
+                outputEl.textContent = 'Running...';
+                window.pyodide.runPython(`
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+`);
+                try {
+                    window.pyodide.runPython(code);
+                } catch (pyErr) {
+                    outputEl.textContent = 'Error: ' + pyErr.message;
+                    return;
+                }
+                const output = window.pyodide.runPython('sys.stdout.getvalue()');
+                outputEl.textContent = output || '(no output)';
+            } catch(e) {
+                outputEl.textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        // ============ VALIDATION ============
+        function validateStudentId(id) {
+            if (id.length < 6 || id.length > 10) return false;
+            if (!/^\d+$/.test(id)) return false;
+            if (/^(\d)\1+$/.test(id)) return false;
+            return true;
+        }
+        function validateName(name) {
+            if (name.length < 5) return false;
+            const words = name.trim().split(/\s+/);
+            if (words.length < 2) return false;
+            if (!/^[A-Za-zğüşıöçĞÜŞİÖÇ\s]+$/.test(name)) return false;
+            const blockedWords = ['test', 'fake', 'asdf', 'qwer', 'spam', 'admin', 'null', 'undefined', 'xxx', 'abc', 'aaa', 'deneme', 'örnek'];
+            const nameLower = name.toLowerCase();
+            for (const word of blockedWords) { if (nameLower.includes(word)) return false; }
+            return true;
+        }
+        function validateEmail(email) {
+            return email.endsWith('@istun.edu.tr') && email.length > 15;
+        }
+        
+        // ============ SUBMIT ============
+        async function submitWork() {
+            const status = document.getElementById('submitStatus');
+            status.style.display = 'none';
+            const studentId = document.getElementById('studentId').value.trim();
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentEmail = document.getElementById('studentEmail').value.trim().toLowerCase();
+            const classCode = document.getElementById('classCode').value.trim().toUpperCase();
+            const honeypot = document.getElementById('hp').value;
+            
+            if (honeypot) { status.textContent = '❌ Submission rejected.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            const timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000);
+            if (timeOnPage < 60) { status.textContent = '❌ Please spend more time reviewing the material.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!studentId || !studentName || !studentEmail || !classCode) { status.textContent = '❌ All fields are required.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!validateStudentId(studentId)) { status.textContent = '❌ Invalid Student ID (must be 6-10 digits).'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!validateName(studentName)) { status.textContent = '❌ Please use your real information.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!validateEmail(studentEmail)) { status.textContent = '❌ Use your @istun.edu.tr email.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            
+            status.textContent = '⏳ Collecting answers and submitting...';
+            status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
+            
+            const answers = {};
+            document.querySelectorAll('.exercise[data-exercise]').forEach(exercise => {
+                const exId = exercise.getAttribute('data-exercise');
+                const titleEl = exercise.querySelector('.exercise-title');
+                const descEl = exercise.querySelector('.exercise-description');
+                const codeEl = document.getElementById(exId);
+                if (codeEl) {
+                    const code = codeEl.value || '';
+                    answers[exId] = {
+                        title: titleEl ? titleEl.textContent.replace(/^Exercise \d+:\s*/, '').trim() : 'Exercise',
+                        description: descEl ? descEl.textContent.trim() : '',
+                        code: code,
+                        modified: isCodeModified(exId, code),
+                        keystrokes: keystrokeCounts[exId] || 0,
+                        pasteAttempts: pasteAttempts[exId] || 0
+                    };
+                }
+            });
+            
+            let ipAddress = 'Unknown', location = 'Unknown';
+            try {
+                const ipResponse = await fetch('https://ipapi.co/json/', { timeout: 5000 });
+                if (ipResponse.ok) {
+                    const ipData = await ipResponse.json();
+                    ipAddress = ipData.ip || 'Unknown';
+                    location = (ipData.city && ipData.country_name) ? `${ipData.city}, ${ipData.country_name}` : (ipData.country_name || 'Unknown');
+                }
+            } catch (e) { console.log('Could not fetch IP info'); }
+            
+            const data = { week: 'Week_05', studentId, studentName, studentEmail, classCode, timeOnPage, answers, ipAddress, location, source: 'dsa-web' };
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbxepk2NvNg3Whad-WOPxdZI-mWnVJeNKCsZVspvk7Ku5YHC_oWv7376VrWLn_30nyI_vw/exec';
+            
+            fetch(scriptUrl, { method: 'POST', mode: 'cors', cache: 'no-cache', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) })
+            .then(response => response.json())
+            .then(res => {
+                if (res.success) { status.textContent = '✅ Submitted successfully! Check your email for confirmation.'; status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80'; }
+                else { status.textContent = '❌ ' + (res.message || 'Submission failed.'); status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; }
+            })
+            .catch(error => {
+                fetch(scriptUrl, { method: 'POST', mode: 'no-cors', cache: 'no-cache', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) })
+                .then(() => { status.textContent = '⏳ Request sent. Check your email.'; status.style.cssText = 'display:block;background:rgba(251,191,36,0.2);color:#fbbf24'; })
+                .catch(() => { status.textContent = '❌ Connection error.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; });
+            });
+        }
+    </script>
+</body>
+</html>

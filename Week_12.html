@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 12: Dynamic Programming | DSA Course</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <script type="module">
+        // Wait for PyScript to be ready
+        const pyReady = new Promise((resolve) => {
+            const check = setInterval(() => {
+                if (typeof pyscript !== 'undefined' && pyscript.interpreter) {
+                    clearInterval(check);
+                    resolve();
+                }
+            }, 100);
+            // Timeout after 15 seconds
+            setTimeout(() => { clearInterval(check); resolve(); }, 15000);
+        });
+        window.pyReady = pyReady;
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 19px;
+            background: #faf9f7;
+            color: #2c2c2c; 
+            line-height: 1.8;
+        }
+        
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .topbar .title { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 500; }
+        .topbar a { font-family: system-ui, sans-serif; color: white; text-decoration: none; font-size: 0.85rem; padding: 6px 14px; background: rgba(255,255,255,0.1); border-radius: 5px; }
+        .topbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .book { max-width: 750px; margin: 0 auto; padding: 60px 40px 100px; }
+        
+        .chapter-header { text-align: center; padding: 50px 0 60px; border-bottom: 1px solid #ddd; margin-bottom: 50px; }
+        .chapter-num { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: #7c3aed; margin-bottom: 15px; }
+        .chapter-header h1 { font-size: 2.8rem; font-weight: 600; color: #1a1a2e; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .chapter-header .subtitle { font-style: italic; color: #666; font-size: 1.1rem; }
+        
+        h2 { font-size: 1.6rem; font-weight: 600; color: #1a1a2e; margin: 60px 0 25px; padding-top: 30px; border-top: 1px solid #e5e5e5; }
+        h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+        h3 { font-size: 1.25rem; font-weight: 600; color: #333; margin: 40px 0 15px; }
+        h4 { font-size: 1.05rem; font-weight: 600; color: #555; margin: 30px 0 12px; }
+        
+        p { margin: 0 0 20px; text-align: justify; hyphens: auto; }
+        ul, ol { margin: 20px 0 25px 30px; }
+        li { margin: 10px 0; }
+        
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: #f0eeeb; padding: 2px 6px; border-radius: 3px; color: #7c3aed; }
+        .term { font-weight: 600; color: #1a1a2e; }
+        
+        .definition { background: #f8f7f5; border-left: 4px solid #7c3aed; padding: 20px 25px; margin: 30px 0; }
+        .definition-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 8px; font-weight: 600; }
+        .definition p { margin: 0; }
+        
+        .margin-note { background: #fffbeb; border: 1px solid #fcd34d; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .margin-note::before { content: "💡 "; }
+        
+        .important { background: #fef2f2; border: 1px solid #fca5a5; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .important::before { content: "⚠️ "; }
+        
+        .example { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; padding: 25px; margin: 30px 0; }
+        .example-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 15px; font-weight: 600; }
+        
+        .code-figure { margin: 35px 0; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background: #1e1e2e; }
+        .code-figure-header { background: #28283c; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
+        .code-figure-label { font-family: system-ui, sans-serif; font-size: 0.75rem; color: #a0a0b0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .code-figure-run { font-family: system-ui, sans-serif; background: #7c3aed; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
+        .code-figure-run:hover { background: #6d28d9; }
+        .code-figure textarea { width: 100%; min-height: 100px; padding: 18px; background: #1e1e2e; color: #e0e0e0; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; }
+        .code-figure textarea:focus { outline: none; }
+        .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; }
+        .code-figure-output.show { display: block; }
+        .code-figure-caption { background: #f8f8f8; padding: 12px 18px; font-size: 0.85rem; color: #666; border-top: 1px solid #e0e0e0; }
+        .code-figure-caption strong { color: #333; }
+        
+        .summary { background: linear-gradient(135deg, #7c3aed10, #7c3aed05); border: 1px solid #7c3aed30; border-radius: 8px; padding: 25px 30px; margin: 40px 0; }
+        .summary-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 12px; font-weight: 600; }
+        .summary ul { margin: 0; }
+        
+        .exercise { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 25px 30px; margin: 40px 0 20px; }
+        .exercise-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #16a34a; margin-bottom: 12px; font-weight: 600; }
+        .exercise p { margin: 0; }
+        .exercise .answer { margin-top: 12px; font-size: 0.9rem; color: #166534; }
+        .exercise-description { margin-bottom: 15px; }
+        
+        /* Hint System */
+        .hint-section { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #bbf7d0; }
+        .hint-toggle { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-family: system-ui, sans-serif; font-weight: 500; transition: all 0.3s ease; margin-right: 8px; margin-bottom: 8px; }
+        .hint-toggle:hover { background: linear-gradient(135deg, #059669, #047857); transform: translateY(-1px); }
+        .hint-toggle.revealed { background: #6b7280; }
+        .hint-content { display: none; background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 15px 20px; margin-top: 12px; font-size: 0.9rem; color: #065f46; line-height: 1.6; }
+        .hint-content.show { display: block; animation: fadeIn 0.3s ease; }
+        .hint-content code { background: #d1fae5; color: #065f46; padding: 2px 6px; border-radius: 3px; font-size: 0.85em; }
+        .hint-content pre { background: #1e1e2e; color: #e0e0e0; padding: 12px 15px; border-radius: 6px; margin: 10px 0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .paste-warning { color: #f87171; font-size: 12px; margin-top: 5px; font-family: system-ui, sans-serif; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 0.95rem; }
+        th, td { border: 1px solid #ddd; padding: 12px 15px; text-align: left; }
+        th { background: #f5f5f5; font-weight: 600; }
+        
+        .submit-section { background: #1a1a2e; color: white; padding: 40px; border-radius: 10px; margin-top: 60px; }
+        .submit-section h2 { color: white; border: none; margin: 0 0 20px; padding: 0; font-size: 1.4rem; }
+        .submit-section p { color: #a0a0b0; text-align: left; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-family: system-ui, sans-serif; font-size: 0.85rem; color: #a0a0b0; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: white; font-size: 1rem; font-family: system-ui, sans-serif; }
+        .form-group input:focus { outline: none; border-color: #7c3aed; }
+        .submit-btn { background: #7c3aed; color: white; border: none; padding: 14px 30px; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; font-family: system-ui, sans-serif; margin-top: 10px; }
+        .submit-btn:hover { background: #6d28d9; }
+        .submit-status { margin-top: 15px; padding: 12px; border-radius: 5px; display: none; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+        .hp { position: absolute; left: -9999px; }
+        
+        .toc { background: #f8f7f5; padding: 30px 35px; margin: 0 0 50px; border-radius: 6px; }
+        .toc-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 15px; }
+        .toc ol { margin: 0; padding-left: 20px; }
+        .toc li { margin: 8px 0; }
+        .toc a { color: #7c3aed; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        
+        @media (max-width: 600px) {
+            .book { padding: 30px 20px; }
+            .chapter-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.4rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="topbar">
+        <span class="title">Data Structures &amp; Algorithms</span>
+        <a href="index.html?home=true">← Course Home</a>
+    </nav>
+    
+    <main class="book">
+        <header class="chapter-header">
+            <div class="chapter-num">Week Twelve</div>
+            <h1>Dynamic Programming</h1>
+            <p class="subtitle">Solving complex problems by breaking them into overlapping subproblems</p>
+        </header>
+        
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <ol>
+                <li><a href="#intro">Introduction to Dynamic Programming</a></li>
+                <li><a href="#memoization">Memoization (Top-Down)</a></li>
+                <li><a href="#tabulation">Tabulation (Bottom-Up)</a></li>
+                <li><a href="#1d">1D Dynamic Programming</a></li>
+                <li><a href="#2d">2D Dynamic Programming</a></li>
+                <li><a href="#subsequence">Subsequence Problems</a></li>
+                <li><a href="#knapsack">Knapsack Problems</a></li>
+                <li><a href="#string">String DP</a></li>
+                <li><a href="#optimization">Space Optimization</a></li>
+                <li><a href="#patterns">Common Patterns</a></li>
+                <li><a href="#pitfalls">Common Pitfalls</a></li>
+                <li><a href="#exercises">Exercises</a></li>
+            </ol>
+        </nav>
+
+        <!-- ============================================== -->
+        <!-- SECTION 1: INTRODUCTION TO DYNAMIC PROGRAMMING -->
+        <!-- ============================================== -->
+        <section id="intro">
+            <h2>1. Introduction to Dynamic Programming</h2>
+            
+            <p>Dynamic Programming (DP) is a powerful algorithmic technique for solving problems by breaking them into smaller overlapping subproblems. Instead of solving the same subproblem multiple times, DP stores results and reuses them. This transforms exponential time complexity into polynomial time for many problems.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Dynamic Programming</span> applies when a problem has two key properties: <span class="term">optimal substructure</span> (optimal solution contains optimal solutions to subproblems) and <span class="term">overlapping subproblems</span> (same subproblems are solved repeatedly). DP trades space for time by caching computed results.</p>
+            </div>
+            
+            <h3>DP vs Other Techniques</h3>
+            
+            <table>
+                <tr>
+                    <th>Technique</th>
+                    <th>Subproblems</th>
+                    <th>Approach</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>Divide & Conquer</td>
+                    <td>Non-overlapping</td>
+                    <td>Split, solve, combine</td>
+                    <td>Merge Sort</td>
+                </tr>
+                <tr>
+                    <td>Greedy</td>
+                    <td>Local optimal</td>
+                    <td>Make best choice now</td>
+                    <td>Huffman Coding</td>
+                </tr>
+                <tr>
+                    <td>Dynamic Programming</td>
+                    <td>Overlapping</td>
+                    <td>Cache & reuse</td>
+                    <td>Fibonacci, Knapsack</td>
+                </tr>
+                <tr>
+                    <td>Backtracking</td>
+                    <td>Decision tree</td>
+                    <td>Try all, prune</td>
+                    <td>N-Queens</td>
+                </tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.1 — Fibonacci: Recursion vs DP</span>
+                    <button class="code-figure-run" onclick="runCode('code1')">▶ Run</button>
+                </div>
+                <textarea id="code1" spellcheck="false">import time
+
+def fib_recursive(n):
+    """Naive recursion - O(2^n) time."""
+    if n <= 1:
+        return n
+    return fib_recursive(n - 1) + fib_recursive(n - 2)
+
+def fib_dp(n):
+    """DP with memoization - O(n) time."""
+    memo = {}
+    def helper(n):
+        if n in memo:
+            return memo[n]
+        if n <= 1:
+            return n
+        memo[n] = helper(n - 1) + helper(n - 2)
+        return memo[n]
+    return helper(n)
+
+# Compare performance
+n = 30
+start = time.perf_counter()
+result1 = fib_recursive(n)
+time1 = time.perf_counter() - start
+
+start = time.perf_counter()
+result2 = fib_dp(n)
+time2 = time.perf_counter() - start
+
+print(f"Fibonacci({n}) = {result1}")
+print(f"Recursive: {time1*1000:.2f} ms")
+print(f"DP:        {time2*1000:.4f} ms")
+print(f"Speedup:   {time1/time2:.0f}x")</textarea>
+                <div class="code-figure-output" id="outputcode1"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.1:</strong> DP eliminates redundant calculations—fib(30) goes from millions of calls to just 30.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 2: MEMOIZATION (TOP-DOWN) -->
+        <!-- ============================================== -->
+        <section id="memoization">
+            <h2>2. Memoization (Top-Down)</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Memoization</span> is the top-down approach to DP. Start with the original problem, recursively break it down, and cache results as you compute them. Think: "solve by recursion, but remember answers."</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.2 — Memoization with Dictionary</span>
+                    <button class="code-figure-run" onclick="runCode('code2')">▶ Run</button>
+                </div>
+                <textarea id="code2" spellcheck="false">def climb_stairs_memo(n):
+    """
+    Count ways to climb n stairs (1 or 2 steps at a time).
+    Top-down memoization approach.
+    """
+    memo = {}
+    
+    def helper(n):
+        if n in memo:
+            return memo[n]
+        if n <= 2:
+            return n
+        
+        memo[n] = helper(n - 1) + helper(n - 2)
+        return memo[n]
+    
+    return helper(n)
+
+# Trace the memoization
+def climb_stairs_traced(n, memo=None, depth=0):
+    if memo is None:
+        memo = {}
+    
+    indent = "  " * depth
+    if n in memo:
+        print(f"{indent}climb({n}) -> cached: {memo[n]}")
+        return memo[n]
+    
+    print(f"{indent}climb({n}) -> computing...")
+    if n <= 2:
+        memo[n] = n
+    else:
+        memo[n] = climb_stairs_traced(n-1, memo, depth+1) + \
+                  climb_stairs_traced(n-2, memo, depth+1)
+    
+    print(f"{indent}climb({n}) = {memo[n]}")
+    return memo[n]
+
+print("Tracing climb_stairs(5):")
+result = climb_stairs_traced(5)
+print(f"\nWays to climb 5 stairs: {result}")</textarea>
+                <div class="code-figure-output" id="outputcode2"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.2:</strong> Memoization caches results as computed—subsequent calls return instantly.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.3 — Using functools.lru_cache</span>
+                    <button class="code-figure-run" onclick="runCode('code3')">▶ Run</button>
+                </div>
+                <textarea id="code3" spellcheck="false">from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fib(n):
+    """Fibonacci with automatic memoization."""
+    if n <= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+# Test
+print(f"fib(50) = {fib(50)}")
+
+# Check cache statistics
+print(f"\nCache info: {fib.cache_info()}")
+
+# Clear cache if needed
+# fib.cache_clear()
+
+@lru_cache(maxsize=None)
+def unique_paths(m, n):
+    """Count paths in m x n grid (only right or down)."""
+    if m == 1 or n == 1:
+        return 1
+    return unique_paths(m - 1, n) + unique_paths(m, n - 1)
+
+print(f"\nUnique paths in 3x7 grid: {unique_paths(3, 7)}")</textarea>
+                <div class="code-figure-output" id="outputcode3"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.3:</strong> @lru_cache provides automatic memoization—cleanest way in Python.
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                <strong>When to use top-down:</strong> When only some subproblems need solving, when the recursive structure is clearer, or when converting existing recursive code.
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 3: TABULATION (BOTTOM-UP) -->
+        <!-- ============================================== -->
+        <section id="tabulation">
+            <h2>3. Tabulation (Bottom-Up)</h2>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Tabulation</span> is the bottom-up approach to DP. Start with the smallest subproblems, solve them first, and build up to the answer. Uses iteration instead of recursion, avoiding stack overhead.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.4 — Tabulation for Fibonacci</span>
+                    <button class="code-figure-run" onclick="runCode('code4')">▶ Run</button>
+                </div>
+                <textarea id="code4" spellcheck="false">def fib_tabulation(n):
+    """
+    Fibonacci using bottom-up tabulation.
+    O(n) time, O(n) space.
+    """
+    if n <= 1:
+        return n
+    
+    # Create table and fill base cases
+    dp = [0] * (n + 1)
+    dp[0] = 0
+    dp[1] = 1
+    
+    # Fill table bottom-up
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    
+    return dp[n]
+
+# Trace the filling process
+def fib_tabulation_traced(n):
+    if n <= 1:
+        return n
+    
+    dp = [0] * (n + 1)
+    dp[0], dp[1] = 0, 1
+    
+    print("Building table bottom-up:")
+    print(f"  dp[0] = 0 (base)")
+    print(f"  dp[1] = 1 (base)")
+    
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+        print(f"  dp[{i}] = dp[{i-1}] + dp[{i-2}] = {dp[i-1]} + {dp[i-2]} = {dp[i]}")
+    
+    return dp[n]
+
+result = fib_tabulation_traced(8)
+print(f"\nFibonacci(8) = {result}")</textarea>
+                <div class="code-figure-output" id="outputcode4"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.4:</strong> Tabulation fills the DP table iteratively from base cases to answer.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.5 — Tabulation for Climbing Stairs</span>
+                    <button class="code-figure-run" onclick="runCode('code5')">▶ Run</button>
+                </div>
+                <textarea id="code5" spellcheck="false">def climb_stairs_tabulation(n):
+    """
+    Count ways to climb n stairs using tabulation.
+    dp[i] = number of ways to reach step i
+    """
+    if n <= 2:
+        return n
+    
+    dp = [0] * (n + 1)
+    dp[1] = 1  # One way to reach step 1
+    dp[2] = 2  # Two ways to reach step 2
+    
+    for i in range(3, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    
+    return dp[n]
+
+# Test
+for n in range(1, 8):
+    print(f"Ways to climb {n} stairs: {climb_stairs_tabulation(n)}")
+
+# Visualize the recurrence relation
+print("\nRecurrence: dp[i] = dp[i-1] + dp[i-2]")
+print("From step i-1: take 1 step")
+print("From step i-2: take 2 steps")</textarea>
+                <div class="code-figure-output" id="outputcode5"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.5:</strong> Each state depends on previous states—the recurrence relation.
+                </div>
+            </div>
+            
+            <div class="important">
+                <strong>Memoization vs Tabulation:</strong><br>
+                • Memoization: Easier to write, may solve fewer subproblems, recursion overhead<br>
+                • Tabulation: More efficient, no recursion stack, requires knowing order of computation
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 4: 1D DYNAMIC PROGRAMMING -->
+        <!-- ============================================== -->
+        <section id="1d">
+            <h2>4. 1D Dynamic Programming</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.6 — House Robber</span>
+                    <button class="code-figure-run" onclick="runCode('code6')">▶ Run</button>
+                </div>
+                <textarea id="code6" spellcheck="false">def rob(nums):
+    """
+    Maximum money robbing non-adjacent houses.
+    dp[i] = max money robbing houses 0 to i
+    Choice: rob house i or skip it
+    """
+    if not nums:
+        return 0
+    if len(nums) == 1:
+        return nums[0]
+    
+    n = len(nums)
+    dp = [0] * n
+    dp[0] = nums[0]
+    dp[1] = max(nums[0], nums[1])
+    
+    for i in range(2, n):
+        # Either rob house i (add to dp[i-2])
+        # Or skip house i (keep dp[i-1])
+        dp[i] = max(dp[i - 1], dp[i - 2] + nums[i])
+    
+    return dp[-1]
+
+# Test
+houses = [2, 7, 9, 3, 1]
+print(f"Houses: {houses}")
+print(f"Max profit: {rob(houses)}")  # Rob houses 0, 2, 4: 2+9+1=12
+
+houses = [1, 2, 3, 1]
+print(f"\nHouses: {houses}")
+print(f"Max profit: {rob(houses)}")  # Rob houses 0, 2: 1+3=4</textarea>
+                <div class="code-figure-output" id="outputcode6"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.6:</strong> At each house, decide whether to rob it (skip previous) or skip it.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.7 — Maximum Subarray (Kadane's)</span>
+                    <button class="code-figure-run" onclick="runCode('code7')">▶ Run</button>
+                </div>
+                <textarea id="code7" spellcheck="false">def max_subarray(nums):
+    """
+    Find contiguous subarray with largest sum (Kadane's algorithm).
+    dp[i] = max sum of subarray ending at index i
+    """
+    n = len(nums)
+    dp = [0] * n
+    dp[0] = nums[0]
+    
+    for i in range(1, n):
+        # Either extend previous subarray or start new one
+        dp[i] = max(dp[i - 1] + nums[i], nums[i])
+    
+    return max(dp)
+
+# Space-optimized version
+def max_subarray_optimized(nums):
+    """O(1) space version."""
+    max_sum = current_sum = nums[0]
+    
+    for num in nums[1:]:
+        current_sum = max(current_sum + num, num)
+        max_sum = max(max_sum, current_sum)
+    
+    return max_sum
+
+# Test
+nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+print(f"Array: {nums}")
+print(f"Max subarray sum: {max_subarray(nums)}")  # [4,-1,2,1] = 6
+print(f"Optimized result: {max_subarray_optimized(nums)}")</textarea>
+                <div class="code-figure-output" id="outputcode7"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.7:</strong> Kadane's algorithm: extend or restart at each element.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.8 — Coin Change (Minimum Coins)</span>
+                    <button class="code-figure-run" onclick="runCode('code8')">▶ Run</button>
+                </div>
+                <textarea id="code8" spellcheck="false">def coin_change(coins, amount):
+    """
+    Minimum coins to make amount.
+    dp[i] = minimum coins needed for amount i
+    """
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0  # 0 coins for amount 0
+    
+    for i in range(1, amount + 1):
+        for coin in coins:
+            if coin <= i and dp[i - coin] != float('inf'):
+                dp[i] = min(dp[i], dp[i - coin] + 1)
+    
+    return dp[amount] if dp[amount] != float('inf') else -1
+
+# Test
+coins = [1, 2, 5]
+amount = 11
+print(f"Coins: {coins}, Amount: {amount}")
+print(f"Minimum coins: {coin_change(coins, amount)}")  # 5+5+1 = 3 coins
+
+# Trace for smaller example
+coins = [1, 2, 5]
+amount = 7
+print(f"\nBuilding dp for amount {amount}:")
+dp = [float('inf')] * (amount + 1)
+dp[0] = 0
+for i in range(1, amount + 1):
+    for coin in coins:
+        if coin <= i and dp[i - coin] != float('inf'):
+            dp[i] = min(dp[i], dp[i - coin] + 1)
+    print(f"  dp[{i}] = {dp[i]}")</textarea>
+                <div class="code-figure-output" id="outputcode8"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.8:</strong> For each amount, try all coins and take minimum.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 5: 2D DYNAMIC PROGRAMMING -->
+        <!-- ============================================== -->
+        <section id="2d">
+            <h2>5. 2D Dynamic Programming</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.9 — Unique Paths</span>
+                    <button class="code-figure-run" onclick="runCode('code9')">▶ Run</button>
+                </div>
+                <textarea id="code9" spellcheck="false">def unique_paths(m, n):
+    """
+    Count paths from top-left to bottom-right in m x n grid.
+    Only move right or down.
+    dp[i][j] = number of paths to reach cell (i, j)
+    """
+    dp = [[1] * n for _ in range(m)]
+    
+    # First row and column are all 1s (only one way to reach)
+    # Fill rest of the grid
+    for i in range(1, m):
+        for j in range(1, n):
+            dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+    
+    return dp[m - 1][n - 1]
+
+# Test and visualize
+m, n = 3, 4
+print(f"Grid: {m} x {n}")
+dp = [[1] * n for _ in range(m)]
+for i in range(1, m):
+    for j in range(1, n):
+        dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+
+print("DP table:")
+for row in dp:
+    print(f"  {row}")
+print(f"\nUnique paths: {dp[m-1][n-1]}")</textarea>
+                <div class="code-figure-output" id="outputcode9"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.9:</strong> Each cell sums paths from above and left.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.10 — Minimum Path Sum</span>
+                    <button class="code-figure-run" onclick="runCode('code10')">▶ Run</button>
+                </div>
+                <textarea id="code10" spellcheck="false">def min_path_sum(grid):
+    """
+    Find path from top-left to bottom-right with minimum sum.
+    dp[i][j] = minimum sum to reach cell (i, j)
+    """
+    m, n = len(grid), len(grid[0])
+    dp = [[0] * n for _ in range(m)]
+    
+    # Base case
+    dp[0][0] = grid[0][0]
+    
+    # First row (can only come from left)
+    for j in range(1, n):
+        dp[0][j] = dp[0][j - 1] + grid[0][j]
+    
+    # First column (can only come from above)
+    for i in range(1, m):
+        dp[i][0] = dp[i - 1][0] + grid[i][0]
+    
+    # Fill rest
+    for i in range(1, m):
+        for j in range(1, n):
+            dp[i][j] = min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j]
+    
+    return dp[m - 1][n - 1]
+
+# Test
+grid = [
+    [1, 3, 1],
+    [1, 5, 1],
+    [4, 2, 1]
+]
+print("Grid:")
+for row in grid:
+    print(f"  {row}")
+print(f"\nMinimum path sum: {min_path_sum(grid)}")  # 1→3→1→1→1 = 7</textarea>
+                <div class="code-figure-output" id="outputcode10"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.10:</strong> Take minimum of paths from above and left, add current cell.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.11 — Unique Paths with Obstacles</span>
+                    <button class="code-figure-run" onclick="runCode('code11')">▶ Run</button>
+                </div>
+                <textarea id="code11" spellcheck="false">def unique_paths_with_obstacles(grid):
+    """
+    Count paths avoiding obstacles (marked as 1).
+    dp[i][j] = 0 if obstacle, else sum of paths from above and left
+    """
+    m, n = len(grid), len(grid[0])
+    
+    # If start or end is blocked
+    if grid[0][0] == 1 or grid[m-1][n-1] == 1:
+        return 0
+    
+    dp = [[0] * n for _ in range(m)]
+    dp[0][0] = 1
+    
+    # First row
+    for j in range(1, n):
+        dp[0][j] = dp[0][j - 1] if grid[0][j] == 0 else 0
+    
+    # First column
+    for i in range(1, m):
+        dp[i][0] = dp[i - 1][0] if grid[i][0] == 0 else 0
+    
+    # Fill rest
+    for i in range(1, m):
+        for j in range(1, n):
+            if grid[i][j] == 0:
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+            # else dp[i][j] stays 0
+    
+    return dp[m - 1][n - 1]
+
+# Test
+grid = [
+    [0, 0, 0],
+    [0, 1, 0],
+    [0, 0, 0]
+]
+print("Grid (1 = obstacle):")
+for row in grid:
+    print(f"  {row}")
+print(f"\nUnique paths: {unique_paths_with_obstacles(grid)}")</textarea>
+                <div class="code-figure-output" id="outputcode11"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.11:</strong> Obstacles propagate zeros—no paths through blocked cells.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 6: SUBSEQUENCE PROBLEMS -->
+        <!-- ============================================== -->
+        <section id="subsequence">
+            <h2>6. Subsequence Problems</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.12 — Longest Increasing Subsequence</span>
+                    <button class="code-figure-run" onclick="runCode('code12')">▶ Run</button>
+                </div>
+                <textarea id="code12" spellcheck="false">def length_of_lis(nums):
+    """
+    Find length of longest strictly increasing subsequence.
+    dp[i] = length of LIS ending at index i
+    O(n²) time
+    """
+    n = len(nums)
+    dp = [1] * n  # Every element is LIS of length 1
+    
+    for i in range(1, n):
+        for j in range(i):
+            if nums[j] < nums[i]:
+                dp[i] = max(dp[i], dp[j] + 1)
+    
+    return max(dp)
+
+# O(n log n) solution using binary search
+import bisect
+
+def length_of_lis_optimized(nums):
+    """O(n log n) using patience sorting."""
+    tails = []  # tails[i] = smallest tail of LIS of length i+1
+    
+    for num in nums:
+        pos = bisect.bisect_left(tails, num)
+        if pos == len(tails):
+            tails.append(num)
+        else:
+            tails[pos] = num
+    
+    return len(tails)
+
+# Test
+nums = [10, 9, 2, 5, 3, 7, 101, 18]
+print(f"Array: {nums}")
+print(f"LIS length (O(n²)): {length_of_lis(nums)}")
+print(f"LIS length (O(n log n)): {length_of_lis_optimized(nums)}")
+# LIS: [2, 3, 7, 101] or [2, 5, 7, 101]</textarea>
+                <div class="code-figure-output" id="outputcode12"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.12:</strong> LIS at each position considers all smaller previous elements.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.13 — Longest Common Subsequence</span>
+                    <button class="code-figure-run" onclick="runCode('code13')">▶ Run</button>
+                </div>
+                <textarea id="code13" spellcheck="false">def longest_common_subsequence(text1, text2):
+    """
+    Find length of LCS of two strings.
+    dp[i][j] = LCS length of text1[:i] and text2[:j]
+    """
+    m, n = len(text1), len(text2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if text1[i - 1] == text2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+    
+    return dp[m][n]
+
+# Reconstruct the LCS
+def get_lcs(text1, text2):
+    m, n = len(text1), len(text2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if text1[i - 1] == text2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+    
+    # Backtrack to find LCS
+    lcs = []
+    i, j = m, n
+    while i > 0 and j > 0:
+        if text1[i - 1] == text2[j - 1]:
+            lcs.append(text1[i - 1])
+            i -= 1
+            j -= 1
+        elif dp[i - 1][j] > dp[i][j - 1]:
+            i -= 1
+        else:
+            j -= 1
+    
+    return ''.join(reversed(lcs))
+
+# Test
+text1, text2 = "abcde", "ace"
+print(f"text1: {text1}")
+print(f"text2: {text2}")
+print(f"LCS length: {longest_common_subsequence(text1, text2)}")
+print(f"LCS: {get_lcs(text1, text2)}")</textarea>
+                <div class="code-figure-output" id="outputcode13"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.13:</strong> If characters match, extend LCS; otherwise take max of excluding either.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.14 — Longest Palindromic Subsequence</span>
+                    <button class="code-figure-run" onclick="runCode('code14')">▶ Run</button>
+                </div>
+                <textarea id="code14" spellcheck="false">def longest_palindrome_subseq(s):
+    """
+    Find length of longest palindromic subsequence.
+    Key insight: LPS(s) = LCS(s, reverse(s))
+    Or use interval DP: dp[i][j] = LPS of s[i:j+1]
+    """
+    n = len(s)
+    dp = [[0] * n for _ in range(n)]
+    
+    # Base case: single characters
+    for i in range(n):
+        dp[i][i] = 1
+    
+    # Fill for increasing lengths
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+            if s[i] == s[j]:
+                dp[i][j] = dp[i + 1][j - 1] + 2
+            else:
+                dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])
+    
+    return dp[0][n - 1]
+
+# Test
+s = "bbbab"
+print(f"String: {s}")
+print(f"Longest palindromic subsequence length: {longest_palindrome_subseq(s)}")
+# LPS: "bbbb" = 4
+
+s = "cbbd"
+print(f"\nString: {s}")
+print(f"Longest palindromic subsequence length: {longest_palindrome_subseq(s)}")
+# LPS: "bb" = 2</textarea>
+                <div class="code-figure-output" id="outputcode14"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.14:</strong> Interval DP: expand from single characters to full string.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 7: KNAPSACK PROBLEMS -->
+        <!-- ============================================== -->
+        <section id="knapsack">
+            <h2>7. Knapsack Problems</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.15 — 0/1 Knapsack</span>
+                    <button class="code-figure-run" onclick="runCode('code15')">▶ Run</button>
+                </div>
+                <textarea id="code15" spellcheck="false">def knapsack_01(weights, values, capacity):
+    """
+    0/1 Knapsack: each item used at most once.
+    dp[i][w] = max value using items 0..i-1 with capacity w
+    """
+    n = len(weights)
+    dp = [[0] * (capacity + 1) for _ in range(n + 1)]
+    
+    for i in range(1, n + 1):
+        for w in range(capacity + 1):
+            # Don't take item i-1
+            dp[i][w] = dp[i - 1][w]
+            
+            # Take item i-1 if it fits
+            if weights[i - 1] <= w:
+                dp[i][w] = max(dp[i][w], 
+                              dp[i - 1][w - weights[i - 1]] + values[i - 1])
+    
+    return dp[n][capacity]
+
+# Test
+weights = [1, 2, 3, 4]
+values = [10, 20, 30, 40]
+capacity = 5
+print(f"Weights: {weights}")
+print(f"Values:  {values}")
+print(f"Capacity: {capacity}")
+print(f"Max value: {knapsack_01(weights, values, capacity)}")
+# Take items with weights 2 and 3: values 20 + 30 = 50</textarea>
+                <div class="code-figure-output" id="outputcode15"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.15:</strong> For each item, decide to take it or not based on remaining capacity.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.16 — Unbounded Knapsack</span>
+                    <button class="code-figure-run" onclick="runCode('code16')">▶ Run</button>
+                </div>
+                <textarea id="code16" spellcheck="false">def knapsack_unbounded(weights, values, capacity):
+    """
+    Unbounded Knapsack: each item can be used unlimited times.
+    dp[w] = max value achievable with capacity w
+    """
+    dp = [0] * (capacity + 1)
+    
+    for w in range(1, capacity + 1):
+        for i in range(len(weights)):
+            if weights[i] <= w:
+                dp[w] = max(dp[w], dp[w - weights[i]] + values[i])
+    
+    return dp[capacity]
+
+# Test
+weights = [1, 3, 4]
+values = [10, 40, 50]
+capacity = 8
+print(f"Weights: {weights}")
+print(f"Values:  {values}")
+print(f"Capacity: {capacity}")
+print(f"Max value (unbounded): {knapsack_unbounded(weights, values, capacity)}")
+# Take item 1 twice (weight 3+3=6, value 40+40=80), then item 0 twice (weight 1+1=2, value 10+10=20)</textarea>
+                <div class="code-figure-output" id="outputcode16"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.16:</strong> Unbounded allows reusing items—check all items for each capacity.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.17 — Coin Change II (Count Ways)</span>
+                    <button class="code-figure-run" onclick="runCode('code17')">▶ Run</button>
+                </div>
+                <textarea id="code17" spellcheck="false">def change(amount, coins):
+    """
+    Count number of ways to make amount using coins.
+    Each coin can be used unlimited times.
+    dp[i] = number of ways to make amount i
+    """
+    dp = [0] * (amount + 1)
+    dp[0] = 1  # One way to make 0: use no coins
+    
+    # Process coins one by one to avoid counting permutations
+    for coin in coins:
+        for i in range(coin, amount + 1):
+            dp[i] += dp[i - coin]
+    
+    return dp[amount]
+
+# Test
+coins = [1, 2, 5]
+amount = 5
+print(f"Coins: {coins}, Amount: {amount}")
+print(f"Number of ways: {change(amount, coins)}")
+# Ways: 5=5, 5=2+2+1, 5=2+1+1+1, 5=1+1+1+1+1 → 4 ways
+
+# Trace for smaller example
+coins = [1, 2]
+amount = 4
+print(f"\nCoins: {coins}, Amount: {amount}")
+dp = [0] * (amount + 1)
+dp[0] = 1
+for coin in coins:
+    for i in range(coin, amount + 1):
+        dp[i] += dp[i - coin]
+    print(f"After coin {coin}: {dp}")
+print(f"Ways: {dp[amount]}")</textarea>
+                <div class="code-figure-output" id="outputcode17"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.17:</strong> Process coins in outer loop to count combinations, not permutations.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.18 — Partition Equal Subset Sum</span>
+                    <button class="code-figure-run" onclick="runCode('code18')">▶ Run</button>
+                </div>
+                <textarea id="code18" spellcheck="false">def can_partition(nums):
+    """
+    Can array be partitioned into two subsets with equal sum?
+    Equivalent to: can we find subset with sum = total/2?
+    This is a 0/1 knapsack variant.
+    """
+    total = sum(nums)
+    
+    # If total is odd, impossible to split equally
+    if total % 2 != 0:
+        return False
+    
+    target = total // 2
+    dp = [False] * (target + 1)
+    dp[0] = True  # Sum of 0 is achievable
+    
+    for num in nums:
+        # Traverse backwards to avoid using same number twice
+        for j in range(target, num - 1, -1):
+            dp[j] = dp[j] or dp[j - num]
+    
+    return dp[target]
+
+# Test
+nums = [1, 5, 11, 5]
+print(f"Array: {nums}")
+print(f"Can partition equally: {can_partition(nums)}")
+# [1, 5, 5] and [11], both sum to 11
+
+nums = [1, 2, 3, 5]
+print(f"\nArray: {nums}")
+print(f"Can partition equally: {can_partition(nums)}")
+# Total = 11 (odd), impossible</textarea>
+                <div class="code-figure-output" id="outputcode18"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.18:</strong> Partition = knapsack with target = sum/2. Traverse backwards for 0/1.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 8: STRING DP -->
+        <!-- ============================================== -->
+        <section id="string">
+            <h2>8. String DP</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.19 — Edit Distance</span>
+                    <button class="code-figure-run" onclick="runCode('code19')">▶ Run</button>
+                </div>
+                <textarea id="code19" spellcheck="false">def min_distance(word1, word2):
+    """
+    Minimum operations (insert, delete, replace) to convert word1 to word2.
+    dp[i][j] = edit distance between word1[:i] and word2[:j]
+    """
+    m, n = len(word1), len(word2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    # Base cases: convert to/from empty string
+    for i in range(m + 1):
+        dp[i][0] = i  # Delete all chars
+    for j in range(n + 1):
+        dp[0][j] = j  # Insert all chars
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if word1[i - 1] == word2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]  # No operation needed
+            else:
+                dp[i][j] = 1 + min(
+                    dp[i - 1][j],      # Delete from word1
+                    dp[i][j - 1],      # Insert into word1
+                    dp[i - 1][j - 1]   # Replace
+                )
+    
+    return dp[m][n]
+
+# Test
+word1, word2 = "horse", "ros"
+print(f"word1: {word1}")
+print(f"word2: {word2}")
+print(f"Edit distance: {min_distance(word1, word2)}")
+# horse -> rorse (replace h with r)
+# rorse -> rose (delete r)
+# rose -> ros (delete e)</textarea>
+                <div class="code-figure-output" id="outputcode19"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.19:</strong> At each position, choose minimum of insert, delete, or replace.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.20 — Longest Palindromic Substring</span>
+                    <button class="code-figure-run" onclick="runCode('code20')">▶ Run</button>
+                </div>
+                <textarea id="code20" spellcheck="false">def longest_palindrome(s):
+    """
+    Find longest palindromic substring.
+    dp[i][j] = True if s[i:j+1] is palindrome
+    """
+    n = len(s)
+    if n < 2:
+        return s
+    
+    dp = [[False] * n for _ in range(n)]
+    start, max_len = 0, 1
+    
+    # All single chars are palindromes
+    for i in range(n):
+        dp[i][i] = True
+    
+    # Check length 2
+    for i in range(n - 1):
+        if s[i] == s[i + 1]:
+            dp[i][i + 1] = True
+            start, max_len = i, 2
+    
+    # Check lengths 3 to n
+    for length in range(3, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+            if s[i] == s[j] and dp[i + 1][j - 1]:
+                dp[i][j] = True
+                start, max_len = i, length
+    
+    return s[start:start + max_len]
+
+# Test
+s = "babad"
+print(f"String: {s}")
+print(f"Longest palindromic substring: {longest_palindrome(s)}")
+
+s = "cbbd"
+print(f"\nString: {s}")
+print(f"Longest palindromic substring: {longest_palindrome(s)}")</textarea>
+                <div class="code-figure-output" id="outputcode20"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.20:</strong> A substring is palindrome if ends match and middle is palindrome.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.21 — Word Break</span>
+                    <button class="code-figure-run" onclick="runCode('code21')">▶ Run</button>
+                </div>
+                <textarea id="code21" spellcheck="false">def word_break(s, word_dict):
+    """
+    Can string be segmented into dictionary words?
+    dp[i] = True if s[:i] can be segmented
+    """
+    word_set = set(word_dict)
+    n = len(s)
+    dp = [False] * (n + 1)
+    dp[0] = True  # Empty string is valid
+    
+    for i in range(1, n + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_set:
+                dp[i] = True
+                break
+    
+    return dp[n]
+
+# Test
+s = "leetcode"
+word_dict = ["leet", "code"]
+print(f"String: {s}")
+print(f"Dictionary: {word_dict}")
+print(f"Can break: {word_break(s, word_dict)}")
+
+s = "applepenapple"
+word_dict = ["apple", "pen"]
+print(f"\nString: {s}")
+print(f"Dictionary: {word_dict}")
+print(f"Can break: {word_break(s, word_dict)}")</textarea>
+                <div class="code-figure-output" id="outputcode21"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.21:</strong> Check if any valid split point leads to solution.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 9: SPACE OPTIMIZATION -->
+        <!-- ============================================== -->
+        <section id="optimization">
+            <h2>9. Space Optimization</h2>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.22 — Fibonacci O(1) Space</span>
+                    <button class="code-figure-run" onclick="runCode('code22')">▶ Run</button>
+                </div>
+                <textarea id="code22" spellcheck="false">def fib_optimized(n):
+    """
+    Fibonacci with O(1) space.
+    Only need previous two values, not entire array.
+    """
+    if n <= 1:
+        return n
+    
+    prev2, prev1 = 0, 1
+    
+    for _ in range(2, n + 1):
+        current = prev1 + prev2
+        prev2, prev1 = prev1, current
+    
+    return prev1
+
+# Compare space usage
+def fib_o_n_space(n):
+    """O(n) space version for comparison."""
+    if n <= 1:
+        return n
+    dp = [0] * (n + 1)
+    dp[1] = 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    return dp[n]
+
+n = 50
+print(f"fib({n}) = {fib_optimized(n)}")
+print(f"O(n) space uses {n+1} integers")
+print(f"O(1) space uses 2 integers")</textarea>
+                <div class="code-figure-output" id="outputcode22"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.22:</strong> When each state only depends on previous few, keep only those.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.23 — 2D to 1D Space Reduction</span>
+                    <button class="code-figure-run" onclick="runCode('code23')">▶ Run</button>
+                </div>
+                <textarea id="code23" spellcheck="false">def unique_paths_1d(m, n):
+    """
+    Unique paths using O(n) space instead of O(m*n).
+    Since we only need previous row, keep one row.
+    """
+    dp = [1] * n  # Start with first row (all 1s)
+    
+    for _ in range(1, m):
+        for j in range(1, n):
+            # dp[j] = dp[j] (above) + dp[j-1] (left)
+            # dp[j] already contains value from previous row
+            dp[j] += dp[j - 1]
+    
+    return dp[n - 1]
+
+# Test
+m, n = 3, 7
+print(f"Grid: {m} x {n}")
+print(f"Unique paths (O(n) space): {unique_paths_1d(m, n)}")
+
+# Trace
+m, n = 3, 4
+dp = [1] * n
+print(f"\nTracing {m}x{n} grid:")
+print(f"Initial row: {dp}")
+for i in range(1, m):
+    for j in range(1, n):
+        dp[j] += dp[j - 1]
+    print(f"After row {i}: {dp}")
+print(f"Result: {dp[n-1]}")</textarea>
+                <div class="code-figure-output" id="outputcode23"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.23:</strong> Reuse same array—dp[j] holds "above" until we update it.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.24 — LCS with O(n) Space</span>
+                    <button class="code-figure-run" onclick="runCode('code24')">▶ Run</button>
+                </div>
+                <textarea id="code24" spellcheck="false">def lcs_optimized(text1, text2):
+    """
+    LCS with O(min(m,n)) space.
+    Only keep two rows (or one row with care).
+    """
+    # Ensure text2 is shorter for less space
+    if len(text1) < len(text2):
+        text1, text2 = text2, text1
+    
+    m, n = len(text1), len(text2)
+    prev = [0] * (n + 1)
+    curr = [0] * (n + 1)
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if text1[i - 1] == text2[j - 1]:
+                curr[j] = prev[j - 1] + 1
+            else:
+                curr[j] = max(prev[j], curr[j - 1])
+        prev, curr = curr, prev  # Swap rows
+    
+    return prev[n]
+
+# Test
+text1 = "abcde"
+text2 = "ace"
+print(f"text1: {text1}")
+print(f"text2: {text2}")
+print(f"LCS length: {lcs_optimized(text1, text2)}")
+
+print(f"\nSpace: O({min(len(text1), len(text2))}) instead of O({len(text1)*len(text2)})")</textarea>
+                <div class="code-figure-output" id="outputcode24"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.24:</strong> Two-row technique reduces m×n space to 2×min(m,n).
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 10: COMMON PATTERNS -->
+        <!-- ============================================== -->
+        <section id="patterns">
+            <h2>10. Common Patterns</h2>
+            
+            <h3>Pattern 1: Linear DP</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.25 — Decode Ways</span>
+                    <button class="code-figure-run" onclick="runCode('code25')">▶ Run</button>
+                </div>
+                <textarea id="code25" spellcheck="false">def num_decodings(s):
+    """
+    Count ways to decode string where A=1, B=2, ..., Z=26.
+    dp[i] = ways to decode s[:i]
+    """
+    if not s or s[0] == '0':
+        return 0
+    
+    n = len(s)
+    dp = [0] * (n + 1)
+    dp[0] = 1  # Empty string
+    dp[1] = 1  # First char (already checked not '0')
+    
+    for i in range(2, n + 1):
+        # Single digit (1-9)
+        if s[i - 1] != '0':
+            dp[i] += dp[i - 1]
+        
+        # Two digits (10-26)
+        two_digit = int(s[i - 2:i])
+        if 10 <= two_digit <= 26:
+            dp[i] += dp[i - 2]
+    
+    return dp[n]
+
+# Test
+s = "226"
+print(f"String: {s}")
+print(f"Decode ways: {num_decodings(s)}")
+# "BZ" (2 26), "VF" (22 6), "BBF" (2 2 6) → 3 ways
+
+s = "12"
+print(f"\nString: {s}")
+print(f"Decode ways: {num_decodings(s)}")
+# "AB" (1 2), "L" (12) → 2 ways</textarea>
+                <div class="code-figure-output" id="outputcode25"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.25:</strong> At each position, consider taking 1 or 2 digits if valid.
+                </div>
+            </div>
+            
+            <h3>Pattern 2: Interval DP</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.26 — Burst Balloons</span>
+                    <button class="code-figure-run" onclick="runCode('code26')">▶ Run</button>
+                </div>
+                <textarea id="code26" spellcheck="false">def max_coins(nums):
+    """
+    Maximum coins from bursting all balloons.
+    dp[i][j] = max coins bursting balloons between i and j (exclusive).
+    Key insight: think of balloon k as LAST to burst in interval.
+    """
+    # Add boundary balloons
+    nums = [1] + nums + [1]
+    n = len(nums)
+    dp = [[0] * n for _ in range(n)]
+    
+    # For each interval length
+    for length in range(2, n):
+        for left in range(n - length):
+            right = left + length
+            # Try each balloon as last to burst
+            for k in range(left + 1, right):
+                coins = nums[left] * nums[k] * nums[right]
+                total = dp[left][k] + coins + dp[k][right]
+                dp[left][right] = max(dp[left][right], total)
+    
+    return dp[0][n - 1]
+
+# Test
+nums = [3, 1, 5, 8]
+print(f"Balloons: {nums}")
+print(f"Max coins: {max_coins(nums)}")
+# Burst 1: 3*1*5 = 15, array becomes [3,5,8]
+# Burst 5: 3*5*8 = 120, array becomes [3,8]
+# Burst 3: 1*3*8 = 24, array becomes [8]
+# Burst 8: 1*8*1 = 8
+# Total: 15 + 120 + 24 + 8 = 167</textarea>
+                <div class="code-figure-output" id="outputcode26"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.26:</strong> Interval DP: think backwards—which balloon to burst last?
+                </div>
+            </div>
+            
+            <h3>Pattern 3: State Machine DP</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.27 — Best Time to Buy and Sell Stock with Cooldown</span>
+                    <button class="code-figure-run" onclick="runCode('code27')">▶ Run</button>
+                </div>
+                <textarea id="code27" spellcheck="false">def max_profit_cooldown(prices):
+    """
+    Buy/sell with 1-day cooldown after selling.
+    State machine: hold, sold, rest
+    """
+    if not prices:
+        return 0
+    
+    n = len(prices)
+    hold = [0] * n    # Holding stock
+    sold = [0] * n    # Just sold
+    rest = [0] * n    # Resting (cooldown or doing nothing)
+    
+    hold[0] = -prices[0]
+    sold[0] = 0
+    rest[0] = 0
+    
+    for i in range(1, n):
+        hold[i] = max(hold[i-1], rest[i-1] - prices[i])  # Keep or buy
+        sold[i] = hold[i-1] + prices[i]                   # Sell
+        rest[i] = max(rest[i-1], sold[i-1])               # Keep resting or enter cooldown
+    
+    return max(sold[n-1], rest[n-1])
+
+# Test
+prices = [1, 2, 3, 0, 2]
+print(f"Prices: {prices}")
+print(f"Max profit with cooldown: {max_profit_cooldown(prices)}")
+# Buy at 1, sell at 3, cooldown, buy at 0, sell at 2 → 3</textarea>
+                <div class="code-figure-output" id="outputcode27"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.27:</strong> State machine DP: track multiple states and transitions.
+                </div>
+            </div>
+            
+            <h3>Pattern 4: Counting DP</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.28 — Perfect Squares</span>
+                    <button class="code-figure-run" onclick="runCode('code28')">▶ Run</button>
+                </div>
+                <textarea id="code28" spellcheck="false">def num_squares(n):
+    """
+    Minimum perfect squares that sum to n.
+    dp[i] = minimum squares for sum i
+    """
+    dp = [float('inf')] * (n + 1)
+    dp[0] = 0
+    
+    # Precompute squares
+    squares = []
+    i = 1
+    while i * i <= n:
+        squares.append(i * i)
+        i += 1
+    
+    for i in range(1, n + 1):
+        for sq in squares:
+            if sq > i:
+                break
+            dp[i] = min(dp[i], dp[i - sq] + 1)
+    
+    return dp[n]
+
+# Test
+for n in [12, 13, 1, 4]:
+    print(f"numSquares({n}) = {num_squares(n)}")
+# 12 = 4 + 4 + 4 (3 squares)
+# 13 = 4 + 9 (2 squares)
+# 1 = 1 (1 square)
+# 4 = 4 (1 square)</textarea>
+                <div class="code-figure-output" id="outputcode28"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.28:</strong> Similar to coin change—try all perfect squares as "coins."
+                </div>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-title">Key Takeaways</div>
+                <ul>
+                    <li><strong>Identify subproblems:</strong> What decisions lead to optimal solution?</li>
+                    <li><strong>Define state:</strong> What information do we need to track?</li>
+                    <li><strong>Write recurrence:</strong> How do states relate to each other?</li>
+                    <li><strong>Base cases:</strong> What are the simplest subproblems?</li>
+                    <li><strong>Optimize space:</strong> Do we need the entire table or just recent rows?</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 11: PITFALLS -->
+        <!-- ============================================== -->
+        <section id="pitfalls">
+            <h2>11. Common Pitfalls</h2>
+            
+            <h3>Pitfall 1: Wrong Base Cases</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.29 — Base Case Importance</span>
+                    <button class="code-figure-run" onclick="runCode('code29')">▶ Run</button>
+                </div>
+                <textarea id="code29" spellcheck="false"># WRONG: Missing base case for coin change
+def coin_change_wrong(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    # Missing: dp[0] = 0
+    
+    for i in range(1, amount + 1):
+        for coin in coins:
+            if coin <= i:
+                dp[i] = min(dp[i], dp[i - coin] + 1)
+    
+    return dp[amount]
+
+# RIGHT: Proper base case
+def coin_change_right(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0  # 0 coins needed for amount 0
+    
+    for i in range(1, amount + 1):
+        for coin in coins:
+            if coin <= i and dp[i - coin] != float('inf'):
+                dp[i] = min(dp[i], dp[i - coin] + 1)
+    
+    return dp[amount] if dp[amount] != float('inf') else -1
+
+coins = [2]
+amount = 4
+print(f"Coins: {coins}, Amount: {amount}")
+print(f"Wrong (no base): {coin_change_wrong(coins, amount)}")
+print(f"Right: {coin_change_right(coins, amount)}")</textarea>
+                <div class="code-figure-output" id="outputcode29"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.29:</strong> Base cases anchor the recursion—without them, nothing works.
+                </div>
+            </div>
+            
+            <h3>Pitfall 2: Off-by-One in Index</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.30 — Index Mapping</span>
+                    <button class="code-figure-run" onclick="runCode('code30')">▶ Run</button>
+                </div>
+                <textarea id="code30" spellcheck="false"># When dp array is size n+1, be careful with index mapping
+
+def lcs_careful(text1, text2):
+    m, n = len(text1), len(text2)
+    # dp has size (m+1) x (n+1)
+    # dp[i][j] corresponds to text1[:i] and text2[:j]
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            # Characters are at i-1 and j-1 in original strings!
+            if text1[i - 1] == text2[j - 1]:  # NOT text1[i]
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+    
+    return dp[m][n]
+
+text1, text2 = "abc", "ac"
+print(f"LCS of '{text1}' and '{text2}': {lcs_careful(text1, text2)}")
+
+print("\nRemember: dp[i][j] uses text1[i-1] and text2[j-1]")</textarea>
+                <div class="code-figure-output" id="outputcode30"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.30:</strong> When dp has extra row/column for base case, adjust string indices.
+                </div>
+            </div>
+            
+            <h3>Pitfall 3: Wrong Iteration Order</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.31 — Iteration Direction Matters</span>
+                    <button class="code-figure-run" onclick="runCode('code31')">▶ Run</button>
+                </div>
+                <textarea id="code31" spellcheck="false"># For 0/1 knapsack (each item once): iterate BACKWARDS
+# For unbounded knapsack (unlimited items): iterate FORWARDS
+
+def knapsack_01_1d(weights, values, capacity):
+    """0/1 Knapsack with 1D array - iterate backwards."""
+    dp = [0] * (capacity + 1)
+    
+    for i in range(len(weights)):
+        # BACKWARDS: don't use same item twice
+        for w in range(capacity, weights[i] - 1, -1):
+            dp[w] = max(dp[w], dp[w - weights[i]] + values[i])
+    
+    return dp[capacity]
+
+def unbounded_knapsack_1d(weights, values, capacity):
+    """Unbounded Knapsack with 1D array - iterate forwards."""
+    dp = [0] * (capacity + 1)
+    
+    for w in range(1, capacity + 1):
+        for i in range(len(weights)):
+            if weights[i] <= w:
+                # FORWARDS: allows reusing items
+                dp[w] = max(dp[w], dp[w - weights[i]] + values[i])
+    
+    return dp[capacity]
+
+weights, values = [2, 3], [3, 4]
+capacity = 5
+
+print(f"Weights: {weights}, Values: {values}, Capacity: {capacity}")
+print(f"0/1 Knapsack: {knapsack_01_1d(weights, values, capacity)}")
+print(f"Unbounded: {unbounded_knapsack_1d(weights, values, capacity)}")</textarea>
+                <div class="code-figure-output" id="outputcode31"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.31:</strong> Backwards iteration prevents reusing items in same round.
+                </div>
+            </div>
+            
+            <h3>Pitfall 4: Counting vs Optimization</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.32 — Combinations vs Permutations</span>
+                    <button class="code-figure-run" onclick="runCode('code32')">▶ Run</button>
+                </div>
+                <textarea id="code32" spellcheck="false"># Counting COMBINATIONS (order doesn't matter): coins in outer loop
+def coin_combinations(coins, amount):
+    dp = [0] * (amount + 1)
+    dp[0] = 1
+    for coin in coins:           # Coin in outer loop
+        for i in range(coin, amount + 1):
+            dp[i] += dp[i - coin]
+    return dp[amount]
+
+# Counting PERMUTATIONS (order matters): amount in outer loop
+def coin_permutations(coins, amount):
+    dp = [0] * (amount + 1)
+    dp[0] = 1
+    for i in range(1, amount + 1):    # Amount in outer loop
+        for coin in coins:
+            if coin <= i:
+                dp[i] += dp[i - coin]
+    return dp[amount]
+
+coins = [1, 2]
+amount = 3
+
+print(f"Coins: {coins}, Amount: {amount}")
+print(f"Combinations (1+1+1, 1+2, 2+1 counted as same): {coin_combinations(coins, amount)}")
+print(f"Permutations (1+1+1, 1+2, 2+1 all different): {coin_permutations(coins, amount)}")</textarea>
+                <div class="code-figure-output" id="outputcode32"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.32:</strong> Loop order determines whether we count combinations or permutations.
+                </div>
+            </div>
+            
+            <h3>Pitfall 5: Integer Overflow</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 12.33 — Handling Large Numbers</span>
+                    <button class="code-figure-run" onclick="runCode('code33')">▶ Run</button>
+                </div>
+                <textarea id="code33" spellcheck="false"># Python handles big integers, but watch for problems asking modulo
+MOD = 10**9 + 7
+
+def unique_paths_mod(m, n):
+    """Unique paths with modulo for large grids."""
+    dp = [[1] * n for _ in range(m)]
+    
+    for i in range(1, m):
+        for j in range(1, n):
+            dp[i][j] = (dp[i - 1][j] + dp[i][j - 1]) % MOD
+    
+    return dp[m - 1][n - 1]
+
+# Large grid
+m, n = 100, 100
+print(f"Unique paths in {m}x{n} grid:")
+print(f"  Without mod: {unique_paths_mod.__code__.co_code}")  # Would be huge
+print(f"  With mod 10^9+7: {unique_paths_mod(m, n)}")
+
+# Always apply modulo at EACH step to prevent overflow
+print("\nRule: (a + b) % MOD = ((a % MOD) + (b % MOD)) % MOD")</textarea>
+                <div class="code-figure-output" id="outputcode33"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 12.33:</strong> Apply modulo at each step to keep numbers manageable.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 12: EXERCISES -->
+        <!-- ============================================== -->
+        <section id="exercises">
+            <h2>12. Exercises</h2>
+            
+            <!-- Exercise 1 -->
+            <div class="exercise" data-exercise="ex1">
+                <div class="exercise-title">Exercise 1: Min Cost Climbing Stairs</div>
+                <p class="exercise-description">Given an array cost where cost[i] is the cost of step i, find the minimum cost to reach the top. You can start from step 0 or 1, and can climb 1 or 2 steps at a time.</p>
+                <p class="answer">(Expected: [10,15,20] → 15)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex1-hint1">
+                        <strong>Hint 1 - State Definition:</strong><br>
+                        <code>dp[i]</code> = minimum cost to reach step i.
+                    </div>
+                    <div class="hint-content" id="ex1-hint2">
+                        <strong>Hint 2 - Recurrence:</strong><br>
+                        <code>dp[i] = min(dp[i-1], dp[i-2]) + cost[i]</code>
+                    </div>
+                    <div class="hint-content" id="ex1-hint3">
+                        <strong>Hint 3 - Final Answer:</strong><br>
+                        To go past the top: <code>min(dp[n-1], dp[n-2])</code>
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 1 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex1')">▶ Run</button>
+                </div>
+                <textarea id="ex1" spellcheck="false"># Min Cost Climbing Stairs - DP
+
+def min_cost_climbing_stairs(cost):
+    # Your code here
+    pass
+
+# Test your implementation (uncomment)
+# print(min_cost_climbing_stairs([10, 15, 20]))  # 15
+# print(min_cost_climbing_stairs([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]))  # 6</textarea>
+                <div class="code-figure-output" id="outputex1"></div>
+            </div>
+            
+            <!-- Exercise 2 -->
+            <div class="exercise" data-exercise="ex2">
+                <div class="exercise-title">Exercise 2: House Robber II</div>
+                <p class="exercise-description">Houses are arranged in a circle (first and last are adjacent). You cannot rob adjacent houses. Find maximum amount you can rob.</p>
+                <p class="answer">(Expected: [2,3,2] → 3)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex2-hint1">
+                        <strong>Hint 1 - Circle Break:</strong><br>
+                        If we rob house 0, we cannot rob house n-1 (they're adjacent in circle).
+                    </div>
+                    <div class="hint-content" id="ex2-hint2">
+                        <strong>Hint 2 - Two Cases:</strong><br>
+                        Case 1: Rob houses [0..n-2]. Case 2: Rob houses [1..n-1].
+                    </div>
+                    <div class="hint-content" id="ex2-hint3">
+                        <strong>Hint 3 - Combine:</strong><br>
+                        <code>max(rob(nums[1:]), rob(nums[:-1]))</code> using linear house robber.
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 2 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex2')">▶ Run</button>
+                </div>
+                <textarea id="ex2" spellcheck="false"># House Robber II - Circular DP
+
+def rob_circular(nums):
+    # Your code here
+    pass
+
+# Test your implementation (uncomment)
+# print(rob_circular([2, 3, 2]))  # 3
+# print(rob_circular([1, 2, 3, 1]))  # 4</textarea>
+                <div class="code-figure-output" id="outputex2"></div>
+            </div>
+            
+            <!-- Exercise 3 -->
+            <div class="exercise" data-exercise="ex3">
+                <div class="exercise-title">Exercise 3: Longest Increasing Path in Matrix</div>
+                <p class="exercise-description">Find the longest increasing path in a matrix. You can move in 4 directions (up, down, left, right).</p>
+                <p class="answer">(Expected: Path 1→2→6→9 = length 4)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex3-hint1">
+                        <strong>Hint 1 - DFS + Memo:</strong><br>
+                        Use DFS from each cell with memoization.
+                    </div>
+                    <div class="hint-content" id="ex3-hint2">
+                        <strong>Hint 2 - State:</strong><br>
+                        <code>dp[i][j]</code> = longest path starting from cell (i,j).
+                    </div>
+                    <div class="hint-content" id="ex3-hint3">
+                        <strong>Hint 3 - Recurrence:</strong><br>
+                        <code>dp[i][j] = 1 + max(dp[neighbor])</code> for all neighbors with larger value.
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 3 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex3')">▶ Run</button>
+                </div>
+                <textarea id="ex3" spellcheck="false"># Longest Increasing Path in Matrix - DFS + Memoization
+
+def longest_increasing_path(matrix):
+    # Your code here
+    pass
+
+# Test your implementation (uncomment)
+# matrix = [[9,9,4],[6,6,8],[2,1,1]]
+# print(longest_increasing_path(matrix))  # 4, path: 1→2→6→9</textarea>
+                <div class="code-figure-output" id="outputex3"></div>
+            </div>
+            
+            <!-- Exercise 4 -->
+            <div class="exercise" data-exercise="ex4">
+                <div class="exercise-title">Exercise 4: Target Sum</div>
+                <p class="exercise-description">Given array nums and target S, find number of ways to assign + or - to each number to achieve target sum.</p>
+                <p class="answer">(Expected: [1,1,1,1,1], target=3 → 5 ways)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex4-hint1">
+                        <strong>Hint 1 - Math Transform:</strong><br>
+                        P - N = target, P + N = sum → P = (target + sum) / 2
+                    </div>
+                    <div class="hint-content" id="ex4-hint2">
+                        <strong>Hint 2 - Subset Sum:</strong><br>
+                        Count subsets with sum = P (0/1 knapsack counting variant).
+                    </div>
+                    <div class="hint-content" id="ex4-hint3">
+                        <strong>Hint 3 - Edge Cases:</strong><br>
+                        Check if (target + sum) is even and non-negative.
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 4 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex4')">▶ Run</button>
+                </div>
+                <textarea id="ex4" spellcheck="false"># Target Sum - Transform to Subset Sum
+
+def find_target_sum_ways(nums, target):
+    # Your code here
+    pass
+
+# Test your implementation (uncomment)
+# print(find_target_sum_ways([1, 1, 1, 1, 1], 3))  # 5</textarea>
+                <div class="code-figure-output" id="outputex4"></div>
+            </div>
+            
+            <!-- Exercise 5 -->
+            <div class="exercise" data-exercise="ex5">
+                <div class="exercise-title">Exercise 5: Interleaving String</div>
+                <p class="exercise-description">Given strings s1, s2, s3, check if s3 is formed by interleaving s1 and s2 (maintaining relative order).</p>
+                <p class="answer">(Expected: "aabcc" + "dbbca" → "aadbbcbcac" = True)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex5-hint1">
+                        <strong>Hint 1 - State:</strong><br>
+                        <code>dp[i][j]</code> = True if s1[:i] and s2[:j] can form s3[:i+j].
+                    </div>
+                    <div class="hint-content" id="ex5-hint2">
+                        <strong>Hint 2 - Recurrence:</strong><br>
+                        <code>dp[i][j] = (dp[i-1][j] and s1[i-1]==s3[i+j-1]) or (dp[i][j-1] and s2[j-1]==s3[i+j-1])</code>
+                    </div>
+                    <div class="hint-content" id="ex5-hint3">
+                        <strong>Hint 3 - Base Case:</strong><br>
+                        <code>dp[0][0] = True</code>. Initialize first row and column.
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 5 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex5')">▶ Run</button>
+                </div>
+                <textarea id="ex5" spellcheck="false"># Interleaving String - 2D DP
+
+def is_interleave(s1, s2, s3):
+    # Your code here
+    pass
+
+# Test your implementation (uncomment)
+# print(is_interleave("aabcc", "dbbca", "aadbbcbcac"))  # True
+# print(is_interleave("aabcc", "dbbca", "aadbbbaccc"))  # False</textarea>
+                <div class="code-figure-output" id="outputex5"></div>
+            </div>
+        </section>
+
+        <!-- SUBMIT SECTION -->
+        <section class="submit-section">
+            <h2>Submit Your Work</h2>
+            <p>After completing the exercises, submit your attendance below.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student ID</label>
+                    <input type="text" id="studentId" placeholder="Enter your student ID">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" placeholder="Enter your full name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email (@istun.edu.tr)</label>
+                    <input type="email" id="studentEmail" placeholder="your.email@istun.edu.tr">
+                </div>
+                <div class="form-group">
+                    <label>Class Code</label>
+                    <input type="text" id="classCode" placeholder="From instructor">
+                </div>
+            </div>
+            <input type="text" id="hp" class="hp" tabindex="-1" autocomplete="off">
+            <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
+            <div class="submit-status" id="submitStatus"></div>
+        </section>
+    </main>
+
+    <script>
+        const pageLoadTime = Date.now();
+        
+        // ============ HINT SYSTEM ============
+        function toggleHint(exerciseId, hintNum) {
+            const hintId = exerciseId + '-hint' + hintNum;
+            const hintEl = document.getElementById(hintId);
+            const btn = event.target;
+            if (hintEl.classList.contains('show')) {
+                hintEl.classList.remove('show');
+                btn.classList.remove('revealed');
+            } else {
+                hintEl.classList.add('show');
+                btn.classList.add('revealed');
+            }
+        }
+        
+        // ============ ANTI-CHEAT SYSTEM ============
+        const originalExerciseCode = {};
+        const keystrokeCounts = {};
+        const pasteAttempts = {};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('textarea[id^="ex"]').forEach(textarea => {
+                const exId = textarea.id;
+                originalExerciseCode[exId] = textarea.value;
+                keystrokeCounts[exId] = 0;
+                pasteAttempts[exId] = 0;
+                
+                textarea.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    pasteAttempts[exId]++;
+                    const warning = document.createElement('div');
+                    warning.textContent = '⚠️ Paste is disabled. Please type your code.';
+                    warning.className = 'paste-warning';
+                    const existingWarning = textarea.parentElement.querySelector('.paste-warning');
+                    if (existingWarning) existingWarning.remove();
+                    textarea.parentElement.appendChild(warning);
+                    setTimeout(() => warning.remove(), 3000);
+                });
+                textarea.addEventListener('drop', function(e) { e.preventDefault(); });
+                textarea.addEventListener('keydown', function(e) {
+                    if (e.key.length === 1 || ['Backspace', 'Delete', 'Enter', 'Tab'].includes(e.key)) {
+                        keystrokeCounts[exId]++;
+                    }
+                });
+            });
+        });
+        
+        function isCodeModified(exId, currentCode) {
+            const original = originalExerciseCode[exId] || '';
+            const keystrokes = keystrokeCounts[exId] || 0;
+            const normalizedOriginal = original.trim().replace(/\s+/g, ' ');
+            const normalizedCurrent = currentCode.trim().replace(/\s+/g, ' ');
+            if (normalizedOriginal === normalizedCurrent) return false;
+            if (keystrokes < 20) return false;
+            const withoutComments = currentCode.replace(/#.*$/gm, '').replace(/"""[\s\S]*?"""/g, '').replace(/'''[\s\S]*?'''/g, '').trim();
+            const originalWithoutComments = original.replace(/#.*$/gm, '').replace(/"""[\s\S]*?"""/g, '').replace(/'''[\s\S]*?'''/g, '').trim();
+            if (withoutComments.length <= originalWithoutComments.length + 10) return false;
+            return true;
+        }
+        
+        // ============ PYODIDE CODE RUNNER ============
+        async function runCode(codeId) {
+            const codeEl = document.getElementById(codeId);
+            const outputEl = document.getElementById('output' + codeId);
+            const code = codeEl.value;
+            outputEl.classList.add('show');
+            outputEl.textContent = 'Loading Python...';
+            
+            try {
+                if (!window.pyodideReady) {
+                    if (typeof loadPyodide === 'undefined') {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
+                        document.head.appendChild(script);
+                        await new Promise((resolve, reject) => {
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            setTimeout(reject, 10000);
+                        });
+                    }
+                    outputEl.textContent = 'Initializing Python (first run may take a moment)...';
+                    window.pyodide = await loadPyodide();
+                    window.pyodideReady = true;
+                }
+                outputEl.textContent = 'Running...';
+                window.pyodide.runPython(`
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+`);
+                try {
+                    window.pyodide.runPython(code);
+                } catch (pyErr) {
+                    outputEl.textContent = 'Error: ' + pyErr.message;
+                    return;
+                }
+                const output = window.pyodide.runPython('sys.stdout.getvalue()');
+                outputEl.textContent = output || '(no output)';
+            } catch(e) {
+                outputEl.textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        // ============ VALIDATION ============
+        function validateStudentId(id) {
+            if (id.length < 6 || id.length > 10) return false;
+            if (!/^\d+$/.test(id)) return false;
+            if (/^(\d)\1+$/.test(id)) return false;
+            return true;
+        }
+        function validateName(name) {
+            if (name.length < 5) return false;
+            const words = name.trim().split(/\s+/);
+            if (words.length < 2) return false;
+            if (!/^[A-Za-zğüşıöçĞÜŞİÖÇ\s]+$/.test(name)) return false;
+            const blockedWords = ['test', 'fake', 'asdf', 'qwer', 'spam', 'admin', 'null', 'undefined', 'xxx', 'abc', 'aaa', 'deneme', 'örnek'];
+            const nameLower = name.toLowerCase();
+            for (const word of blockedWords) { if (nameLower.includes(word)) return false; }
+            return true;
+        }
+        function validateEmail(email) {
+            return email.endsWith('@istun.edu.tr') && email.length > 15;
+        }
+        
+        // ============ SUBMIT ============
+        async function submitWork() {
+            const status = document.getElementById('submitStatus');
+            status.style.display = 'none';
+            const studentId = document.getElementById('studentId').value.trim();
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentEmail = document.getElementById('studentEmail').value.trim().toLowerCase();
+            const classCode = document.getElementById('classCode').value.trim().toUpperCase();
+            const honeypot = document.getElementById('hp').value;
+            
+            if (honeypot) { status.textContent = '❌ Submission rejected.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            const timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000);
+            if (timeOnPage < 60) { status.textContent = '❌ Please spend more time reviewing the material.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!studentId || !studentName || !studentEmail || !classCode) { status.textContent = '❌ All fields are required.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!validateStudentId(studentId)) { status.textContent = '❌ Invalid Student ID (must be 6-10 digits).'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!validateName(studentName)) { status.textContent = '❌ Please use your real information.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            if (!validateEmail(studentEmail)) { status.textContent = '❌ Use your @istun.edu.tr email.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; return; }
+            
+            status.textContent = '⏳ Collecting answers and submitting...';
+            status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
+            
+            const answers = {};
+            document.querySelectorAll('.exercise[data-exercise]').forEach(exercise => {
+                const exId = exercise.getAttribute('data-exercise');
+                const titleEl = exercise.querySelector('.exercise-title');
+                const descEl = exercise.querySelector('.exercise-description');
+                const codeEl = document.getElementById(exId);
+                if (codeEl) {
+                    const code = codeEl.value || '';
+                    answers[exId] = {
+                        title: titleEl ? titleEl.textContent.replace(/^Exercise \d+:\s*/, '').trim() : 'Exercise',
+                        description: descEl ? descEl.textContent.trim() : '',
+                        code: code,
+                        modified: isCodeModified(exId, code),
+                        keystrokes: keystrokeCounts[exId] || 0,
+                        pasteAttempts: pasteAttempts[exId] || 0
+                    };
+                }
+            });
+            
+            let ipAddress = 'Unknown', location = 'Unknown';
+            try {
+                const ipResponse = await fetch('https://ipapi.co/json/', { timeout: 5000 });
+                if (ipResponse.ok) {
+                    const ipData = await ipResponse.json();
+                    ipAddress = ipData.ip || 'Unknown';
+                    location = (ipData.city && ipData.country_name) ? `${ipData.city}, ${ipData.country_name}` : (ipData.country_name || 'Unknown');
+                }
+            } catch (e) { console.log('Could not fetch IP info'); }
+            
+            const data = { week: 'Week_12', studentId, studentName, studentEmail, classCode, timeOnPage, answers, ipAddress, location, source: 'dsa-web' };
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbxepk2NvNg3Whad-WOPxdZI-mWnVJeNKCsZVspvk7Ku5YHC_oWv7376VrWLn_30nyI_vw/exec';
+            
+            fetch(scriptUrl, { method: 'POST', mode: 'cors', cache: 'no-cache', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) })
+            .then(response => response.json())
+            .then(res => {
+                if (res.success) { status.textContent = '✅ Submitted successfully! Check your email for confirmation.'; status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80'; }
+                else { status.textContent = '❌ ' + (res.message || 'Submission failed.'); status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; }
+            })
+            .catch(error => {
+                fetch(scriptUrl, { method: 'POST', mode: 'no-cors', cache: 'no-cache', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) })
+                .then(() => { status.textContent = '⏳ Request sent. Check your email.'; status.style.cssText = 'display:block;background:rgba(251,191,36,0.2);color:#fbbf24'; })
+                .catch(() => { status.textContent = '❌ Connection error.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; });
+            });
+        }
+    </script>
+</body>
+</html>

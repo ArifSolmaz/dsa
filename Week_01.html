@@ -1,0 +1,2511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 01: Foundations &amp; Big O | DSA Course</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <script type="module">
+        // Wait for PyScript to be ready
+        const pyReady = new Promise((resolve) => {
+            const check = setInterval(() => {
+                if (typeof pyscript !== 'undefined' && pyscript.interpreter) {
+                    clearInterval(check);
+                    resolve();
+                }
+            }, 100);
+            // Timeout after 15 seconds
+            setTimeout(() => { clearInterval(check); resolve(); }, 15000);
+        });
+        window.pyReady = pyReady;
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 19px;
+            background: #faf9f7;
+            color: #2c2c2c; 
+            line-height: 1.8;
+        }
+        
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .topbar .title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .topbar a {
+            font-family: system-ui, sans-serif;
+            color: white;
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+        }
+        .topbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .book {
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 60px 40px 100px;
+        }
+        
+        .chapter-header {
+            text-align: center;
+            padding: 50px 0 60px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 50px;
+        }
+        .chapter-num {
+            font-family: system-ui, sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #7c3aed;
+            margin-bottom: 15px;
+        }
+        .chapter-header h1 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+        .chapter-header .subtitle {
+            font-style: italic;
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin: 60px 0 25px;
+            padding-top: 30px;
+            border-top: 1px solid #e5e5e5;
+        }
+        h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+        
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+            margin: 40px 0 15px;
+        }
+        
+        h4 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #555;
+            margin: 30px 0 12px;
+        }
+        
+        p {
+            margin: 0 0 20px;
+            text-align: justify;
+            hyphens: auto;
+        }
+        
+        ul, ol {
+            margin: 20px 0 25px 30px;
+        }
+        li {
+            margin: 10px 0;
+        }
+        
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            background: #f0eeeb;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #7c3aed;
+        }
+        
+        .term {
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        
+        .definition {
+            background: #f8f7f5;
+            border-left: 4px solid #7c3aed;
+            padding: 20px 25px;
+            margin: 30px 0;
+        }
+        .definition-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7c3aed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .definition p { margin: 0; }
+        
+        .margin-note {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            padding: 15px 18px;
+            margin: 25px 0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .margin-note::before {
+            content: "💡 ";
+        }
+        
+        .important {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            padding: 15px 18px;
+            margin: 25px 0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .important::before {
+            content: "⚠️ ";
+        }
+        
+        .example {
+            background: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .example-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .code-figure {
+            margin: 35px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #1e1e2e;
+        }
+        .code-figure-header {
+            background: #28283c;
+            padding: 10px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .code-figure-label {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            color: #a0a0b0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .code-figure-run {
+            font-family: system-ui, sans-serif;
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .code-figure-run:hover { background: #6d28d9; }
+        .code-figure textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 18px;
+            background: #1e1e2e;
+            color: #e0e0e0;
+            border: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            resize: vertical;
+        }
+        .code-figure textarea:focus { outline: none; }
+        .code-figure-output {
+            display: none;
+            border-top: 1px solid #28283c;
+            padding: 15px 18px;
+            background: #161622;
+            color: #4ade80;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+        .code-figure-output.show { display: block; }
+        .code-figure-caption {
+            background: #f8f8f8;
+            padding: 12px 18px;
+            font-size: 0.85rem;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+        }
+        .code-figure-caption strong { color: #333; }
+        
+        .summary {
+            background: linear-gradient(135deg, #7c3aed10, #7c3aed05);
+            border: 1px solid #7c3aed30;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 40px 0;
+        }
+        .summary-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7c3aed;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .summary ul { margin: 0; }
+        
+        .exercise {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 40px 0 20px;
+        }
+        .exercise-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .exercise p { margin: 0; }
+        .exercise .answer {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #166534;
+        }
+        .exercise-description {
+            margin-bottom: 15px;
+        }
+        
+        /* Hint System */
+        .hint-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #bbf7d0;
+        }
+        .hint-toggle {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: system-ui, sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .hint-toggle:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-1px);
+        }
+        .hint-toggle.revealed {
+            background: #6b7280;
+        }
+        .hint-content {
+            display: none;
+            background: white;
+            border: 1px solid #d1fae5;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #065f46;
+            line-height: 1.6;
+        }
+        .hint-content.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .hint-content code {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+        }
+        .hint-content pre {
+            background: #1e1e2e;
+            color: #e0e0e0;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Paste Warning */
+        .paste-warning {
+            color: #f87171;
+            font-size: 12px;
+            margin-top: 5px;
+            font-family: system-ui, sans-serif;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background: #f5f5f5;
+            font-weight: 600;
+        }
+        
+        .submit-section {
+            background: #1a1a2e;
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-top: 60px;
+        }
+        .submit-section h2 {
+            color: white;
+            border: none;
+            margin: 0 0 20px;
+            padding: 0;
+            font-size: 1.4rem;
+        }
+        .submit-section p {
+            color: #a0a0b0;
+            text-align: left;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label {
+            display: block;
+            font-family: system-ui, sans-serif;
+            font-size: 0.85rem;
+            color: #a0a0b0;
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 5px;
+            color: white;
+            font-size: 1rem;
+            font-family: system-ui, sans-serif;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #7c3aed;
+        }
+        .submit-btn {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: system-ui, sans-serif;
+            margin-top: 10px;
+        }
+        .submit-btn:hover { background: #6d28d9; }
+        .submit-status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 5px;
+            display: none;
+            font-family: system-ui, sans-serif;
+            font-size: 0.9rem;
+        }
+        .hp { position: absolute; left: -9999px; }
+        
+        .toc {
+            background: #f8f7f5;
+            padding: 30px 35px;
+            margin: 0 0 50px;
+            border-radius: 6px;
+        }
+        .toc-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+        .toc ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .toc li { margin: 8px 0; }
+        .toc a {
+            color: #7c3aed;
+            text-decoration: none;
+        }
+        .toc a:hover { text-decoration: underline; }
+        
+        @media (max-width: 700px) {
+            body { font-size: 17px; }
+            .book { padding: 30px 20px 60px; }
+            .chapter-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.4rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .code-figure textarea { font-size: 0.8rem; padding: 14px; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="topbar">
+        <span class="title">Data Structures &amp; Algorithms</span>
+        <a href="index.html?home=true">← Course Home</a>
+    </nav>
+    
+    <main class="book">
+        <header class="chapter-header">
+            <div class="chapter-num">Week One</div>
+            <h1>Foundations &amp; Big O</h1>
+            <p class="subtitle">An introduction to programming concepts and algorithm analysis</p>
+        </header>
+        
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <ol>
+                <li><a href="#intro">What is Programming?</a></li>
+                <li><a href="#python">Getting Started with Python</a></li>
+                <li><a href="#variables">Variables and Data Types</a></li>
+                <li><a href="#operators">Operators and Expressions</a></li>
+                <li><a href="#strings">Working with Strings</a></li>
+                <li><a href="#control">Control Flow</a></li>
+                <li><a href="#collections">Collections: Lists</a></li>
+                <li><a href="#functions">Introduction to Functions</a></li>
+                <li><a href="#bigo">Algorithm Analysis: Big O Notation</a></li>
+                <li><a href="#exercises">Exercises</a></li>
+            </ol>
+        </nav>
+
+        <!-- ============================================== -->
+        <!-- SECTION 1: WHAT IS PROGRAMMING -->
+        <!-- ============================================== -->
+        <section id="intro">
+            <h2>1. What is Programming?</h2>
+            
+            <p>Programming is the process of creating a set of instructions that tell a computer how to perform a task. These instructions must be precise and unambiguous because computers execute them exactly as written—they cannot infer intent or fill in missing information.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">program</span> (also called software or code) is a sequence of instructions written in a programming language that a computer can execute to perform a specific task or solve a problem.</p>
+            </div>
+            
+            <p>Unlike humans, computers are literal interpreters. If you provide incomplete or ambiguous instructions, the computer will either fail with an error or produce incorrect results. This fundamental characteristic shapes everything about how we write programs.</p>
+            
+            <div class="example">
+                <div class="example-title">Analogy: A Recipe</div>
+                <p>Consider baking a cake. A recipe provides step-by-step instructions:</p>
+                <ol>
+                    <li>Preheat oven to 180°C</li>
+                    <li>Mix 200g flour with 150g sugar</li>
+                    <li>Add 2 eggs and 100ml milk</li>
+                    <li>Stir until smooth</li>
+                    <li>Pour into pan and bake for 30 minutes</li>
+                </ol>
+                <p>A program works similarly: it specifies exact operations in a specific order with specific data. Skip a step or change the order, and the result changes. A computer follows these instructions with perfect precision but zero understanding.</p>
+            </div>
+            
+            <h3>The Stored-Program Concept</h3>
+            
+            <p>Modern computers operate on the <span class="term">stored-program concept</span>, developed by John von Neumann in the 1940s. This revolutionary idea means that both the program (instructions) and the data it operates on are stored in the same memory. Before this, "programming" a computer meant physically rewiring it.</p>
+            
+            <p>This concept enables the flexibility we take for granted today: the same physical computer can run a web browser, process spreadsheets, play games, or analyze scientific data—simply by loading different programs into memory.</p>
+            
+            <h3>Levels of Abstraction</h3>
+            
+            <p>Computers fundamentally operate on <span class="term">binary</span>—sequences of 0s and 1s representing electrical states (off/on). Writing programs directly in binary would be impractical, so we use layers of abstraction:</p>
+            
+            <ul>
+                <li><strong>Machine Code:</strong> Binary instructions the CPU directly executes</li>
+                <li><strong>Assembly Language:</strong> Human-readable mnemonics that map to machine code</li>
+                <li><strong>High-Level Languages:</strong> Python, Java, C++—closer to human language</li>
+            </ul>
+            
+            <p>Python is a <span class="term">high-level language</span>, meaning it abstracts away hardware details. When you write <code>print("Hello")</code>, Python translates this into the many low-level operations required to display text on screen.</p>
+            
+            <h3>Why Learn Programming?</h3>
+            
+            <p><span class="term">Problem Decomposition:</span> Programming teaches you to break complex problems into smaller, solvable sub-problems. This analytical skill—known as <em>computational thinking</em>—is valuable in any field.</p>
+            
+            <p><span class="term">Automation:</span> Computers excel at repetitive tasks. A program can process millions of records, perform billions of calculations, or monitor systems continuously without fatigue or error.</p>
+            
+            <p><span class="term">Precision:</span> Programming requires clear definitions, careful handling of edge cases, and anticipation of errors. This discipline improves logical thinking.</p>
+            
+            <p><span class="term">Understanding Technology:</span> In an increasingly digital world, understanding how software works helps you make informed decisions about the technology you use daily.</p>
+            
+            <h3>Compilation vs. Interpretation</h3>
+            
+            <p>High-level code must be translated to machine code. There are two primary approaches:</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Compilation</span> translates the entire program to machine code before execution, producing an executable file. <span class="term">Interpretation</span> translates and executes code line-by-line at runtime.</p>
+            </div>
+            
+            <p>Python is primarily an <span class="term">interpreted language</span>. When you run a Python program, the Python interpreter reads your code, translates it to an intermediate form called bytecode, and executes it. This makes development faster (no compilation step) but execution somewhat slower than compiled languages like C++.</p>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 2: GETTING STARTED WITH PYTHON -->
+        <!-- ============================================== -->
+        <section id="python">
+            <h2>2. Getting Started with Python</h2>
+            
+            <p>Python was created by Guido van Rossum and first released in 1991. The name comes from the British comedy group Monty Python, not the snake. Python emphasizes code readability and has become one of the world's most popular programming languages, used extensively in web development, data science, artificial intelligence, automation, and education.</p>
+            
+            <div class="margin-note">
+                Code examples on this page are interactive. You can edit them and click "Run" to execute directly in your browser using PyScript.
+            </div>
+            
+            <h3>The Python Interpreter</h3>
+            
+            <p>Python code is executed by the <span class="term">Python interpreter</span>. You can use Python in two modes:</p>
+            
+            <ul>
+                <li><strong>Interactive Mode:</strong> Type commands one at a time and see results immediately (like a calculator)</li>
+                <li><strong>Script Mode:</strong> Write a complete program in a file and run it all at once</li>
+            </ul>
+            
+            <p>The code blocks on this page simulate script mode—you write multiple lines and execute them together.</p>
+            
+            <h3>The print() Function</h3>
+            
+            <p>The most basic operation is displaying output. In Python, we use the built-in <code>print()</code> function to display text or values.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">function</span> is a reusable block of code that performs a specific task. Functions are invoked (called) by name followed by parentheses. Values passed inside the parentheses are called <span class="term">arguments</span>.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.1 — The print() Function</span>
+                    <button class="code-figure-run" onclick="runCode('code1')">▶ Run</button>
+                </div>
+                <textarea id="code1" spellcheck="false">print("Hello, World!")
+print("Welcome to Python programming.")
+print("This is line three.")</textarea>
+                <div class="code-figure-output" id="outputcode1"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.1:</strong> The <code>print()</code> function outputs text. Each call produces a new line by default.
+                </div>
+            </div>
+            
+            <p>The text <code>"Hello, World!"</code> is a <span class="term">string literal</span>—a sequence of characters enclosed in quotation marks. Python accepts both single quotes (<code>'text'</code>) and double quotes (<code>"text"</code>); they are functionally equivalent.</p>
+            
+            <h3>Printing Multiple Values</h3>
+            
+            <p>The <code>print()</code> function can accept multiple arguments, separated by commas. By default, it inserts a space between them:</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.2 — Multiple Arguments</span>
+                    <button class="code-figure-run" onclick="runCode('code2')">▶ Run</button>
+                </div>
+                <textarea id="code2" spellcheck="false"># Multiple arguments are separated by spaces
+print("The answer is", 42)
+print("Python", "is", "fun")
+
+# Change the separator with sep parameter
+print("2024", "01", "15", sep="-")
+
+# Change the ending with end parameter
+print("Hello", end=" ")
+print("World")  # Continues on same line</textarea>
+                <div class="code-figure-output" id="outputcode2"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.2:</strong> The <code>sep</code> parameter changes the separator between arguments; <code>end</code> changes what appears at the end (default is newline).
+                </div>
+            </div>
+            
+            <h3>Comments</h3>
+            
+            <p>Comments are notes in code that Python ignores during execution. They serve to explain what code does, why certain decisions were made, or to temporarily disable code. Good comments are essential for maintainability.</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.3 — Comments</span>
+                    <button class="code-figure-run" onclick="runCode('code3')">▶ Run</button>
+                </div>
+                <textarea id="code3" spellcheck="false"># This entire line is a comment - Python ignores it
+print("This line executes")  # Inline comment after code
+
+# Use comments to explain WHY, not just WHAT
+# Bad:  x = x + 1  # Add 1 to x (obvious from code)
+# Good: x = x + 1  # Compensate for zero-based indexing
+
+"""
+Multi-line strings (triple quotes) can also serve
+as comments, though they're technically string literals
+that aren't assigned to anything.
+"""
+print("Program continues")</textarea>
+                <div class="code-figure-output" id="outputcode3"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.3:</strong> Single-line comments use <code>#</code>. Multi-line comments can use triple quotes.
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                Good comments explain <em>why</em> code exists, not <em>what</em> it does. The code itself shows what; comments should provide context that isn't obvious from reading the code.
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 3: VARIABLES AND DATA TYPES -->
+        <!-- ============================================== -->
+        <section id="variables">
+            <h2>3. Variables and Data Types</h2>
+            
+            <p>Programs need to store data for processing. <span class="term">Variables</span> provide named references to values stored in memory, allowing us to use and manipulate data throughout our programs.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">variable</span> is a named storage location in computer memory that holds a value. <span class="term">Assignment</span> is the process of binding a name to a value using the assignment operator <code>=</code>.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.4 — Creating Variables</span>
+                    <button class="code-figure-run" onclick="runCode('code4')">▶ Run</button>
+                </div>
+                <textarea id="code4" spellcheck="false"># Creating variables with assignment
+name = "Alice"
+age = 25
+height = 1.68
+is_student = True
+
+# Using variables
+print("Name:", name)
+print("Age:", age)
+print("Height:", height, "meters")
+print("Is student:", is_student)</textarea>
+                <div class="code-figure-output" id="outputcode4"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.4:</strong> Variables store values of different types. The assignment operator <code>=</code> stores the value on the right into the variable on the left.
+                </div>
+            </div>
+            
+            <div class="important">
+                The <code>=</code> in programming is the <strong>assignment operator</strong>, not mathematical equality. The statement <code>x = x + 1</code> means "take the current value of x, add 1, and store the result back in x." In mathematics, this equation has no solution; in programming, it's a common operation called <em>incrementing</em>.
+            </div>
+            
+            <h3>Variable Naming Rules</h3>
+            
+            <p>Python has specific rules for valid variable names:</p>
+            
+            <ul>
+                <li>Must start with a letter (a-z, A-Z) or underscore (_)</li>
+                <li>Can contain letters, digits (0-9), and underscores</li>
+                <li>Cannot be a Python reserved keyword</li>
+                <li>Case-sensitive: <code>Name</code>, <code>name</code>, and <code>NAME</code> are three different variables</li>
+            </ul>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.5 — Valid and Invalid Names</span>
+                    <button class="code-figure-run" onclick="runCode('code5')">▶ Run</button>
+                </div>
+                <textarea id="code5" spellcheck="false"># Valid variable names
+student_name = "Bob"
+_private = 100
+counter2 = 0
+PI = 3.14159  # Convention: ALL_CAPS for constants
+
+# These would be INVALID (commented out):
+# 2nd_place = "Silver"  # Can't start with digit
+# my-variable = 5       # Hyphens not allowed
+# class = "Math"        # 'class' is a reserved keyword
+
+print(student_name, _private, counter2, PI)</textarea>
+                <div class="code-figure-output" id="outputcode5"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.5:</strong> Variable names should be descriptive. Python convention uses <code>snake_case</code> (lowercase with underscores).
+                </div>
+            </div>
+            
+            <h3>Data Types</h3>
+            
+            <p>Every value in Python has a <span class="term">type</span> that determines what operations can be performed on it and how it is stored in memory. Python is <span class="term">dynamically typed</span>—you don't declare types explicitly; the interpreter infers them from values.</p>
+            
+            <table>
+                <tr><th>Type</th><th>Description</th><th>Examples</th></tr>
+                <tr><td><code>int</code></td><td>Integer (whole numbers, unlimited precision)</td><td><code>42</code>, <code>-7</code>, <code>0</code>, <code>1000000</code></td></tr>
+                <tr><td><code>float</code></td><td>Floating-point (decimal numbers, ~15-17 significant digits)</td><td><code>3.14</code>, <code>-0.5</code>, <code>2.0</code>, <code>1e10</code></td></tr>
+                <tr><td><code>str</code></td><td>String (text, sequence of characters)</td><td><code>"hello"</code>, <code>'world'</code>, <code>""</code></td></tr>
+                <tr><td><code>bool</code></td><td>Boolean (logical true/false)</td><td><code>True</code>, <code>False</code></td></tr>
+                <tr><td><code>NoneType</code></td><td>Represents absence of value</td><td><code>None</code></td></tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.6 — Data Types and type()</span>
+                    <button class="code-figure-run" onclick="runCode('code6')">▶ Run</button>
+                </div>
+                <textarea id="code6" spellcheck="false"># The type() function returns a value's type
+print("Type of 42:", type(42))
+print("Type of 3.14:", type(3.14))
+print("Type of 'Hello':", type("Hello"))
+print("Type of True:", type(True))
+print("Type of None:", type(None))
+
+# Variables take the type of their assigned value
+x = 100
+print("\nx =", x, "| type:", type(x))
+
+x = "now I'm a string"
+print("x =", x, "| type:", type(x))</textarea>
+                <div class="code-figure-output" id="outputcode6"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.6:</strong> The <code>type()</code> function reveals a value's type. In Python, variables can be reassigned to values of different types.
+                </div>
+            </div>
+            
+            <h3>Type Conversion</h3>
+            
+            <p>Sometimes you need to convert values between types. Python provides built-in functions for this:</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.7 — Type Conversion</span>
+                    <button class="code-figure-run" onclick="runCode('code7')">▶ Run</button>
+                </div>
+                <textarea id="code7" spellcheck="false"># Converting between types
+num_str = "42"
+num_int = int(num_str)      # String to integer
+print(f"'{num_str}' -> {num_int} (type: {type(num_int).__name__})")
+
+pi = 3.14159
+pi_int = int(pi)            # Float to int (truncates, doesn't round)
+print(f"{pi} -> {pi_int} (truncated)")
+
+value = 255
+value_str = str(value)      # Integer to string
+print(f"{value} -> '{value_str}' (type: {type(value_str).__name__})")
+
+# float() converts to floating-point
+print(f"float('3.14') = {float('3.14')}")
+print(f"float(10) = {float(10)}")</textarea>
+                <div class="code-figure-output" id="outputcode7"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.7:</strong> Type conversion functions: <code>int()</code>, <code>float()</code>, <code>str()</code>, <code>bool()</code>.
+                </div>
+            </div>
+            
+            <div class="important">
+                Converting a float to int using <code>int()</code> <strong>truncates</strong> toward zero—it doesn't round. So <code>int(3.9)</code> gives <code>3</code>, not <code>4</code>. Use <code>round()</code> for rounding.
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 4: OPERATORS AND EXPRESSIONS -->
+        <!-- ============================================== -->
+        <section id="operators">
+            <h2>4. Operators and Expressions</h2>
+            
+            <p>Operators are symbols that perform operations on values (operands). An <span class="term">expression</span> is a combination of values, variables, and operators that evaluates to a single value.</p>
+            
+            <h3>Arithmetic Operators</h3>
+            
+            <table>
+                <tr><th>Operator</th><th>Operation</th><th>Example</th><th>Result</th></tr>
+                <tr><td><code>+</code></td><td>Addition</td><td><code>7 + 3</code></td><td>10</td></tr>
+                <tr><td><code>-</code></td><td>Subtraction</td><td><code>7 - 3</code></td><td>4</td></tr>
+                <tr><td><code>*</code></td><td>Multiplication</td><td><code>7 * 3</code></td><td>21</td></tr>
+                <tr><td><code>/</code></td><td>Division (always returns float)</td><td><code>7 / 3</code></td><td>2.333...</td></tr>
+                <tr><td><code>//</code></td><td>Floor division (rounds down)</td><td><code>7 // 3</code></td><td>2</td></tr>
+                <tr><td><code>%</code></td><td>Modulo (remainder)</td><td><code>7 % 3</code></td><td>1</td></tr>
+                <tr><td><code>**</code></td><td>Exponentiation</td><td><code>2 ** 10</code></td><td>1024</td></tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.8 — Arithmetic Operators</span>
+                    <button class="code-figure-run" onclick="runCode('code8')">▶ Run</button>
+                </div>
+                <textarea id="code8" spellcheck="false"># Basic arithmetic
+print("7 + 3 =", 7 + 3)
+print("7 - 3 =", 7 - 3)
+print("7 * 3 =", 7 * 3)
+print("7 / 3 =", 7 / 3)     # True division (float result)
+print("7 // 3 =", 7 // 3)   # Floor division (integer result)
+print("7 % 3 =", 7 % 3)     # Modulo (remainder)
+print("2 ** 10 =", 2 ** 10) # Exponentiation
+
+# Operator precedence (PEMDAS)
+result = 2 + 3 * 4          # Multiplication first
+print("\n2 + 3 * 4 =", result)
+
+result = (2 + 3) * 4        # Parentheses override
+print("(2 + 3) * 4 =", result)</textarea>
+                <div class="code-figure-output" id="outputcode8"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.8:</strong> Python follows standard mathematical precedence: parentheses, exponents, multiplication/division, addition/subtraction.
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                The modulo operator <code>%</code> is extremely useful. Common applications: checking if a number is even (<code>n % 2 == 0</code>), wrapping around (<code>index % length</code>), extracting digits.
+            </div>
+            
+            <h3>Comparison Operators</h3>
+            
+            <p>Comparison operators compare two values and return a boolean (<code>True</code> or <code>False</code>):</p>
+            
+            <table>
+                <tr><th>Operator</th><th>Meaning</th><th>Example</th><th>Result</th></tr>
+                <tr><td><code>==</code></td><td>Equal to</td><td><code>5 == 5</code></td><td>True</td></tr>
+                <tr><td><code>!=</code></td><td>Not equal to</td><td><code>5 != 3</code></td><td>True</td></tr>
+                <tr><td><code>&lt;</code></td><td>Less than</td><td><code>3 &lt; 5</code></td><td>True</td></tr>
+                <tr><td><code>&gt;</code></td><td>Greater than</td><td><code>3 &gt; 5</code></td><td>False</td></tr>
+                <tr><td><code>&lt;=</code></td><td>Less than or equal</td><td><code>5 &lt;= 5</code></td><td>True</td></tr>
+                <tr><td><code>&gt;=</code></td><td>Greater than or equal</td><td><code>5 &gt;= 3</code></td><td>True</td></tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.9 — Comparison Operators</span>
+                    <button class="code-figure-run" onclick="runCode('code9')">▶ Run</button>
+                </div>
+                <textarea id="code9" spellcheck="false">x = 10
+y = 5
+
+print(f"x = {x}, y = {y}")
+print(f"x == y: {x == y}")   # Equal
+print(f"x != y: {x != y}")   # Not equal
+print(f"x > y: {x > y}")     # Greater than
+print(f"x < y: {x < y}")     # Less than
+print(f"x >= y: {x >= y}")   # Greater or equal
+print(f"x <= y: {x <= y}")   # Less or equal
+
+# Chained comparisons (Python feature)
+z = 7
+print(f"\n5 < {z} < 10: {5 < z < 10}")  # True</textarea>
+                <div class="code-figure-output" id="outputcode9"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.9:</strong> Comparison operators return boolean values. Note: <code>==</code> tests equality; <code>=</code> is assignment.
+                </div>
+            </div>
+            
+            <h3>Logical Operators</h3>
+            
+            <p>Logical operators combine boolean expressions:</p>
+            
+            <table>
+                <tr><th>Operator</th><th>Meaning</th><th>Example</th><th>Result</th></tr>
+                <tr><td><code>and</code></td><td>True if both operands are True</td><td><code>True and False</code></td><td>False</td></tr>
+                <tr><td><code>or</code></td><td>True if at least one operand is True</td><td><code>True or False</code></td><td>True</td></tr>
+                <tr><td><code>not</code></td><td>Inverts the boolean value</td><td><code>not True</code></td><td>False</td></tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.10 — Logical Operators</span>
+                    <button class="code-figure-run" onclick="runCode('code10')">▶ Run</button>
+                </div>
+                <textarea id="code10" spellcheck="false">age = 25
+has_license = True
+
+# Combining conditions
+can_drive = age >= 18 and has_license
+print(f"Age: {age}, Has license: {has_license}")
+print(f"Can drive: {can_drive}")
+
+# Or operator
+is_weekend = False
+is_holiday = True
+day_off = is_weekend or is_holiday
+print(f"\nWeekend: {is_weekend}, Holiday: {is_holiday}")
+print(f"Day off: {day_off}")
+
+# Not operator
+is_raining = False
+go_outside = not is_raining
+print(f"\nRaining: {is_raining}, Go outside: {go_outside}")</textarea>
+                <div class="code-figure-output" id="outputcode10"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.10:</strong> Logical operators are essential for complex conditions in if statements and loops.
+                </div>
+            </div>
+            
+            <h3>Assignment Operators</h3>
+            
+            <p>Python provides shorthand operators that combine arithmetic with assignment:</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.11 — Assignment Operators</span>
+                    <button class="code-figure-run" onclick="runCode('code11')">▶ Run</button>
+                </div>
+                <textarea id="code11" spellcheck="false">x = 10
+print(f"Initial x: {x}")
+
+x += 5      # Same as: x = x + 5
+print(f"After x += 5: {x}")
+
+x -= 3      # Same as: x = x - 3
+print(f"After x -= 3: {x}")
+
+x *= 2      # Same as: x = x * 2
+print(f"After x *= 2: {x}")
+
+x //= 4     # Same as: x = x // 4
+print(f"After x //= 4: {x}")
+
+x **= 2     # Same as: x = x ** 2
+print(f"After x **= 2: {x}")</textarea>
+                <div class="code-figure-output" id="outputcode11"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.11:</strong> Compound assignment operators provide a concise syntax for common operations.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 5: WORKING WITH STRINGS -->
+        <!-- ============================================== -->
+        <section id="strings">
+            <h2>5. Working with Strings</h2>
+            
+            <p>Strings are one of the most commonly used data types. Python provides powerful tools for creating and manipulating text.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">string</span> is an immutable sequence of characters. Once created, a string cannot be modified—operations that appear to modify strings actually create new string objects.</p>
+            </div>
+            
+            <h3>Creating Strings</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.12 — String Creation</span>
+                    <button class="code-figure-run" onclick="runCode('code12')">▶ Run</button>
+                </div>
+                <textarea id="code12" spellcheck="false"># Single or double quotes
+s1 = 'Hello'
+s2 = "World"
+
+# Quotes inside strings
+s3 = "It's a beautiful day"
+s4 = 'She said "Hello"'
+
+# Triple quotes for multi-line strings
+s5 = """This is a
+multi-line
+string."""
+
+# Escape sequences
+s6 = "Line 1\nLine 2"       # \n = newline
+s7 = "Column1\tColumn2"     # \t = tab
+
+print(s1, s2)
+print(s3)
+print(s4)
+print(s5)
+print(s6)
+print(s7)</textarea>
+                <div class="code-figure-output" id="outputcode12"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.12:</strong> Strings can be created with single, double, or triple quotes. Escape sequences represent special characters.
+                </div>
+            </div>
+            
+            <h3>String Operations</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.13 — String Operations</span>
+                    <button class="code-figure-run" onclick="runCode('code13')">▶ Run</button>
+                </div>
+                <textarea id="code13" spellcheck="false"># Concatenation (joining strings)
+first = "Hello"
+second = "World"
+combined = first + " " + second
+print("Concatenation:", combined)
+
+# Repetition
+line = "-" * 20
+print("Repetition:", line)
+
+# Length
+message = "Python"
+print(f"Length of '{message}': {len(message)}")
+
+# Indexing (zero-based)
+print(f"First character: {message[0]}")
+print(f"Last character: {message[-1]}")
+
+# Slicing [start:end:step]
+print(f"First 3: {message[0:3]}")    # 'Pyt'
+print(f"Last 3: {message[-3:]}")     # 'hon'
+print(f"Every 2nd: {message[::2]}")  # 'Pto'
+print(f"Reversed: {message[::-1]}")  # 'nohtyP'</textarea>
+                <div class="code-figure-output" id="outputcode13"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.13:</strong> String operations include concatenation, repetition, indexing, and slicing.
+                </div>
+            </div>
+            
+            <h3>String Methods</h3>
+            
+            <p>Strings have many built-in methods (functions that belong to an object):</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.14 — String Methods</span>
+                    <button class="code-figure-run" onclick="runCode('code14')">▶ Run</button>
+                </div>
+                <textarea id="code14" spellcheck="false">text = "  Hello, World!  "
+
+# Case methods
+print(text.upper())          # "  HELLO, WORLD!  "
+print(text.lower())          # "  hello, world!  "
+print("hello".capitalize())  # "Hello"
+print("hello world".title()) # "Hello World"
+
+# Whitespace
+print(f"'{text.strip()}'")   # Remove leading/trailing whitespace
+
+# Find and replace
+print(text.find("World"))    # Returns index: 9
+print(text.replace("World", "Python"))
+
+# Check content
+print("hello".isalpha())     # True (all letters)
+print("12345".isdigit())     # True (all digits)
+print("hello".startswith("he"))  # True
+print("hello".endswith("lo"))    # True
+
+# Split and join
+words = "apple,banana,cherry".split(",")
+print(words)                 # ['apple', 'banana', 'cherry']
+print("-".join(words))       # "apple-banana-cherry"</textarea>
+                <div class="code-figure-output" id="outputcode14"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.14:</strong> String methods provide powerful text processing capabilities.
+                </div>
+            </div>
+            
+            <h3>Formatted Strings (f-strings)</h3>
+            
+            <p>Python 3.6 introduced f-strings, the most readable way to embed expressions in strings:</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.15 — F-strings</span>
+                    <button class="code-figure-run" onclick="runCode('code15')">▶ Run</button>
+                </div>
+                <textarea id="code15" spellcheck="false">name = "Alice"
+age = 30
+height = 1.756
+
+# Basic f-string
+print(f"Name: {name}, Age: {age}")
+
+# Expressions inside f-strings
+print(f"Next year: {age + 1}")
+print(f"Name uppercase: {name.upper()}")
+
+# Formatting numbers
+print(f"Height: {height:.2f} meters")  # 2 decimal places
+print(f"Large number: {1000000:,}")    # Thousands separator
+
+# Padding and alignment
+print(f"{'left':<10}|{'center':^10}|{'right':>10}")
+
+# Percentage
+ratio = 0.756
+print(f"Success rate: {ratio:.1%}")    # 75.6%</textarea>
+                <div class="code-figure-output" id="outputcode15"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.15:</strong> F-strings allow embedded expressions and sophisticated formatting. They're prefixed with <code>f</code> before the quotes.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 6: CONTROL FLOW -->
+        <!-- ============================================== -->
+        <section id="control">
+            <h2>6. Control Flow</h2>
+            
+            <p>By default, Python executes statements sequentially from top to bottom. <span class="term">Control flow</span> statements allow us to change this order—executing code conditionally or repeatedly.</p>
+            
+            <h3>Conditional Statements: if, elif, else</h3>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">conditional statement</span> executes a block of code only if a specified condition evaluates to <code>True</code>. Python uses <code>if</code>, <code>elif</code> (else if), and <code>else</code> keywords.</p>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.16 — If Statements</span>
+                    <button class="code-figure-run" onclick="runCode('code16')">▶ Run</button>
+                </div>
+                <textarea id="code16" spellcheck="false">score = 85
+
+# Simple if
+if score >= 60:
+    print("Passed!")
+
+# if-else
+if score >= 90:
+    print("Excellent!")
+else:
+    print("Keep working!")
+
+# if-elif-else chain
+if score >= 90:
+    grade = "A"
+elif score >= 80:
+    grade = "B"
+elif score >= 70:
+    grade = "C"
+elif score >= 60:
+    grade = "D"
+else:
+    grade = "F"
+
+print(f"Score: {score}, Grade: {grade}")</textarea>
+                <div class="code-figure-output" id="outputcode16"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.16:</strong> Conditional statements use indentation to define code blocks. Python requires consistent indentation (typically 4 spaces).
+                </div>
+            </div>
+            
+            <div class="important">
+                Python uses <strong>indentation</strong> to define code blocks, not braces <code>{}</code> like many other languages. This enforces readable code but requires careful attention to whitespace.
+            </div>
+            
+            <h3>Loops: while</h3>
+            
+            <p>A <code>while</code> loop repeats a block of code as long as a condition remains true:</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.17 — While Loops</span>
+                    <button class="code-figure-run" onclick="runCode('code17')">▶ Run</button>
+                </div>
+                <textarea id="code17" spellcheck="false"># Count from 1 to 5
+count = 1
+while count <= 5:
+    print(f"Count: {count}")
+    count += 1
+
+print("Done!")
+
+# Sum numbers until total exceeds 20
+total = 0
+num = 1
+while total <= 20:
+    total += num
+    num += 1
+
+print(f"\nSum exceeded 20 at total = {total}")</textarea>
+                <div class="code-figure-output" id="outputcode17"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.17:</strong> While loops continue as long as the condition is True. Be careful to avoid infinite loops!
+                </div>
+            </div>
+            
+            <h3>Loops: for</h3>
+            
+            <p>A <code>for</code> loop iterates over a sequence (list, string, range, etc.):</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.18 — For Loops</span>
+                    <button class="code-figure-run" onclick="runCode('code18')">▶ Run</button>
+                </div>
+                <textarea id="code18" spellcheck="false"># Iterate over a list
+fruits = ["apple", "banana", "cherry"]
+for fruit in fruits:
+    print(f"I like {fruit}")
+
+# Iterate over a string
+print("\nLetters in 'Python':")
+for char in "Python":
+    print(char, end=" ")
+
+# Using range()
+print("\n\nNumbers 0-4:")
+for i in range(5):           # 0, 1, 2, 3, 4
+    print(i, end=" ")
+
+print("\n\nNumbers 2-6:")
+for i in range(2, 7):        # 2, 3, 4, 5, 6
+    print(i, end=" ")
+
+print("\n\nEven numbers 0-10:")
+for i in range(0, 11, 2):    # 0, 2, 4, 6, 8, 10
+    print(i, end=" ")</textarea>
+                <div class="code-figure-output" id="outputcode18"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.18:</strong> The <code>range(start, stop, step)</code> function generates sequences of integers. Note: <code>stop</code> is exclusive.
+                </div>
+            </div>
+            
+            <h3>Loop Control: break and continue</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.19 — Break and Continue</span>
+                    <button class="code-figure-run" onclick="runCode('code19')">▶ Run</button>
+                </div>
+                <textarea id="code19" spellcheck="false"># break: exit loop entirely
+print("Finding first even number:")
+for num in [1, 3, 5, 4, 7, 2]:
+    if num % 2 == 0:
+        print(f"Found: {num}")
+        break
+    print(f"Checking {num}...")
+
+# continue: skip to next iteration
+print("\nPrinting odd numbers only:")
+for num in range(10):
+    if num % 2 == 0:
+        continue    # Skip even numbers
+    print(num, end=" ")</textarea>
+                <div class="code-figure-output" id="outputcode19"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.19:</strong> <code>break</code> exits the loop completely; <code>continue</code> skips to the next iteration.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 7: COLLECTIONS: LISTS -->
+        <!-- ============================================== -->
+        <section id="collections">
+            <h2>7. Collections: Lists</h2>
+            
+            <p>Programs often work with groups of related values. The <span class="term">list</span> is Python's most versatile built-in collection type.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">list</span> is an ordered, mutable (changeable) sequence of values. Lists are created with square brackets <code>[]</code>, elements separated by commas. Lists can contain any data types, including other lists.</p>
+            </div>
+            
+            <h3>Creating and Accessing Lists</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.20 — List Basics</span>
+                    <button class="code-figure-run" onclick="runCode('code20')">▶ Run</button>
+                </div>
+                <textarea id="code20" spellcheck="false"># Creating lists
+numbers = [10, 20, 30, 40, 50]
+mixed = [1, "two", 3.0, True, None]
+empty = []
+nested = [[1, 2], [3, 4], [5, 6]]
+
+# Accessing elements (zero-based indexing)
+print(f"First: {numbers[0]}")      # 10
+print(f"Third: {numbers[2]}")      # 30
+print(f"Last: {numbers[-1]}")      # 50
+print(f"Second to last: {numbers[-2]}")  # 40
+
+# Nested access
+print(f"Nested [1][0]: {nested[1][0]}")  # 3
+
+# Length
+print(f"Length: {len(numbers)}")</textarea>
+                <div class="code-figure-output" id="outputcode20"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.20:</strong> Lists use zero-based indexing. The first element is at index 0; negative indices count from the end.
+                </div>
+            </div>
+            
+            <div class="important">
+                <strong>Zero-Based Indexing:</strong> A list of n elements has valid indices from 0 to n-1. Accessing index n raises an <code>IndexError</code>. This is a common source of bugs called "off-by-one errors."
+            </div>
+            
+            <h3>List Slicing</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.21 — List Slicing</span>
+                    <button class="code-figure-run" onclick="runCode('code21')">▶ Run</button>
+                </div>
+                <textarea id="code21" spellcheck="false">nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+# Slicing: [start:stop:step]
+print(f"Original: {nums}")
+print(f"[2:7]: {nums[2:7]}")       # Elements 2-6
+print(f"[:5]: {nums[:5]}")         # First 5
+print(f"[5:]: {nums[5:]}")         # From index 5 to end
+print(f"[::2]: {nums[::2]}")       # Every 2nd element
+print(f"[1::2]: {nums[1::2]}")     # Every 2nd, starting at 1
+print(f"[::-1]: {nums[::-1]}")     # Reversed
+
+# Slicing creates a copy
+original = [1, 2, 3]
+copy = original[:]
+copy[0] = 999
+print(f"\nOriginal: {original}, Copy: {copy}")</textarea>
+                <div class="code-figure-output" id="outputcode21"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.21:</strong> Slicing syntax: <code>[start:stop:step]</code>. The <code>stop</code> index is exclusive. Omitted values default to start=0, stop=len, step=1.
+                </div>
+            </div>
+            
+            <h3>Modifying Lists</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.22 — List Modification</span>
+                    <button class="code-figure-run" onclick="runCode('code22')">▶ Run</button>
+                </div>
+                <textarea id="code22" spellcheck="false">fruits = ["apple", "banana", "cherry"]
+print(f"Original: {fruits}")
+
+# Modify element
+fruits[1] = "blueberry"
+print(f"After fruits[1] = 'blueberry': {fruits}")
+
+# append(): add to end - O(1) amortized
+fruits.append("date")
+print(f"After append('date'): {fruits}")
+
+# insert(): add at position - O(n)
+fruits.insert(1, "apricot")
+print(f"After insert(1, 'apricot'): {fruits}")
+
+# remove(): remove by value - O(n)
+fruits.remove("cherry")
+print(f"After remove('cherry'): {fruits}")
+
+# pop(): remove and return by index - O(1) for last, O(n) for others
+last = fruits.pop()
+print(f"After pop(): {fruits}, removed: {last}")
+
+first = fruits.pop(0)
+print(f"After pop(0): {fruits}, removed: {first}")</textarea>
+                <div class="code-figure-output" id="outputcode22"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.22:</strong> Lists are mutable—elements can be added, removed, or changed. Time complexities are noted for each operation.
+                </div>
+            </div>
+            
+            <h3>List Operations and Methods</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.23 — List Operations</span>
+                    <button class="code-figure-run" onclick="runCode('code23')">▶ Run</button>
+                </div>
+                <textarea id="code23" spellcheck="false">numbers = [3, 1, 4, 1, 5, 9, 2, 6]
+
+# Membership test - O(n)
+print(f"5 in list: {5 in numbers}")
+print(f"7 in list: {7 in numbers}")
+
+# Count occurrences
+print(f"Count of 1: {numbers.count(1)}")
+
+# Find index (raises ValueError if not found)
+print(f"Index of 5: {numbers.index(5)}")
+
+# Sort (modifies in place)
+numbers.sort()
+print(f"Sorted: {numbers}")
+
+numbers.sort(reverse=True)
+print(f"Sorted descending: {numbers}")
+
+# Reverse (modifies in place)
+numbers.reverse()
+print(f"Reversed: {numbers}")
+
+# Aggregation functions
+nums = [10, 20, 30, 40, 50]
+print(f"\nsum: {sum(nums)}, min: {min(nums)}, max: {max(nums)}")</textarea>
+                <div class="code-figure-output" id="outputcode23"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.23:</strong> Common list operations and built-in functions for aggregation.
+                </div>
+            </div>
+            
+            <h3>List Comprehensions</h3>
+            
+            <p>List comprehensions provide a concise way to create lists:</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.24 — List Comprehensions</span>
+                    <button class="code-figure-run" onclick="runCode('code24')">▶ Run</button>
+                </div>
+                <textarea id="code24" spellcheck="false"># Traditional loop approach
+squares = []
+for x in range(1, 6):
+    squares.append(x ** 2)
+print(f"Traditional: {squares}")
+
+# List comprehension (equivalent, more concise)
+squares = [x ** 2 for x in range(1, 6)]
+print(f"Comprehension: {squares}")
+
+# With condition
+evens = [x for x in range(10) if x % 2 == 0]
+print(f"Even numbers: {evens}")
+
+# Transform and filter
+words = ["hello", "WORLD", "Python", "AI"]
+lower_long = [w.lower() for w in words if len(w) > 3]
+print(f"Lowercase, length > 3: {lower_long}")</textarea>
+                <div class="code-figure-output" id="outputcode24"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.24:</strong> List comprehensions: <code>[expression for item in iterable if condition]</code>. They're often faster and more readable than explicit loops.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 8: INTRODUCTION TO FUNCTIONS -->
+        <!-- ============================================== -->
+        <section id="functions">
+            <h2>8. Introduction to Functions</h2>
+            
+            <p>Functions are reusable blocks of code that perform specific tasks. They help organize code, avoid repetition, and make programs easier to understand and maintain.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>A <span class="term">function</span> is a named sequence of statements that performs a computation. Functions accept <span class="term">parameters</span> (input) and may <span class="term">return</span> a value (output).</p>
+            </div>
+            
+            <h3>Defining Functions</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.25 — Function Definition</span>
+                    <button class="code-figure-run" onclick="runCode('code25')">▶ Run</button>
+                </div>
+                <textarea id="code25" spellcheck="false"># Function with no parameters, no return
+def greet():
+    print("Hello, World!")
+
+greet()  # Call the function
+
+# Function with parameter
+def greet_person(name):
+    print(f"Hello, {name}!")
+
+greet_person("Alice")
+greet_person("Bob")
+
+# Function with return value
+def square(x):
+    return x ** 2
+
+result = square(5)
+print(f"5 squared is {result}")</textarea>
+                <div class="code-figure-output" id="outputcode25"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.25:</strong> Functions are defined with <code>def</code>, followed by the name, parameters in parentheses, and a colon. The body is indented.
+                </div>
+            </div>
+            
+            <h3>Parameters and Arguments</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.26 — Function Parameters</span>
+                    <button class="code-figure-run" onclick="runCode('code26')">▶ Run</button>
+                </div>
+                <textarea id="code26" spellcheck="false"># Multiple parameters
+def add(a, b):
+    return a + b
+
+print(f"3 + 5 = {add(3, 5)}")
+
+# Default parameter values
+def greet(name, greeting="Hello"):
+    return f"{greeting}, {name}!"
+
+print(greet("Alice"))              # Uses default
+print(greet("Bob", "Hi"))          # Override default
+print(greet(greeting="Hey", name="Charlie"))  # Keyword args
+
+# Multiple return values (returns a tuple)
+def min_max(numbers):
+    return min(numbers), max(numbers)
+
+minimum, maximum = min_max([3, 1, 4, 1, 5, 9])
+print(f"Min: {minimum}, Max: {maximum}")</textarea>
+                <div class="code-figure-output" id="outputcode26"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.26:</strong> Parameters can have default values. Arguments can be passed by position or keyword.
+                </div>
+            </div>
+            
+            <h3>Docstrings</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.27 — Function Documentation</span>
+                    <button class="code-figure-run" onclick="runCode('code27')">▶ Run</button>
+                </div>
+                <textarea id="code27" spellcheck="false">def calculate_area(length, width):
+    """
+    Calculate the area of a rectangle.
+    
+    Args:
+        length: The length of the rectangle (positive number)
+        width: The width of the rectangle (positive number)
+    
+    Returns:
+        The area (length * width)
+    
+    Example:
+        >>> calculate_area(5, 3)
+        15
+    """
+    return length * width
+
+# Access the docstring
+print(calculate_area.__doc__)
+
+# Use the function
+print(f"\nArea: {calculate_area(10, 5)}")</textarea>
+                <div class="code-figure-output" id="outputcode27"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.27:</strong> Docstrings document what a function does. They're accessed via the <code>__doc__</code> attribute or <code>help()</code> function.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 9: BIG O NOTATION -->
+        <!-- ============================================== -->
+        <section id="bigo">
+            <h2>9. Algorithm Analysis: Big O Notation</h2>
+            
+            <p>When solving problems with code, we care about both <em>correctness</em> (does it produce the right answer?) and <em>efficiency</em> (how much time and memory does it use?). Efficiency becomes critical when working with large data sets.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>An <span class="term">algorithm</span> is a step-by-step procedure for solving a problem. Different algorithms for the same problem may have vastly different efficiencies.</p>
+            </div>
+            
+            <h3>Why Analyze Algorithms?</h3>
+            
+            <p>We cannot measure efficiency simply by timing execution—results depend on hardware, other running processes, and specific inputs. Instead, we analyze how resource usage grows as input size increases.</p>
+            
+            <div class="example">
+                <div class="example-title">Example: Searching a Phone Book</div>
+                <p>Suppose you need to find a name in a phone book with n entries:</p>
+                <ul>
+                    <li><strong>Linear Search:</strong> Start at page 1, check each entry. On average, check n/2 entries.</li>
+                    <li><strong>Binary Search:</strong> Open to the middle, determine which half contains the name, repeat. Check at most log₂(n) entries.</li>
+                </ul>
+                <p>For n = 1,000,000: linear search averages 500,000 checks; binary search needs at most 20 checks. The difference is dramatic!</p>
+            </div>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Big O notation</span> describes the upper bound of an algorithm's growth rate as a function of input size n. It characterizes how performance scales, ignoring constant factors and lower-order terms.</p>
+            </div>
+            
+            <h3>Why Ignore Constants?</h3>
+            
+            <p>Big O focuses on scalability. An algorithm that takes 2n steps and one that takes 100n steps are both O(n)—they both scale linearly. As n grows large, the growth rate dominates any constant factor.</p>
+            
+            <p>Consider two algorithms for processing n items:</p>
+            <ul>
+                <li>Algorithm A: 100n operations (O(n))</li>
+                <li>Algorithm B: 0.01n² operations (O(n²))</li>
+            </ul>
+            <p>For n = 100: A does 10,000 ops, B does 100 ops. B wins.</p>
+            <p>For n = 100,000: A does 10,000,000 ops, B does 100,000,000,000 ops. A wins by 10,000x.</p>
+            
+            <h3>Common Time Complexities</h3>
+            
+            <table>
+                <tr><th>Big O</th><th>Name</th><th>Description</th><th>Example</th></tr>
+                <tr><td>O(1)</td><td>Constant</td><td>Same time regardless of input</td><td>Array index access</td></tr>
+                <tr><td>O(log n)</td><td>Logarithmic</td><td>Halves problem each step</td><td>Binary search</td></tr>
+                <tr><td>O(n)</td><td>Linear</td><td>Examines each element once</td><td>Linear search</td></tr>
+                <tr><td>O(n log n)</td><td>Linearithmic</td><td>Divide-and-conquer sorts</td><td>Merge sort</td></tr>
+                <tr><td>O(n²)</td><td>Quadratic</td><td>Nested loops</td><td>Bubble sort</td></tr>
+                <tr><td>O(2ⁿ)</td><td>Exponential</td><td>Doubles each step</td><td>Naive Fibonacci</td></tr>
+            </table>
+            
+            <h3>Growth Rate Comparison</h3>
+            
+            <p>The following table shows approximate operation counts:</p>
+            
+            <table>
+                <tr><th>n</th><th>O(1)</th><th>O(log n)</th><th>O(n)</th><th>O(n log n)</th><th>O(n²)</th></tr>
+                <tr><td>10</td><td>1</td><td>3</td><td>10</td><td>33</td><td>100</td></tr>
+                <tr><td>100</td><td>1</td><td>7</td><td>100</td><td>664</td><td>10,000</td></tr>
+                <tr><td>1,000</td><td>1</td><td>10</td><td>1,000</td><td>9,966</td><td>1,000,000</td></tr>
+                <tr><td>10,000</td><td>1</td><td>13</td><td>10,000</td><td>132,877</td><td>100,000,000</td></tr>
+                <tr><td>1,000,000</td><td>1</td><td>20</td><td>1,000,000</td><td>19,931,569</td><td>10¹²</td></tr>
+            </table>
+            
+            <p>If each operation takes 1 microsecond:</p>
+            <ul>
+                <li>O(n) with n = 1,000,000: ~1 second</li>
+                <li>O(n²) with n = 1,000,000: ~12 days</li>
+                <li>O(2ⁿ) with n = 50: ~35 years</li>
+            </ul>
+            
+            <h3>Analyzing Code: O(1) — Constant Time</h3>
+            
+            <p>Operations that take the same time regardless of input size:</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.28 — O(1) Examples</span>
+                    <button class="code-figure-run" onclick="runCode('code28')">▶ Run</button>
+                </div>
+                <textarea id="code28" spellcheck="false"># O(1) operations
+data = [10, 20, 30, 40, 50]
+
+# Array index access - O(1)
+first = data[0]
+last = data[-1]
+print(f"First: {first}, Last: {last}")
+
+# Length of list - O(1) (Python caches this)
+size = len(data)
+print(f"Size: {size}")
+
+# Dictionary lookup - O(1) average
+phone_book = {"Alice": "555-1234", "Bob": "555-5678"}
+alice_phone = phone_book["Alice"]
+print(f"Alice's phone: {alice_phone}")
+
+# Append to list - O(1) amortized
+data.append(60)
+print(f"After append: {data}")</textarea>
+                <div class="code-figure-output" id="outputcode28"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.28:</strong> O(1) operations execute in constant time—performance doesn't depend on data size.
+                </div>
+            </div>
+            
+            <h3>Analyzing Code: O(n) — Linear Time</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.29 — O(n) Examples</span>
+                    <button class="code-figure-run" onclick="runCode('code29')">▶ Run</button>
+                </div>
+                <textarea id="code29" spellcheck="false"># O(n) - Linear time algorithms
+
+def linear_search(data, target):
+    """Search for target in data. O(n)"""
+    for i, value in enumerate(data):
+        if value == target:
+            return i
+    return -1
+
+def find_sum(data):
+    """Calculate sum of all elements. O(n)"""
+    total = 0
+    for value in data:
+        total += value
+    return total
+
+def find_max(data):
+    """Find maximum value. O(n)"""
+    if not data:
+        return None
+    maximum = data[0]
+    for value in data[1:]:
+        if value > maximum:
+            maximum = value
+    return maximum
+
+numbers = [15, 42, 8, 23, 4, 16, 55, 31]
+print(f"List: {numbers}")
+print(f"Index of 16: {linear_search(numbers, 16)}")
+print(f"Sum: {find_sum(numbers)}")
+print(f"Max: {find_max(numbers)}")</textarea>
+                <div class="code-figure-output" id="outputcode29"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.29:</strong> O(n) algorithms examine each element at most a constant number of times.
+                </div>
+            </div>
+            
+            <h3>Analyzing Code: O(n²) — Quadratic Time</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.30 — O(n²) Examples</span>
+                    <button class="code-figure-run" onclick="runCode('code30')">▶ Run</button>
+                </div>
+                <textarea id="code30" spellcheck="false"># O(n²) - Quadratic time algorithms
+
+def has_duplicates_naive(data):
+    """Check for duplicates by comparing all pairs. O(n²)"""
+    n = len(data)
+    comparisons = 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            comparisons += 1
+            if data[i] == data[j]:
+                return True, comparisons
+    return False, comparisons
+
+def bubble_sort(data):
+    """Simple but inefficient sorting. O(n²)"""
+    data = data.copy()  # Don't modify original
+    n = len(data)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if data[j] > data[j + 1]:
+                data[j], data[j + 1] = data[j + 1], data[j]
+    return data
+
+test = [3, 1, 4, 1, 5]
+has_dup, comps = has_duplicates_naive(test)
+print(f"List: {test}")
+print(f"Has duplicates: {has_dup} (found in {comps} comparisons)")
+
+unsorted = [64, 34, 25, 12, 22, 11, 90]
+print(f"\nUnsorted: {unsorted}")
+print(f"Sorted: {bubble_sort(unsorted)}")</textarea>
+                <div class="code-figure-output" id="outputcode30"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.30:</strong> O(n²) algorithms often involve nested loops. They become impractical for large inputs.
+                </div>
+            </div>
+            
+            <div class="margin-note">
+                There's an O(n) algorithm for finding duplicates using a set (hash table). The naive O(n²) approach compares all pairs; the set approach tracks seen elements with O(1) lookups.
+            </div>
+            
+            <h3>Space Complexity</h3>
+            
+            <p>Big O also describes memory usage. An algorithm is:</p>
+            <ul>
+                <li><strong>O(1) space:</strong> Uses constant extra memory (e.g., only a few variables)</li>
+                <li><strong>O(n) space:</strong> Uses memory proportional to input size (e.g., copies the input)</li>
+            </ul>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.31 — Space Complexity</span>
+                    <button class="code-figure-run" onclick="runCode('code31')">▶ Run</button>
+                </div>
+                <textarea id="code31" spellcheck="false"># O(1) space - uses constant extra memory
+def sum_in_place(data):
+    total = 0  # Only one extra variable
+    for x in data:
+        total += x
+    return total
+
+# O(n) space - creates new list
+def double_values(data):
+    result = []  # New list grows with input
+    for x in data:
+        result.append(x * 2)
+    return result
+
+# Also O(n) space (list comprehension)
+def double_values_v2(data):
+    return [x * 2 for x in data]
+
+nums = [1, 2, 3, 4, 5]
+print(f"Sum (O(1) space): {sum_in_place(nums)}")
+print(f"Doubled (O(n) space): {double_values(nums)}")</textarea>
+                <div class="code-figure-output" id="outputcode31"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.31:</strong> Space complexity measures additional memory used, not including the input itself.
+                </div>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-title">Key Takeaways</div>
+                <ul>
+                    <li>Big O describes how algorithm performance scales with input size</li>
+                    <li>It captures worst-case growth rate, ignoring constant factors</li>
+                    <li>O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n²) &lt; O(2ⁿ)</li>
+                    <li>A single loop over n elements is typically O(n)</li>
+                    <li>Nested loops over n elements are typically O(n²)</li>
+                    <li>Choosing appropriate data structures and algorithms dramatically affects performance</li>
+                    <li>Space complexity measures memory usage, not just time</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 10: EXERCISES -->
+        <!-- ============================================== -->
+        <section id="exercises">
+            <h2>10. Exercises</h2>
+            
+            <p>Complete the following exercises to reinforce your understanding. Each exercise shows the expected answer—use the code cell below it to write your solution.</p>
+            
+            <!-- EXERCISE 1 -->
+            <div class="exercise" data-exercise="ex1">
+                <div class="exercise-title">Exercise 1: Temperature Conversion</div>
+                <p class="exercise-description">Write a function <code>celsius_to_fahrenheit(celsius)</code> that converts a temperature from Celsius to Fahrenheit using the formula: F = C × 9/5 + 32. Test it with the values 0, 100, and 37.</p>
+                <p class="answer">(Expected: 0°C = 32.0°F, 100°C = 212.0°F, 37°C = 98.6°F)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex1-hint1">
+                        <strong>Hint 1 - Function Definition:</strong><br>
+                        Define a function using <code>def function_name(parameter):</code><br>
+                        Example: <code>def celsius_to_fahrenheit(celsius):</code>
+                    </div>
+                    <div class="hint-content" id="ex1-hint2">
+                        <strong>Hint 2 - The Formula:</strong><br>
+                        Inside the function, calculate: <code>fahrenheit = celsius * 9/5 + 32</code><br>
+                        Then use <code>return fahrenheit</code> to return the result.
+                    </div>
+                    <div class="hint-content" id="ex1-hint3">
+                        <strong>Hint 3 - Testing:</strong><br>
+                        Call your function with test values and print the results:<br>
+                        <code>print(f"0°C = {celsius_to_fahrenheit(0)}°F")</code>
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 1 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex1')">▶ Run</button>
+                </div>
+                <textarea id="ex1" spellcheck="false"># Temperature Conversion
+# Implement the celsius_to_fahrenheit function
+
+def celsius_to_fahrenheit(celsius):
+    # Your code here: implement the formula F = C × 9/5 + 32
+    pass  # Remove this line when you add your code
+
+# Test your function (uncomment these lines)
+# print(f"0°C = {celsius_to_fahrenheit(0)}°F")
+# print(f"100°C = {celsius_to_fahrenheit(100)}°F")
+# print(f"37°C = {celsius_to_fahrenheit(37)}°F")</textarea>
+                <div class="code-figure-output" id="outputex1"></div>
+            </div>
+            
+            <!-- EXERCISE 2 -->
+            <div class="exercise" data-exercise="ex2">
+                <div class="exercise-title">Exercise 2: List Statistics</div>
+                <p class="exercise-description">Given the list <code>scores = [85, 92, 78, 90, 88, 76, 95, 89]</code>, write code to find and print: the number of scores, the sum, the average (mean), the minimum, and the maximum.</p>
+                <p class="answer">(Expected: Count=8, Sum=693, Average=86.625, Min=76, Max=95)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex2-hint1">
+                        <strong>Hint 1 - Built-in Functions:</strong><br>
+                        Python has built-in functions: <code>len()</code>, <code>sum()</code>, <code>min()</code>, <code>max()</code><br>
+                        Example: <code>count = len(scores)</code>
+                    </div>
+                    <div class="hint-content" id="ex2-hint2">
+                        <strong>Hint 2 - Calculating Average:</strong><br>
+                        Average = sum divided by count<br>
+                        <code>average = sum(scores) / len(scores)</code>
+                    </div>
+                    <div class="hint-content" id="ex2-hint3">
+                        <strong>Hint 3 - Min and Max:</strong><br>
+                        <code>minimum = min(scores)</code><br>
+                        <code>maximum = max(scores)</code>
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 2 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex2')">▶ Run</button>
+                </div>
+                <textarea id="ex2" spellcheck="false">scores = [85, 92, 78, 90, 88, 76, 95, 89]
+
+# Calculate the statistics using Python built-in functions
+count = None    # Replace None with your code
+total = None    # Replace None with your code
+average = None  # Replace None with your code
+minimum = None  # Replace None with your code
+maximum = None  # Replace None with your code
+
+print(f"Count: {count}")
+print(f"Sum: {total}")
+print(f"Average: {average}")
+print(f"Min: {minimum}")
+print(f"Max: {maximum}")</textarea>
+                <div class="code-figure-output" id="outputex2"></div>
+            </div>
+            
+            <!-- EXERCISE 3 -->
+            <div class="exercise" data-exercise="ex3">
+                <div class="exercise-title">Exercise 3: FizzBuzz</div>
+                <p class="exercise-description">Write a program that prints numbers from 1 to 20, but: for multiples of 3, print "Fizz" instead; for multiples of 5, print "Buzz" instead; for multiples of both 3 and 5, print "FizzBuzz".</p>
+                <p class="answer">(Expected: 1, 2, Fizz, 4, Buzz, Fizz, 7, 8, Fizz, Buzz, 11, Fizz, 13, 14, FizzBuzz, 16, 17, Fizz, 19, Buzz)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex3-hint1">
+                        <strong>Hint 1 - Loop Structure:</strong><br>
+                        Use <code>for num in range(1, 21):</code> to loop from 1 to 20.<br>
+                        The modulo operator <code>%</code> checks divisibility: <code>num % 3 == 0</code>
+                    </div>
+                    <div class="hint-content" id="ex3-hint2">
+                        <strong>Hint 2 - Order Matters!</strong><br>
+                        Check "divisible by both 3 AND 5" FIRST!<br>
+                        <code>if num % 3 == 0 and num % 5 == 0:</code><br>
+                        Then check 3 only, then 5 only, then else.
+                    </div>
+                    <div class="hint-content" id="ex3-hint3">
+                        <strong>Hint 3 - Print Formatting:</strong><br>
+                        Use <code>print(..., end=" ")</code> to keep output on the same line.<br>
+                        Or use regular print for each on new line.
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 3 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex3')">▶ Run</button>
+                </div>
+                <textarea id="ex3" spellcheck="false"># FizzBuzz Challenge
+# Print numbers 1-20, but Fizz for multiples of 3, Buzz for 5, FizzBuzz for both
+
+for num in range(1, 21):
+    # Your code here: use if/elif/else to check divisibility
+    pass  # Remove this and add your logic</textarea>
+                <div class="code-figure-output" id="outputex3"></div>
+            </div>
+            
+            <!-- EXERCISE 4 -->
+            <div class="exercise" data-exercise="ex4">
+                <div class="exercise-title">Exercise 4: Count Vowels</div>
+                <p class="exercise-description">Write a function <code>count_vowels(text)</code> that returns the number of vowels (a, e, i, o, u) in a string. Test it with "Hello World" and "Python Programming".</p>
+                <p class="answer">(Expected: "Hello World" has 3 vowels, "Python Programming" has 4 vowels)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex4-hint1">
+                        <strong>Hint 1 - Define Vowels:</strong><br>
+                        Create a string containing all vowels: <code>vowels = "aeiouAEIOU"</code><br>
+                        Or convert text to lowercase: <code>text.lower()</code> and use <code>"aeiou"</code>
+                    </div>
+                    <div class="hint-content" id="ex4-hint2">
+                        <strong>Hint 2 - Loop Through Characters:</strong><br>
+                        Initialize a counter: <code>count = 0</code><br>
+                        Loop through each character: <code>for char in text:</code>
+                    </div>
+                    <div class="hint-content" id="ex4-hint3">
+                        <strong>Hint 3 - Check Membership:</strong><br>
+                        Use the <code>in</code> operator to check if character is a vowel:<br>
+                        <code>if char in vowels:</code> then <code>count += 1</code>
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 4 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex4')">▶ Run</button>
+                </div>
+                <textarea id="ex4" spellcheck="false"># Count Vowels Function
+# Return the number of vowels (a, e, i, o, u) in a string
+
+def count_vowels(text):
+    # Your code here
+    pass  # Remove this line
+
+# Test your function (uncomment these lines)
+# print(f'"Hello World" has {count_vowels("Hello World")} vowels')
+# print(f'"Python Programming" has {count_vowels("Python Programming")} vowels')</textarea>
+                <div class="code-figure-output" id="outputex4"></div>
+            </div>
+            
+            <!-- EXERCISE 5 -->
+            <div class="exercise" data-exercise="ex5">
+                <div class="exercise-title">Exercise 5: Big O Analysis</div>
+                <p class="exercise-description">Analyze the time complexity of each function below. Fill in the Big O notation in the comments and explain why.</p>
+                <p class="answer">(Expected: func_a is O(1), func_b is O(n), func_c is O(n²), func_d is O(n))</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex5-hint1">
+                        <strong>Hint 1 - O(1) Constant Time:</strong><br>
+                        Operations that don't depend on input size are O(1).<br>
+                        Example: Accessing an element by index <code>data[0]</code> is O(1).
+                    </div>
+                    <div class="hint-content" id="ex5-hint2">
+                        <strong>Hint 2 - O(n) Linear Time:</strong><br>
+                        A single loop over n elements is O(n).<br>
+                        <code>for x in data:</code> iterates n times → O(n)
+                    </div>
+                    <div class="hint-content" id="ex5-hint3">
+                        <strong>Hint 3 - O(n²) Quadratic Time:</strong><br>
+                        Nested loops each running n times → n × n = O(n²)<br>
+                        <code>for i in range(n): for j in range(n):</code> → O(n²)
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 5 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex5')">▶ Run</button>
+                </div>
+                <textarea id="ex5" spellcheck="false"># Big O Analysis
+# Update the docstrings with the correct time complexity
+
+def func_a(data):
+    """Time Complexity: O(???) - Why: ???"""
+    return data[0] + data[-1]
+
+def func_b(data):
+    """Time Complexity: O(???) - Why: ???"""
+    total = 0
+    for x in data:
+        total += x
+    return total
+
+def func_c(data):
+    """Time Complexity: O(???) - Why: ???"""
+    n = len(data)
+    count = 0
+    for i in range(n):
+        for j in range(n):
+            count += 1
+    return count
+
+def func_d(data):
+    """Time Complexity: O(???) - Why: ???"""
+    result = []
+    for x in data:
+        result.append(x * 2)
+    return result
+
+# Test with a sample list
+test_data = [1, 2, 3, 4, 5]
+print(f"func_a result: {func_a(test_data)}")
+print(f"func_b result: {func_b(test_data)}")
+print(f"func_c result: {func_c(test_data)}")
+print(f"func_d result: {func_d(test_data)}")
+
+print("\nUpdate the docstrings with your Big O answers!")</textarea>
+                <div class="code-figure-output" id="outputex5"></div>
+            </div>
+        </section>
+
+        <!-- SUBMIT SECTION -->
+        <section class="submit-section">
+            <h2>Submit Your Work</h2>
+            <p>After completing the exercises, submit your attendance below.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student ID</label>
+                    <input type="text" id="studentId" placeholder="Enter your student ID">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" placeholder="Enter your full name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email (@istun.edu.tr)</label>
+                    <input type="email" id="studentEmail" placeholder="your.email@istun.edu.tr">
+                </div>
+                <div class="form-group">
+                    <label>Class Code</label>
+                    <input type="text" id="classCode" placeholder="From instructor">
+                </div>
+            </div>
+            <input type="text" id="hp" class="hp" tabindex="-1" autocomplete="off">
+            <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
+            <div class="submit-status" id="submitStatus"></div>
+        </section>
+    </main>
+
+    <script>
+        const pageLoadTime = Date.now();
+        
+        // ============ HINT SYSTEM ============
+        function toggleHint(exerciseId, hintNum) {
+            const hintId = exerciseId + '-hint' + hintNum;
+            const hintEl = document.getElementById(hintId);
+            const btn = event.target;
+            
+            if (hintEl.classList.contains('show')) {
+                hintEl.classList.remove('show');
+                btn.classList.remove('revealed');
+            } else {
+                hintEl.classList.add('show');
+                btn.classList.add('revealed');
+            }
+        }
+        
+        // ============ ANTI-CHEAT SYSTEM ============
+        const originalExerciseCode = {};
+        const keystrokeCounts = {};
+        const pasteAttempts = {};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize anti-cheat for all exercise textareas
+            document.querySelectorAll('textarea[id^="ex"]').forEach(textarea => {
+                const exId = textarea.id;
+                
+                // Store original code
+                originalExerciseCode[exId] = textarea.value;
+                keystrokeCounts[exId] = 0;
+                pasteAttempts[exId] = 0;
+                
+                // Block paste
+                textarea.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    pasteAttempts[exId]++;
+                    const warning = document.createElement('div');
+                    warning.textContent = '⚠️ Paste is disabled. Please type your code.';
+                    warning.style.cssText = 'color:#f87171;font-size:12px;margin-top:5px;';
+                    warning.className = 'paste-warning';
+                    const existingWarning = textarea.parentElement.querySelector('.paste-warning');
+                    if (existingWarning) existingWarning.remove();
+                    textarea.parentElement.appendChild(warning);
+                    setTimeout(() => warning.remove(), 3000);
+                });
+                
+                // Block drag & drop
+                textarea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                });
+                
+                // Count keystrokes
+                textarea.addEventListener('keydown', function(e) {
+                    if (e.key.length === 1 || ['Backspace', 'Delete', 'Enter', 'Tab'].includes(e.key)) {
+                        keystrokeCounts[exId]++;
+                    }
+                });
+            });
+        });
+        
+        function isCodeModified(exId, currentCode) {
+            const original = originalExerciseCode[exId] || '';
+            const keystrokes = keystrokeCounts[exId] || 0;
+            
+            const normalizedOriginal = original.trim().replace(/\s+/g, ' ');
+            const normalizedCurrent = currentCode.trim().replace(/\s+/g, ' ');
+            
+            if (normalizedOriginal === normalizedCurrent) return false;
+            if (keystrokes < 20) return false;
+            
+            const withoutComments = currentCode.replace(/#.*$/gm, '').replace(/"""[\s\S]*?"""/g, '').replace(/'''[\s\S]*?'''/g, '').trim();
+            const originalWithoutComments = original.replace(/#.*$/gm, '').replace(/"""[\s\S]*?"""/g, '').replace(/'''[\s\S]*?'''/g, '').trim();
+            
+            if (withoutComments.length <= originalWithoutComments.length + 10) return false;
+            
+            return true;
+        }
+        // ============ END ANTI-CHEAT ============
+        
+        // ============ PYODIDE CODE RUNNER ============
+        async function runCode(codeId) {
+            const codeEl = document.getElementById(codeId);
+            const outputEl = document.getElementById('output' + codeId);
+            const code = codeEl.value;
+            outputEl.classList.add('show');
+            outputEl.textContent = 'Loading Python...';
+            
+            try {
+                if (!window.pyodideReady) {
+                    if (typeof loadPyodide === 'undefined') {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
+                        document.head.appendChild(script);
+                        await new Promise((resolve, reject) => {
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            setTimeout(reject, 10000);
+                        });
+                    }
+                    outputEl.textContent = 'Initializing Python (first run may take a moment)...';
+                    window.pyodide = await loadPyodide();
+                    window.pyodideReady = true;
+                }
+                
+                outputEl.textContent = 'Running...';
+                
+                window.pyodide.runPython(`
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+`);
+                
+                try {
+                    window.pyodide.runPython(code);
+                } catch (pyErr) {
+                    outputEl.textContent = 'Error: ' + pyErr.message;
+                    return;
+                }
+                
+                const output = window.pyodide.runPython('sys.stdout.getvalue()');
+                outputEl.textContent = output || '(no output)';
+                
+            } catch(e) {
+                outputEl.textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        // ============ VALIDATION FUNCTIONS ============
+        function validateStudentId(id) {
+            if (id.length < 6 || id.length > 10) return false;
+            if (!/^\d+$/.test(id)) return false;
+            if (/^(\d)\1+$/.test(id)) return false;
+            return true;
+        }
+        
+        function validateName(name) {
+            if (name.length < 5) return false;
+            const words = name.trim().split(/\s+/);
+            if (words.length < 2) return false;
+            if (!/^[A-Za-zğüşıöçĞÜŞİÖÇ\s]+$/.test(name)) return false;
+            const blockedWords = ['test', 'fake', 'asdf', 'qwer', 'spam', 'admin', 'null', 'undefined', 'xxx', 'abc', 'aaa', 'deneme', 'örnek'];
+            const nameLower = name.toLowerCase();
+            for (const word of blockedWords) {
+                if (nameLower.includes(word)) return false;
+            }
+            return true;
+        }
+        
+        function validateEmail(email) {
+            return email.endsWith('@istun.edu.tr') && email.length > 15;
+        }
+        
+        // ============ SUBMIT FUNCTION ============
+        async function submitWork() {
+            const status = document.getElementById('submitStatus');
+            status.style.display = 'none';
+            
+            const studentId = document.getElementById('studentId').value.trim();
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentEmail = document.getElementById('studentEmail').value.trim().toLowerCase();
+            const classCode = document.getElementById('classCode').value.trim().toUpperCase();
+            const honeypot = document.getElementById('hp').value;
+            
+            // Bot check
+            if (honeypot) {
+                status.textContent = '❌ Submission rejected.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            // Time check
+            const timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000);
+            if (timeOnPage < 60) {
+                status.textContent = '❌ Please spend more time reviewing the material.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            // Required fields
+            if (!studentId || !studentName || !studentEmail || !classCode) {
+                status.textContent = '❌ All fields are required.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            // Validate student ID
+            if (!validateStudentId(studentId)) {
+                status.textContent = '❌ Invalid Student ID (must be 6-10 digits).';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            // Validate name
+            if (!validateName(studentName)) {
+                status.textContent = '❌ Please use your real information.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            // Validate email
+            if (!validateEmail(studentEmail)) {
+                status.textContent = '❌ Use your @istun.edu.tr email.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            // Validate class code
+            if (classCode.length < 4) {
+                status.textContent = '❌ Invalid class code.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            status.textContent = '⏳ Collecting answers and submitting...';
+            status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
+            
+            // Collect all exercise answers with anti-cheat data
+            const answers = {};
+            const exercises = document.querySelectorAll('.exercise[data-exercise]');
+            exercises.forEach(exercise => {
+                const exId = exercise.getAttribute('data-exercise');
+                const titleEl = exercise.querySelector('.exercise-title');
+                const descEl = exercise.querySelector('.exercise-description');
+                const codeEl = document.getElementById(exId);
+                
+                if (codeEl) {
+                    const code = codeEl.value || '';
+                    const wasModified = isCodeModified(exId, code);
+                    
+                    answers[exId] = {
+                        title: titleEl ? titleEl.textContent.replace(/^Exercise \d+:\s*/, '').trim() : 'Exercise',
+                        description: descEl ? descEl.textContent.trim() : '',
+                        code: code,
+                        modified: wasModified,
+                        keystrokes: keystrokeCounts[exId] || 0,
+                        pasteAttempts: pasteAttempts[exId] || 0
+                    };
+                }
+            });
+            
+            // Fetch IP and location
+            let ipAddress = 'Unknown';
+            let location = 'Unknown';
+            try {
+                const ipResponse = await fetch('https://ipapi.co/json/', { timeout: 5000 });
+                if (ipResponse.ok) {
+                    const ipData = await ipResponse.json();
+                    ipAddress = ipData.ip || 'Unknown';
+                    location = (ipData.city && ipData.country_name) 
+                        ? `${ipData.city}, ${ipData.country_name}` 
+                        : (ipData.country_name || 'Unknown');
+                }
+            } catch (e) {
+                console.log('Could not fetch IP info');
+            }
+            
+            const data = {
+                week: 'Week_01',
+                studentId: studentId,
+                studentName: studentName,
+                studentEmail: studentEmail,
+                classCode: classCode,
+                timeOnPage: timeOnPage,
+                answers: answers,
+                ipAddress: ipAddress,
+                location: location,
+                source: 'dsa-web'
+            };
+            
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbxepk2NvNg3Whad-WOPxdZI-mWnVJeNKCsZVspvk7Ku5YHC_oWv7376VrWLn_30nyI_vw/exec';
+            
+            fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(res => {
+                if (res.success) {
+                    status.textContent = '✅ Submitted successfully! Check your email for confirmation with your submitted answers.';
+                    status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80';
+                } else {
+                    status.textContent = '❌ ' + (res.message || 'Submission failed. Please try again.');
+                    status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(data)
+                })
+                .then(() => {
+                    status.textContent = '⏳ Request sent. Check your email for confirmation.';
+                    status.style.cssText = 'display:block;background:rgba(251,191,36,0.2);color:#fbbf24';
+                })
+                .catch(() => {
+                    status.textContent = '❌ Connection error. Please try again.';
+                    status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                });
+            });
+        }
+    </script>
+</body>
+</html>

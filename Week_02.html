@@ -1,0 +1,2519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 02: Recursion &amp; Recursive Thinking | DSA Course</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <script type="module">
+        // Wait for PyScript to be ready
+        const pyReady = new Promise((resolve) => {
+            const check = setInterval(() => {
+                if (typeof pyscript !== 'undefined' && pyscript.interpreter) {
+                    clearInterval(check);
+                    resolve();
+                }
+            }, 100);
+            // Timeout after 15 seconds
+            setTimeout(() => { clearInterval(check); resolve(); }, 15000);
+        });
+        window.pyReady = pyReady;
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 19px;
+            background: #faf9f7;
+            color: #2c2c2c; 
+            line-height: 1.8;
+        }
+        
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .topbar .title { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 500; }
+        .topbar a { font-family: system-ui, sans-serif; color: white; text-decoration: none; font-size: 0.85rem; padding: 6px 14px; background: rgba(255,255,255,0.1); border-radius: 5px; }
+        .topbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .book { max-width: 750px; margin: 0 auto; padding: 60px 40px 100px; }
+        
+        .chapter-header { text-align: center; padding: 50px 0 60px; border-bottom: 1px solid #ddd; margin-bottom: 50px; }
+        .chapter-num { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: #7c3aed; margin-bottom: 15px; }
+        .chapter-header h1 { font-size: 2.8rem; font-weight: 600; color: #1a1a2e; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .chapter-header .subtitle { font-style: italic; color: #666; font-size: 1.1rem; }
+        
+        h2 { font-size: 1.6rem; font-weight: 600; color: #1a1a2e; margin: 60px 0 25px; padding-top: 30px; border-top: 1px solid #e5e5e5; }
+        h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+        h3 { font-size: 1.25rem; font-weight: 600; color: #333; margin: 40px 0 15px; }
+        h4 { font-size: 1.05rem; font-weight: 600; color: #555; margin: 30px 0 12px; }
+        
+        p { margin: 0 0 20px; text-align: justify; hyphens: auto; }
+        ul, ol { margin: 20px 0 25px 30px; }
+        li { margin: 10px 0; }
+        
+        code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: #f0eeeb; padding: 2px 6px; border-radius: 3px; color: #7c3aed; }
+        .term { font-weight: 600; color: #1a1a2e; }
+        
+        .definition { background: #f8f7f5; border-left: 4px solid #7c3aed; padding: 20px 25px; margin: 30px 0; }
+        .definition-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 8px; font-weight: 600; }
+        .definition p { margin: 0; }
+        
+        .margin-note { background: #fffbeb; border: 1px solid #fcd34d; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .margin-note::before { content: "💡 "; }
+        
+        .important { background: #fef2f2; border: 1px solid #fca5a5; padding: 15px 18px; margin: 25px 0; border-radius: 4px; font-size: 0.9rem; }
+        .important::before { content: "⚠️ "; }
+        
+        .example { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; padding: 25px; margin: 30px 0; }
+        .example-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 15px; font-weight: 600; }
+        
+        .code-figure { margin: 35px 0; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background: #1e1e2e; }
+        .code-figure-header { background: #28283c; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
+        .code-figure-label { font-family: system-ui, sans-serif; font-size: 0.75rem; color: #a0a0b0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .code-figure-run { font-family: system-ui, sans-serif; background: #7c3aed; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
+        .code-figure-run:hover { background: #6d28d9; }
+        .code-figure textarea { width: 100%; min-height: 100px; padding: 18px; background: #1e1e2e; color: #e0e0e0; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; }
+        .code-figure textarea:focus { outline: none; }
+        .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; }
+        .code-figure-output.show { display: block; }
+        .code-figure-caption { background: #f8f8f8; padding: 12px 18px; font-size: 0.85rem; color: #666; border-top: 1px solid #e0e0e0; }
+        .code-figure-caption strong { color: #333; }
+        
+        .summary { background: linear-gradient(135deg, #7c3aed10, #7c3aed05); border: 1px solid #7c3aed30; border-radius: 8px; padding: 25px 30px; margin: 40px 0; }
+        .summary-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; margin-bottom: 12px; font-weight: 600; }
+        .summary ul { margin: 0; }
+        
+        .exercise { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 25px 30px; margin: 40px 0 20px; }
+        .exercise-title { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #16a34a; margin-bottom: 12px; font-weight: 600; }
+        .exercise p { margin: 0; }
+        .exercise .answer { margin-top: 12px; font-size: 0.9rem; color: #166534; }
+        .exercise-description { margin-bottom: 15px; }
+        
+        /* Hint System */
+        .hint-section { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #bbf7d0; }
+        .hint-toggle { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-family: system-ui, sans-serif; font-weight: 500; transition: all 0.3s ease; margin-right: 8px; margin-bottom: 8px; }
+        .hint-toggle:hover { background: linear-gradient(135deg, #059669, #047857); transform: translateY(-1px); }
+        .hint-toggle.revealed { background: #6b7280; }
+        .hint-content { display: none; background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 15px 20px; margin-top: 12px; font-size: 0.9rem; color: #065f46; line-height: 1.6; }
+        .hint-content.show { display: block; animation: fadeIn 0.3s ease; }
+        .hint-content code { background: #d1fae5; color: #065f46; padding: 2px 6px; border-radius: 3px; font-size: 0.85em; }
+        .hint-content pre { background: #1e1e2e; color: #e0e0e0; padding: 12px 15px; border-radius: 6px; margin: 10px 0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .paste-warning { color: #f87171; font-size: 12px; margin-top: 5px; font-family: system-ui, sans-serif; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 0.95rem; }
+        th, td { border: 1px solid #ddd; padding: 12px 15px; text-align: left; }
+        th { background: #f5f5f5; font-weight: 600; }
+        
+        .submit-section { background: #1a1a2e; color: white; padding: 40px; border-radius: 10px; margin-top: 60px; }
+        .submit-section h2 { color: white; border: none; margin: 0 0 20px; padding: 0; font-size: 1.4rem; }
+        .submit-section p { color: #a0a0b0; text-align: left; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-family: system-ui, sans-serif; font-size: 0.85rem; color: #a0a0b0; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: white; font-size: 1rem; font-family: system-ui, sans-serif; }
+        .form-group input:focus { outline: none; border-color: #7c3aed; }
+        .submit-btn { background: #7c3aed; color: white; border: none; padding: 14px 30px; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; font-family: system-ui, sans-serif; margin-top: 10px; }
+        .submit-btn:hover { background: #6d28d9; }
+        .submit-status { margin-top: 15px; padding: 12px; border-radius: 5px; display: none; font-family: system-ui, sans-serif; font-size: 0.9rem; }
+        .hp { position: absolute; left: -9999px; }
+        
+        .toc { background: #f8f7f5; padding: 30px 35px; margin: 0 0 50px; border-radius: 6px; }
+        .toc-title { font-family: system-ui, sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 15px; }
+        .toc ol { margin: 0; padding-left: 20px; }
+        .toc li { margin: 8px 0; }
+        .toc a { color: #7c3aed; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        
+        @media (max-width: 600px) {
+            .book { padding: 30px 20px; }
+            .chapter-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.4rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="topbar">
+        <span class="title">Data Structures &amp; Algorithms</span>
+        <a href="index.html?home=true">← Course Home</a>
+    </nav>
+    
+    <main class="book">
+        <header class="chapter-header">
+            <div class="chapter-num">Week Two</div>
+            <h1>Recursion &amp; Recursive Thinking</h1>
+            <p class="subtitle">Understanding self-referential problem solving</p>
+        </header>
+        
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <ol>
+                <li><a href="#intro">What is Recursion?</a></li>
+                <li><a href="#callstack">The Call Stack</a></li>
+                <li><a href="#anatomy">Anatomy of Recursive Functions</a></li>
+                <li><a href="#factorial">Classic Example: Factorial</a></li>
+                <li><a href="#fibonacci">Classic Example: Fibonacci</a></li>
+                <li><a href="#datastructures">Recursion on Data Structures</a></li>
+                <li><a href="#strings">Recursion on Strings</a></li>
+                <li><a href="#analysis">Analyzing Recursive Complexity</a></li>
+                <li><a href="#comparison">Recursion vs Iteration</a></li>
+                <li><a href="#pitfalls">Common Pitfalls</a></li>
+                <li><a href="#exercises">Exercises</a></li>
+            </ol>
+        </nav>
+
+        <!-- ============================================== -->
+        <!-- SECTION 1: WHAT IS RECURSION -->
+        <!-- ============================================== -->
+        <section id="intro">
+            <h2>1. What is Recursion?</h2>
+            
+            <p>In the previous week, we explored loops as a way to repeat operations. This week, we study a fundamentally different approach: <span class="term">recursion</span>—where a function solves a problem by calling itself with smaller inputs. This technique is not merely a programming trick; it represents a powerful way of thinking about problems that will prove essential for understanding trees, graphs, and divide-and-conquer algorithms.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Recursion</span> is a problem-solving technique where a function calls itself to solve smaller instances of the same problem. A recursive solution consists of a <span class="term">base case</span> (the simplest case, solved directly without recursion) and a <span class="term">recursive case</span> (which reduces the problem and calls itself).</p>
+            </div>
+            
+            <p>The fundamental insight of recursion is that many problems have <em>self-similar structure</em>: a problem of size n can be expressed in terms of the same problem of size n-1 (or n/2, or some other smaller size). Once we recognize this pattern, the solution often becomes remarkably elegant.</p>
+            
+            <h3>Real-World Analogies</h3>
+            
+            <p>Before diving into code, let's build intuition with some real-world examples of recursive thinking:</p>
+            
+            <div class="example">
+                <div class="example-title">Analogy 1: Russian Nesting Dolls (Matryoshka)</div>
+                <p>Consider finding the smallest doll in a set of nesting dolls:</p>
+                <ol>
+                    <li><strong>Base case:</strong> If the doll doesn't open, you've found the smallest.</li>
+                    <li><strong>Recursive case:</strong> If it opens, look inside and repeat the process with the inner doll.</li>
+                </ol>
+                <p>You don't need to know how many dolls there are. The process naturally terminates when you reach one that doesn't open. This is exactly how recursion works in code.</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">Analogy 2: Looking Up Words in a Dictionary</div>
+                <p>When you look up a word, its definition may contain other words you don't know. You look those up too. Eventually, you reach words you already understand—these are your base cases. The process is naturally recursive: understanding a word requires understanding its definition, which may require understanding other words.</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">Analogy 3: Calculating Your Ancestors</div>
+                <p>How many ancestors do you have going back n generations?</p>
+                <ul>
+                    <li><strong>Base case:</strong> Generation 0 (you) = 1 person</li>
+                    <li><strong>Recursive case:</strong> Generation n = 2 × ancestors(n-1)</li>
+                </ul>
+                <p>Each generation doubles: 1, 2, 4, 8, 16... The formula ancestors(n) = 2 × ancestors(n-1) is inherently recursive.</p>
+            </div>
+            
+            <h3>The Recursive Leap of Faith</h3>
+            
+            <p>When writing recursive code, you must trust that the recursive call returns the correct answer for the smaller problem. This is called the <span class="term">recursive leap of faith</span>. If your base case is correct and your recursive case correctly combines the result, the entire solution will be correct—even though it may seem like magic at first.</p>
+            
+            <div class="margin-note">
+                Don't trace through every recursive call in your head. Instead, trust that the recursive call works, and focus on: (1) Is my base case correct? (2) Does my recursive case make progress toward the base case? (3) Do I correctly combine the result?
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.1 — The Simplest Recursive Function</span>
+                    <button class="code-figure-run" onclick="runCode('code1')">▶ Run</button>
+                </div>
+                <textarea id="code1" spellcheck="false"># A simple countdown using recursion
+def countdown(n):
+    """Count down from n to 1, then print 'Blastoff!'"""
+    if n <= 0:              # Base case: nothing left to count
+        print("Blastoff!")
+    else:                   # Recursive case
+        print(n)
+        countdown(n - 1)    # Call ourselves with smaller input
+
+print("Countdown from 5:")
+countdown(5)</textarea>
+                <div class="code-figure-output" id="outputcode1"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.1:</strong> A recursive countdown. Each call prints one number, then delegates the rest of the work to a recursive call with a smaller value.
+                </div>
+            </div>
+            
+            <p>Notice the structure: we first check if we've reached the base case (n ≤ 0). If not, we do some work (print n), then make a recursive call with a smaller problem (n - 1). Eventually, n becomes 0 and we stop. This pattern appears in virtually all recursive functions.</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.2 — Counting Up Recursively</span>
+                    <button class="code-figure-run" onclick="runCode('code2')">▶ Run</button>
+                </div>
+                <textarea id="code2" spellcheck="false"># Count from 1 to n recursively
+def count_up(n, current=1):
+    """Print numbers from current to n."""
+    if current > n:         # Base case: passed the target
+        return
+    print(current)
+    count_up(n, current + 1)  # Recursive case: count next number
+
+print("Count up to 5:")
+count_up(5)
+
+print("\nCount from 3 to 7:")
+count_up(7, 3)</textarea>
+                <div class="code-figure-output" id="outputcode2"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.2:</strong> Recursion can also count upward by passing the current value as a parameter.
+                </div>
+            </div>
+            
+            <h3>Why Learn Recursion?</h3>
+            
+            <p><span class="term">Natural Fit for Hierarchical Structures:</span> Trees, graphs, file systems, and nested data have inherently recursive structure. A tree is made of subtrees; a directory contains subdirectories. Processing them recursively often yields the clearest, most natural code.</p>
+            
+            <p><span class="term">Divide and Conquer:</span> Many efficient algorithms (quicksort, mergesort, binary search) are naturally expressed recursively. They divide the problem into subproblems, solve each recursively, and combine the results.</p>
+            
+            <p><span class="term">Mathematical Elegance:</span> Mathematical definitions are often recursive (factorial, Fibonacci, combinatorics). Translating them to code becomes almost trivial once you understand recursion.</p>
+            
+            <p><span class="term">Foundation for Advanced Topics:</span> Understanding recursion is absolutely essential for tree traversals, dynamic programming, backtracking, and graph algorithms covered in later weeks.</p>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 2: THE CALL STACK -->
+        <!-- ============================================== -->
+        <section id="callstack">
+            <h2>2. The Call Stack</h2>
+            
+            <p>To truly understand recursion, you must understand how function calls work at a deeper level. When Python executes a program, it uses a <span class="term">call stack</span> to keep track of function calls and their local state.</p>
+            
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p>The <span class="term">call stack</span> (or execution stack) is a data structure that stores information about active function calls. Each call creates a <span class="term">stack frame</span> (or activation record) containing the function's parameters, local variables, and return address. Frames are added (pushed) when functions are called and removed (popped) when functions return.</p>
+            </div>
+            
+            <p>The stack follows Last-In-First-Out (LIFO) order: the most recently called function must return before the function that called it can continue. This is why it's called a "stack"—like a stack of plates, you can only add or remove from the top.</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.3 — Visualizing the Call Stack</span>
+                    <button class="code-figure-run" onclick="runCode('code3')">▶ Run</button>
+                </div>
+                <textarea id="code3" spellcheck="false"># Visualizing recursion with indentation showing stack depth
+def factorial(n, depth=0):
+    """Calculate n! with call stack visualization."""
+    indent = "  " * depth
+    print(f"{indent}→ factorial({n}) called")
+    
+    if n <= 1:  # Base case
+        print(f"{indent}← factorial({n}) returns 1")
+        return 1
+    else:       # Recursive case
+        result = n * factorial(n - 1, depth + 1)
+        print(f"{indent}← factorial({n}) returns {result}")
+        return result
+
+print("Computing factorial(5):")
+print("=" * 40)
+answer = factorial(5)
+print("=" * 40)
+print(f"Final answer: 5! = {answer}")</textarea>
+                <div class="code-figure-output" id="outputcode3"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.3:</strong> Arrows show the call stack growing (→) and unwinding (←). The indentation reflects stack depth. Notice how each function waits for its recursive call to return.
+                </div>
+            </div>
+            
+            <h3>Stack Frames Step by Step</h3>
+            
+            <p>Let's trace through <code>factorial(4)</code> in detail. Each step shows the state of the call stack:</p>
+            
+            <table>
+                <tr>
+                    <th>Step</th>
+                    <th>Action</th>
+                    <th>Stack (bottom → top)</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Call factorial(4)</td>
+                    <td>[factorial(4)]</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>4 ≤ 1 is False, call factorial(3)</td>
+                    <td>[factorial(4), factorial(3)]</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>3 ≤ 1 is False, call factorial(2)</td>
+                    <td>[factorial(4), factorial(3), factorial(2)]</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>2 ≤ 1 is False, call factorial(1)</td>
+                    <td>[factorial(4), factorial(3), factorial(2), factorial(1)]</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>1 ≤ 1 is True, return 1</td>
+                    <td>[factorial(4), factorial(3), factorial(2)] → returns 1</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>factorial(2) computes 2 × 1 = 2, returns</td>
+                    <td>[factorial(4), factorial(3)] → returns 2</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>factorial(3) computes 3 × 2 = 6, returns</td>
+                    <td>[factorial(4)] → returns 6</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>factorial(4) computes 4 × 6 = 24, returns</td>
+                    <td>[] → returns 24</td>
+                </tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.4 — A More Detailed Stack Trace</span>
+                    <button class="code-figure-run" onclick="runCode('code4')">▶ Run</button>
+                </div>
+                <textarea id="code4" spellcheck="false"># Show local variables at each stack frame
+def factorial_detailed(n, depth=0):
+    """Factorial with detailed state information."""
+    indent = "│ " * depth
+    print(f"{indent}┌─ ENTER factorial(n={n})")
+    
+    if n <= 1:
+        print(f"{indent}│  Base case reached!")
+        print(f"{indent}└─ RETURN 1")
+        return 1
+    
+    print(f"{indent}│  Computing: {n} × factorial({n-1})")
+    sub_result = factorial_detailed(n - 1, depth + 1)
+    result = n * sub_result
+    print(f"{indent}│  Got sub_result = {sub_result}")
+    print(f"{indent}│  Computing: {n} × {sub_result} = {result}")
+    print(f"{indent}└─ RETURN {result}")
+    return result
+
+print("Detailed trace of factorial(4):")
+print()
+factorial_detailed(4)</textarea>
+                <div class="code-figure-output" id="outputcode4"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.4:</strong> A detailed view showing exactly what happens at each stack frame—entering, computing, waiting for sub-results, and returning.
+                </div>
+            </div>
+            
+            <h3>Stack Overflow</h3>
+            
+            <p>The call stack has limited size (typically around 1000 frames in Python). If recursion goes too deep without reaching a base case, you get a <code>RecursionError</code>—commonly called a "stack overflow."</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.5 — The Recursion Limit</span>
+                    <button class="code-figure-run" onclick="runCode('code5')">▶ Run</button>
+                </div>
+                <textarea id="code5" spellcheck="false">import sys
+
+# Python's default recursion limit
+limit = sys.getrecursionlimit()
+print(f"Python's default recursion limit: {limit}")
+
+# This function has no base case - would crash!
+def infinite_recursion(n):
+    """BAD: No base case - infinite recursion!"""
+    print(f"Call {n}")
+    return infinite_recursion(n + 1)  # Never stops!
+
+# Demonstrating what happens with deep (but finite) recursion
+def deep_recursion(n, current=0):
+    """Count how deep we can go."""
+    if current >= n:
+        return current
+    return deep_recursion(n, current + 1)
+
+# Try progressively deeper recursion
+for depth in [100, 500, 900]:
+    result = deep_recursion(depth)
+    print(f"Successfully reached depth: {result}")
+
+print(f"\n⚠️ Going beyond {limit} would cause RecursionError!")
+
+# You CAN increase the limit (but be careful!):
+# sys.setrecursionlimit(2000)</textarea>
+                <div class="code-figure-output" id="outputcode5"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.5:</strong> Python limits recursion depth to prevent crashes. For very deep recursion, consider converting to iteration.
+                </div>
+            </div>
+            
+            <div class="important">
+                Every recursive call consumes stack memory. A recursion depth of 1000 requires 1000 stack frames, each storing local variables and return addresses. For problems requiring very deep recursion (like processing a list of 10,000 elements), you may need to convert to an iterative solution or increase the recursion limit carefully.
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 3: ANATOMY OF RECURSIVE FUNCTIONS -->
+        <!-- ============================================== -->
+        <section id="anatomy">
+            <h2>3. Anatomy of Recursive Functions</h2>
+            
+            <p>Every well-formed recursive function has exactly two essential components. Missing either one leads to bugs—typically infinite recursion or incorrect results.</p>
+            
+            <h3>Component 1: Base Case (Termination Condition)</h3>
+            
+            <p>The <span class="term">base case</span> handles the simplest possible input directly, without making any recursive calls. It's the "exit condition" that prevents infinite recursion. Common base cases include:</p>
+            
+            <ul>
+                <li><strong>Numeric:</strong> n ≤ 0, n == 1, n < 10</li>
+                <li><strong>Collections:</strong> empty list <code>[]</code>, empty string <code>""</code>, single element</li>
+                <li><strong>Trees:</strong> null node, leaf node</li>
+                <li><strong>Search:</strong> found the target, exhausted search space</li>
+            </ul>
+            
+            <h3>Component 2: Recursive Case (Progress Toward Base)</h3>
+            
+            <p>The <span class="term">recursive case</span> handles non-trivial inputs by:</p>
+            <ol>
+                <li>Breaking the problem into one or more smaller subproblems</li>
+                <li>Making recursive calls on the subproblems</li>
+                <li>Combining subproblem results into the final answer</li>
+            </ol>
+            
+            <p>Crucially, each recursive call must make <strong>progress toward the base case</strong>. If n starts at 5, each recursive call should use a smaller value (4, 3, 2, 1, 0) until we reach the base case.</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.6 — The Recursive Template</span>
+                    <button class="code-figure-run" onclick="runCode('code6')">▶ Run</button>
+                </div>
+                <textarea id="code6" spellcheck="false"># Generic template for recursive functions
+def recursive_function(problem):
+    """
+    Template for recursive problem-solving.
+    """
+    # Step 1: BASE CASE
+    # Can we solve this directly without recursion?
+    if is_base_case(problem):
+        return base_case_solution(problem)
+    
+    # Step 2: RECURSIVE CASE
+    # Break into smaller subproblem(s)
+    smaller_problem = make_smaller(problem)
+    
+    # Step 3: RECURSIVE CALL
+    # Trust that this returns the correct answer!
+    sub_result = recursive_function(smaller_problem)
+    
+    # Step 4: COMBINE
+    # Build the final answer from sub_result
+    return combine(problem, sub_result)
+
+# Concrete example: Sum of 1 + 2 + ... + n
+def sum_to_n(n):
+    """Calculate 1 + 2 + ... + n recursively."""
+    # Base case: sum to 0 is 0
+    if n <= 0:
+        return 0
+    
+    # Recursive case: n + sum of (1 to n-1)
+    # Trust that sum_to_n(n-1) gives correct answer!
+    return n + sum_to_n(n - 1)
+
+# Test
+print("Sum from 1 to n:")
+for n in [0, 1, 5, 10, 100]:
+    result = sum_to_n(n)
+    expected = n * (n + 1) // 2  # Formula verification
+    status = "✓" if result == expected else "✗"
+    print(f"  sum_to_n({n}) = {result} {status}")</textarea>
+                <div class="code-figure-output" id="outputcode6"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.6:</strong> The recursive template applied to sum calculation. Results are verified against the closed-form formula n(n+1)/2.
+                </div>
+            </div>
+            
+            <h3>Multiple Base Cases</h3>
+            
+            <p>Some problems require multiple base cases. The Fibonacci sequence is a classic example:</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.7 — Multiple Base Cases</span>
+                    <button class="code-figure-run" onclick="runCode('code7')">▶ Run</button>
+                </div>
+                <textarea id="code7" spellcheck="false"># Multiple base cases example
+def fib(n):
+    """
+    Fibonacci sequence (naive recursive version).
+    fib(0) = 0, fib(1) = 1, fib(n) = fib(n-1) + fib(n-2)
+    """
+    # TWO base cases needed!
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    
+    # Recursive case: sum of two previous values
+    return fib(n - 1) + fib(n - 2)
+
+print("Fibonacci sequence (first 12 numbers):")
+for i in range(12):
+    print(f"  fib({i}) = {fib(i)}")</textarea>
+                <div class="code-figure-output" id="outputcode7"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.7:</strong> Fibonacci requires two base cases: fib(0) and fib(1). Without both, the recursion would never terminate for n=1.
+                </div>
+            </div>
+            
+            <h3>Checklist for Writing Recursive Functions</h3>
+            
+            <p>Before writing a recursive function, answer these questions:</p>
+            
+            <ol>
+                <li><strong>What is the base case?</strong> What's the simplest input? What should it return directly?</li>
+                <li><strong>What is the recursive case?</strong> How can the problem be expressed in terms of smaller subproblems?</li>
+                <li><strong>Does each call make progress?</strong> Does each recursive call move strictly closer to the base case?</li>
+                <li><strong>Do I trust the recursion?</strong> Assume recursive calls return correct results. Does combining them give the right final answer?</li>
+                <li><strong>Are all cases covered?</strong> Does every possible input eventually reach a base case?</li>
+            </ol>
+            
+            <div class="margin-note">
+                When stuck on a recursive problem, try working backwards: "If I magically knew the answer for a smaller input, how would I use it to solve this input?"
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.8 — Applying the Checklist</span>
+                    <button class="code-figure-run" onclick="runCode('code8')">▶ Run</button>
+                </div>
+                <textarea id="code8" spellcheck="false"># Problem: Count digits in a positive integer
+# 
+# Checklist:
+# 1. Base case: single digit (n < 10) → return 1
+# 2. Recursive case: count_digits(n // 10) + 1
+# 3. Progress: n // 10 is smaller than n (removes last digit)
+# 4. Trust: count_digits(123 // 10) = count_digits(12) = 2
+#           So count_digits(123) = 2 + 1 = 3 ✓
+# 5. Coverage: any positive integer eventually becomes < 10
+
+def count_digits(n):
+    """Count the number of digits in positive integer n."""
+    # Base case: single digit
+    if n < 10:
+        return 1
+    
+    # Recursive case: one digit + digits in remaining number
+    return 1 + count_digits(n // 10)
+
+# Test with trace
+def count_digits_traced(n, depth=0):
+    indent = "  " * depth
+    print(f"{indent}count_digits({n})")
+    
+    if n < 10:
+        print(f"{indent}→ base case, return 1")
+        return 1
+    
+    sub = count_digits_traced(n // 10, depth + 1)
+    result = 1 + sub
+    print(f"{indent}→ return 1 + {sub} = {result}")
+    return result
+
+print("Trace of count_digits(12345):")
+result = count_digits_traced(12345)
+print(f"\nFinal result: {result} digits")</textarea>
+                <div class="code-figure-output" id="outputcode8"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.8:</strong> Applying the recursive checklist to count digits. The trace shows how n // 10 makes progress by removing the last digit.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 4: FACTORIAL -->
+        <!-- ============================================== -->
+        <section id="factorial">
+            <h2>4. Classic Example: Factorial</h2>
+            
+            <p>The <span class="term">factorial</span> of a non-negative integer n, written n!, is the product of all positive integers from 1 to n:</p>
+            
+            <ul>
+                <li>5! = 5 × 4 × 3 × 2 × 1 = 120</li>
+                <li>4! = 4 × 3 × 2 × 1 = 24</li>
+                <li>3! = 3 × 2 × 1 = 6</li>
+                <li>2! = 2 × 1 = 2</li>
+                <li>1! = 1</li>
+                <li>0! = 1 (by mathematical convention)</li>
+            </ul>
+            
+            <h3>Mathematical (Recursive) Definition</h3>
+            
+            <p>Factorial is naturally defined recursively:</p>
+            <ul>
+                <li><strong>Base case:</strong> 0! = 1 (and 1! = 1)</li>
+                <li><strong>Recursive case:</strong> n! = n × (n-1)!</li>
+            </ul>
+            
+            <p>This definition translates almost directly to code:</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.9 — Factorial: Recursive Implementation</span>
+                    <button class="code-figure-run" onclick="runCode('code9')">▶ Run</button>
+                </div>
+                <textarea id="code9" spellcheck="false"># Factorial: Recursive implementation
+def factorial_recursive(n):
+    """
+    Calculate n! recursively.
+    
+    Time Complexity: O(n) — n recursive calls
+    Space Complexity: O(n) — n stack frames
+    """
+    # Base case
+    if n <= 1:
+        return 1
+    
+    # Recursive case: n! = n × (n-1)!
+    return n * factorial_recursive(n - 1)
+
+# Test
+print("Factorial values:")
+for n in range(11):
+    print(f"  {n}! = {factorial_recursive(n)}")</textarea>
+                <div class="code-figure-output" id="outputcode9"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.9:</strong> The recursive factorial function directly mirrors the mathematical definition.
+                </div>
+            </div>
+            
+            <h3>Trace Table for factorial(5)</h3>
+            
+            <p>Let's trace exactly what happens when we compute 5!:</p>
+            
+            <table>
+                <tr>
+                    <th>Call #</th>
+                    <th>n</th>
+                    <th>Condition</th>
+                    <th>Action</th>
+                    <th>Returns</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>5</td>
+                    <td>5 > 1</td>
+                    <td>5 × factorial(4)</td>
+                    <td>5 × 24 = 120</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>4</td>
+                    <td>4 > 1</td>
+                    <td>4 × factorial(3)</td>
+                    <td>4 × 6 = 24</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>3</td>
+                    <td>3 > 1</td>
+                    <td>3 × factorial(2)</td>
+                    <td>3 × 2 = 6</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>2</td>
+                    <td>2 > 1</td>
+                    <td>2 × factorial(1)</td>
+                    <td>2 × 1 = 2</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>1</td>
+                    <td>1 ≤ 1 ✓</td>
+                    <td>Base case</td>
+                    <td>1</td>
+                </tr>
+            </table>
+            
+            <h3>Comparing Recursive vs Iterative</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.10 — Factorial: Iterative Implementation</span>
+                    <button class="code-figure-run" onclick="runCode('code10')">▶ Run</button>
+                </div>
+                <textarea id="code10" spellcheck="false"># Factorial: Iterative implementation
+def factorial_iterative(n):
+    """
+    Calculate n! iteratively.
+    
+    Time Complexity: O(n) — n iterations
+    Space Complexity: O(1) — just one variable!
+    """
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result
+
+# Compare both implementations
+print("Comparing recursive vs iterative:")
+print("-" * 40)
+print(f"{'n':<5} {'Recursive':<15} {'Iterative':<15} {'Match'}")
+print("-" * 40)
+
+for n in [0, 1, 5, 10, 12]:
+    rec = factorial_recursive(n)
+    itr = factorial_iterative(n)
+    match = "✓" if rec == itr else "✗"
+    print(f"{n:<5} {rec:<15} {itr:<15} {match}")
+
+print("-" * 40)
+print("Both produce identical results!")
+print("But iterative uses O(1) space vs O(n) for recursive.")</textarea>
+                <div class="code-figure-output" id="outputcode10"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.10:</strong> Both implementations compute factorial correctly. The iterative version uses O(1) space, while recursive uses O(n) for the call stack.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.11 — Factorial: Using Python's Built-in</span>
+                    <button class="code-figure-run" onclick="runCode('code11')">▶ Run</button>
+                </div>
+                <textarea id="code11" spellcheck="false"># Python provides a built-in factorial in the math module
+import math
+
+# Compare all three implementations
+print("All three implementations:")
+for n in [0, 1, 5, 10, 20]:
+    rec = factorial_recursive(n)
+    itr = factorial_iterative(n)
+    builtin = math.factorial(n)
+    
+    all_equal = rec == itr == builtin
+    status = "✓ all match" if all_equal else "✗ mismatch!"
+    print(f"  {n}! = {builtin} ({status})")
+
+# The built-in is optimized and can handle very large numbers
+print(f"\n100! has {len(str(math.factorial(100)))} digits!")
+print(f"First 50 chars of 100!: {str(math.factorial(100))[:50]}...")</textarea>
+                <div class="code-figure-output" id="outputcode11"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.11:</strong> For production code, use <code>math.factorial()</code>. It's optimized and handles arbitrarily large integers.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 5: FIBONACCI -->
+        <!-- ============================================== -->
+        <section id="fibonacci">
+            <h2>5. Classic Example: Fibonacci</h2>
+            
+            <p>The <span class="term">Fibonacci sequence</span> is one of the most famous sequences in mathematics: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, ... Each number is the sum of the two preceding ones.</p>
+            
+            <h3>Mathematical Definition</h3>
+            
+            <ul>
+                <li>F(0) = 0</li>
+                <li>F(1) = 1</li>
+                <li>F(n) = F(n-1) + F(n-2) for n ≥ 2</li>
+            </ul>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.12 — Naive Fibonacci (WARNING: Slow!)</span>
+                    <button class="code-figure-run" onclick="runCode('code12')">▶ Run</button>
+                </div>
+                <textarea id="code12" spellcheck="false"># Naive recursive Fibonacci - DO NOT use for large n!
+call_count = 0
+
+def fib_naive(n):
+    """
+    Naive Fibonacci implementation.
+    
+    WARNING: Time Complexity is O(2^n) — EXPONENTIAL!
+    Space Complexity: O(n) — stack depth
+    """
+    global call_count
+    call_count += 1
+    
+    # Base cases
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    
+    # Recursive case
+    return fib_naive(n - 1) + fib_naive(n - 2)
+
+# Demonstrate the exponential explosion of calls
+print("Naive Fibonacci call counts:")
+print("-" * 45)
+print(f"{'n':<5} {'fib(n)':<12} {'Calls':<12} {'Growth'}")
+print("-" * 45)
+
+prev_calls = 1
+for n in [1, 5, 10, 15, 20, 25]:
+    call_count = 0
+    result = fib_naive(n)
+    growth = f"×{call_count / prev_calls:.1f}" if prev_calls > 0 else "-"
+    print(f"{n:<5} {result:<12} {call_count:<12} {growth}")
+    prev_calls = call_count
+
+print("-" * 45)
+print("⚠️ Calls roughly DOUBLE with each increase of 1!")</textarea>
+                <div class="code-figure-output" id="outputcode12"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.12:</strong> Naive Fibonacci is extremely slow. The number of calls roughly doubles with each increment of n, giving O(2<sup>n</sup>) time complexity.
+                </div>
+            </div>
+            
+            <div class="important">
+                The naive recursive Fibonacci has O(2<sup>n</sup>) time complexity because it recomputes the same values many times. fib(5) computes fib(3) twice, fib(2) three times, fib(1) five times. For n=40, there are over 300 million recursive calls! <strong>Never use naive recursive Fibonacci for n > 30.</strong>
+            </div>
+            
+            <h3>The Problem: Redundant Computation</h3>
+            
+            <p>The call tree for fib(5) reveals the problem:</p>
+            
+            <div class="example">
+                <div class="example-title">Call Tree for fib(5)</div>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; overflow-x: auto;">
+                        fib(5)
+                       /      \
+                   fib(4)      fib(3)      ← fib(3) computed TWICE
+                  /     \      /     \
+              fib(3)  fib(2)  fib(2)  fib(1)
+              /    \    |
+          fib(2)  fib(1) |
+            |           |
+         fib(1) fib(0)  fib(1) fib(0)
+
+Count of redundant computations:
+- fib(3): computed 2 times
+- fib(2): computed 3 times  
+- fib(1): computed 5 times
+- fib(0): computed 3 times
+                </pre>
+            </div>
+            
+            <h3>Solution 1: Memoization</h3>
+            
+            <p><span class="term">Memoization</span> (not "memorization") is a technique where we cache the results of expensive function calls and return the cached result when the same inputs occur again.</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.13 — Fibonacci with Manual Memoization</span>
+                    <button class="code-figure-run" onclick="runCode('code13')">▶ Run</button>
+                </div>
+                <textarea id="code13" spellcheck="false"># Fibonacci with manual memoization
+def fib_memo(n, cache=None):
+    """
+    Fibonacci with memoization (caching).
+    
+    Time Complexity: O(n) — each value computed once
+    Space Complexity: O(n) — cache + stack
+    """
+    # Initialize cache on first call
+    if cache is None:
+        cache = {}
+    
+    # Check if already computed
+    if n in cache:
+        return cache[n]
+    
+    # Base cases
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    
+    # Compute, cache, and return
+    result = fib_memo(n - 1, cache) + fib_memo(n - 2, cache)
+    cache[n] = result
+    return result
+
+# Test
+print("Memoized Fibonacci:")
+for n in [10, 20, 30, 40, 50]:
+    result = fib_memo(n)
+    print(f"  fib({n}) = {result}")
+
+print("\n✓ No exponential slowdown with memoization!")</textarea>
+                <div class="code-figure-output" id="outputcode13"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.13:</strong> Memoization reduces Fibonacci from O(2<sup>n</sup>) to O(n) by caching results. Each Fibonacci number is computed only once.
+                </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.14 — Fibonacci with @lru_cache Decorator</span>
+                    <button class="code-figure-run" onclick="runCode('code14')">▶ Run</button>
+                </div>
+                <textarea id="code14" spellcheck="false"># Python provides automatic memoization via functools
+from functools import lru_cache
+
+@lru_cache(maxsize=None)  # Cache unlimited results
+def fib_cached(n):
+    """
+    Fibonacci with automatic caching via decorator.
+    This is the cleanest way to memoize in Python.
+    """
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib_cached(n - 1) + fib_cached(n - 2)
+
+# Test with large values
+print("Fibonacci with @lru_cache:")
+for n in [50, 100, 200, 300]:
+    result = fib_cached(n)
+    digits = len(str(result))
+    print(f"  fib({n}) has {digits} digits")
+
+# Show first 100 digits of fib(300)
+big_fib = str(fib_cached(300))
+print(f"\nFirst 60 chars of fib(300):")
+print(f"  {big_fib[:60]}...")
+
+# Clear cache if needed
+# fib_cached.cache_clear()</textarea>
+                <div class="code-figure-output" id="outputcode14"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.14:</strong> The <code>@lru_cache</code> decorator from functools provides automatic memoization. This is the recommended approach in Python.
+                </div>
+            </div>
+            
+            <h3>Solution 2: Iterative (Best for Fibonacci)</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.15 — Fibonacci: Iterative (Optimal)</span>
+                    <button class="code-figure-run" onclick="runCode('code15')">▶ Run</button>
+                </div>
+                <textarea id="code15" spellcheck="false"># Fibonacci: Iterative implementation (optimal)
+def fib_iterative(n):
+    """
+    Fibonacci using iteration.
+    
+    Time Complexity: O(n)
+    Space Complexity: O(1) — just two variables!
+    """
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    
+    prev, curr = 0, 1
+    for _ in range(2, n + 1):
+        prev, curr = curr, prev + curr
+    return curr
+
+# Compare all implementations
+print("Comparing Fibonacci implementations:")
+print("-" * 50)
+
+for n in [10, 20, 30]:
+    naive = fib_naive(n) if n <= 25 else "too slow"
+    memo = fib_memo(n)
+    cached = fib_cached(n)
+    iterative = fib_iterative(n)
+    
+    print(f"fib({n}):")
+    print(f"  Naive:     {naive}")
+    print(f"  Memoized:  {memo}")
+    print(f"  Cached:    {cached}")
+    print(f"  Iterative: {iterative}")
+    print()
+
+print("Verdict: Iterative is best for Fibonacci (O(1) space)")</textarea>
+                <div class="code-figure-output" id="outputcode15"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.15:</strong> The iterative solution is optimal for Fibonacci: O(n) time and O(1) space.
+                </div>
+            </div>
+            
+            <h3>Complexity Comparison Table</h3>
+            
+            <table>
+                <tr>
+                    <th>Implementation</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td>Naive recursive</td>
+                    <td>O(2<sup>n</sup>)</td>
+                    <td>O(n)</td>
+                    <td>Never use! Exponential time.</td>
+                </tr>
+                <tr>
+                    <td>Memoized recursive</td>
+                    <td>O(n)</td>
+                    <td>O(n)</td>
+                    <td>Good. Cache uses memory.</td>
+                </tr>
+                <tr>
+                    <td>Iterative</td>
+                    <td>O(n)</td>
+                    <td>O(1)</td>
+                    <td>Best! Minimal memory.</td>
+                </tr>
+                <tr>
+                    <td>Matrix exponentiation</td>
+                    <td>O(log n)</td>
+                    <td>O(1)</td>
+                    <td>Advanced technique.</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 6: RECURSION ON DATA STRUCTURES -->
+        <!-- ============================================== -->
+        <section id="datastructures">
+            <h2>6. Recursion on Data Structures</h2>
+            
+            <p>Recursion naturally processes collections by dividing them into a <span class="term">head</span> (first element) and <span class="term">tail</span> (remaining elements). This pattern appears constantly in functional programming and is essential for understanding how recursive data structures like linked lists and trees work.</p>
+            
+            <h3>Sum of a List</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.16 — Recursive Sum of List</span>
+                    <button class="code-figure-run" onclick="runCode('code16')">▶ Run</button>
+                </div>
+                <textarea id="code16" spellcheck="false"># Sum of list: recursive vs iterative
+def sum_recursive(lst):
+    """
+    Sum all elements in a list recursively.
+    
+    Base case: empty list → 0
+    Recursive case: first element + sum of rest
+    """
+    if not lst:  # Empty list (base case)
+        return 0
+    return lst[0] + sum_recursive(lst[1:])
+
+def sum_iterative(lst):
+    """Sum all elements iteratively."""
+    total = 0
+    for x in lst:
+        total += x
+    return total
+
+# Test with trace
+def sum_traced(lst, depth=0):
+    indent = "  " * depth
+    print(f"{indent}sum({lst})")
+    
+    if not lst:
+        print(f"{indent}→ return 0 (empty)")
+        return 0
+    
+    rest_sum = sum_traced(lst[1:], depth + 1)
+    result = lst[0] + rest_sum
+    print(f"{indent}→ return {lst[0]} + {rest_sum} = {result}")
+    return result
+
+print("Traced sum of [1, 2, 3, 4]:")
+print("-" * 40)
+total = sum_traced([1, 2, 3, 4])
+print("-" * 40)
+print(f"Total: {total}")</textarea>
+                <div class="code-figure-output" id="outputcode16"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.16:</strong> The list sum pattern: process the first element, recursively sum the rest, combine by adding.
+                </div>
+            </div>
+            
+            <h3>Finding Maximum</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.17 — Recursive Maximum</span>
+                    <button class="code-figure-run" onclick="runCode('code17')">▶ Run</button>
+                </div>
+                <textarea id="code17" spellcheck="false"># Find maximum element recursively
+def find_max(lst):
+    """
+    Find the maximum element in a non-empty list.
+    
+    Base case: single element → return it
+    Recursive case: max of (first, max of rest)
+    """
+    if len(lst) == 1:
+        return lst[0]
+    
+    # Get max of the rest
+    max_rest = find_max(lst[1:])
+    
+    # Compare first element with max of rest
+    if lst[0] > max_rest:
+        return lst[0]
+    else:
+        return max_rest
+
+# Test
+test_lists = [
+    [42],
+    [3, 1, 4, 1, 5, 9, 2, 6],
+    [-5, -2, -8, -1],
+    [100, 200, 150, 175]
+]
+
+print("Finding maximum recursively:")
+for lst in test_lists:
+    result = find_max(lst)
+    expected = max(lst)  # Verify with built-in
+    status = "✓" if result == expected else "✗"
+    print(f"  max({lst}) = {result} {status}")</textarea>
+                <div class="code-figure-output" id="outputcode17"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.17:</strong> Finding the maximum by comparing the first element with the maximum of the rest.
+                </div>
+            </div>
+            
+            <h3>Checking Membership</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.18 — Recursive Membership Check</span>
+                    <button class="code-figure-run" onclick="runCode('code18')">▶ Run</button>
+                </div>
+                <textarea id="code18" spellcheck="false"># Check if element exists in list
+def contains(lst, target):
+    """
+    Check if target is in lst (recursive version of 'in').
+    
+    Base case 1: empty list → False
+    Base case 2: first element matches → True
+    Recursive case: check rest of list
+    """
+    if not lst:
+        return False
+    if lst[0] == target:
+        return True
+    return contains(lst[1:], target)
+
+# Test
+numbers = [10, 20, 30, 40, 50]
+print(f"List: {numbers}")
+print()
+
+for target in [30, 35, 10, 50, 0]:
+    result = contains(numbers, target)
+    expected = target in numbers
+    status = "✓" if result == expected else "✗"
+    print(f"  contains({target}): {result} {status}")</textarea>
+                <div class="code-figure-output" id="outputcode18"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.18:</strong> Membership check with multiple base cases: found (True) or exhausted (False).
+                </div>
+            </div>
+            
+            <h3>Flattening Nested Lists</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.19 — Flattening Nested Structures</span>
+                    <button class="code-figure-run" onclick="runCode('code19')">▶ Run</button>
+                </div>
+                <textarea id="code19" spellcheck="false"># Flatten arbitrarily nested lists
+def flatten(nested):
+    """
+    Flatten nested lists into a single flat list.
+    
+    Example: [1, [2, [3, 4], 5], 6] → [1, 2, 3, 4, 5, 6]
+    """
+    result = []
+    for item in nested:
+        if isinstance(item, list):
+            # Item is a list: recursively flatten it
+            result.extend(flatten(item))
+        else:
+            # Item is not a list: add directly
+            result.append(item)
+    return result
+
+# Test with various nesting levels
+test_cases = [
+    [1, 2, 3],                           # Already flat
+    [1, [2, 3], 4],                       # One level
+    [1, [2, [3, [4, [5]]]]],              # Deep nesting
+    [[[[1]]], [[[2]]], [[[3]]]],          # Very nested
+    [1, [2, 3], [4, [5, 6]], 7, [8]],     # Mixed
+]
+
+print("Flattening nested lists:")
+for nested in test_cases:
+    flat = flatten(nested)
+    print(f"  {nested}")
+    print(f"  → {flat}")
+    print()</textarea>
+                <div class="code-figure-output" id="outputcode19"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.19:</strong> Flattening handles arbitrary nesting depth by recursing whenever we encounter a sublist.
+                </div>
+            </div>
+            
+            <h3>Binary Search</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.20 — Recursive Binary Search</span>
+                    <button class="code-figure-run" onclick="runCode('code20')">▶ Run</button>
+                </div>
+                <textarea id="code20" spellcheck="false"># Binary search: recursive implementation
+def binary_search(arr, target, low=0, high=None):
+    """
+    Search for target in sorted array using binary search.
+    
+    Returns index if found, -1 if not found.
+    Time: O(log n) — halves search space each call
+    Space: O(log n) — stack depth
+    """
+    if high is None:
+        high = len(arr) - 1
+    
+    # Base case: empty range
+    if low > high:
+        return -1
+    
+    mid = (low + high) // 2
+    
+    if arr[mid] == target:
+        return mid                    # Found it!
+    elif arr[mid] > target:
+        return binary_search(arr, target, low, mid - 1)    # Search left
+    else:
+        return binary_search(arr, target, mid + 1, high)   # Search right
+
+# Test
+sorted_arr = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+print(f"Sorted array: {sorted_arr}")
+print()
+
+for target in [23, 2, 91, 50, 0, 100]:
+    idx = binary_search(sorted_arr, target)
+    if idx != -1:
+        print(f"  binary_search({target}) = index {idx} (arr[{idx}] = {sorted_arr[idx]})")
+    else:
+        print(f"  binary_search({target}) = -1 (not found)")</textarea>
+                <div class="code-figure-output" id="outputcode20"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.20:</strong> Binary search recursively halves the search space, achieving O(log n) time complexity.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 7: STRINGS -->
+        <!-- ============================================== -->
+        <section id="strings">
+            <h2>7. Recursion on Strings</h2>
+            
+            <p>Strings work like lists for recursion: process the first character, then recurse on the rest. Python's string slicing makes this natural.</p>
+            
+            <h3>String Reversal</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.21 — Recursive String Reversal</span>
+                    <button class="code-figure-run" onclick="runCode('code21')">▶ Run</button>
+                </div>
+                <textarea id="code21" spellcheck="false"># Reverse a string recursively
+def reverse_string(s):
+    """
+    Reverse a string recursively.
+    
+    Base case: empty or single char → return as-is
+    Recursive case: reverse(rest) + first_char
+    """
+    if len(s) <= 1:
+        return s
+    return reverse_string(s[1:]) + s[0]
+
+# Test
+test_strings = ["", "a", "ab", "hello", "Python", "racecar"]
+
+print("String reversal:")
+for s in test_strings:
+    rev = reverse_string(s)
+    expected = s[::-1]  # Verify with slicing
+    status = "✓" if rev == expected else "✗"
+    print(f"  '{s}' → '{rev}' {status}")</textarea>
+                <div class="code-figure-output" id="outputcode21"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.21:</strong> String reversal by moving the first character to the end of the reversed rest.
+                </div>
+            </div>
+            
+            <h3>Palindrome Check</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.22 — Recursive Palindrome Check</span>
+                    <button class="code-figure-run" onclick="runCode('code22')">▶ Run</button>
+                </div>
+                <textarea id="code22" spellcheck="false"># Check if string is a palindrome
+def is_palindrome(s):
+    """
+    Check if s reads the same forwards and backwards.
+    Ignores case and spaces for natural text.
+    """
+    # Normalize: lowercase, no spaces
+    s = s.lower().replace(" ", "")
+    
+    # Base case: empty or single char is palindrome
+    if len(s) <= 1:
+        return True
+    
+    # Check first and last characters
+    if s[0] != s[-1]:
+        return False
+    
+    # Recurse on middle portion
+    return is_palindrome(s[1:-1])
+
+# Test
+test_cases = [
+    ("racecar", True),
+    ("hello", False),
+    ("A man a plan a canal Panama", True),
+    ("Was it a car or a cat I saw", True),
+    ("Python", False),
+    ("", True),
+    ("a", True),
+]
+
+print("Palindrome check:")
+for s, expected in test_cases:
+    result = is_palindrome(s)
+    status = "✓" if result == expected else "✗"
+    print(f"  '{s}' → {result} {status}")</textarea>
+                <div class="code-figure-output" id="outputcode22"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.22:</strong> Palindrome check compares first and last characters, then recurses on the middle.
+                </div>
+            </div>
+            
+            <h3>Count Character Occurrences</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.23 — Count Characters Recursively</span>
+                    <button class="code-figure-run" onclick="runCode('code23')">▶ Run</button>
+                </div>
+                <textarea id="code23" spellcheck="false"># Count occurrences of a character in a string
+def count_char(s, char):
+    """
+    Count how many times char appears in s.
+    """
+    if not s:
+        return 0
+    
+    # Count 1 if first char matches, else 0
+    count = 1 if s[0] == char else 0
+    
+    # Add count from rest of string
+    return count + count_char(s[1:], char)
+
+# Test
+text = "mississippi"
+print(f"String: '{text}'")
+print()
+
+for char in ['m', 'i', 's', 'p', 'x']:
+    result = count_char(text, char)
+    expected = text.count(char)  # Verify with built-in
+    status = "✓" if result == expected else "✗"
+    print(f"  count('{char}'): {result} {status}")</textarea>
+                <div class="code-figure-output" id="outputcode23"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.23:</strong> Counting characters by checking each position and summing recursively.
+                </div>
+            </div>
+            
+            <h3>String Length Without len()</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.24 — Recursive String Length</span>
+                    <button class="code-figure-run" onclick="runCode('code24')">▶ Run</button>
+                </div>
+                <textarea id="code24" spellcheck="false"># Calculate string length without using len()
+def string_length(s):
+    """
+    Calculate the length of a string recursively.
+    
+    Base case: empty string → 0
+    Recursive case: 1 + length of rest
+    """
+    if s == "":
+        return 0
+    return 1 + string_length(s[1:])
+
+# Test
+test_strings = ["", "a", "hello", "Python programming", "12345"]
+
+print("String length (recursive):")
+for s in test_strings:
+    result = string_length(s)
+    expected = len(s)
+    status = "✓" if result == expected else "✗"
+    print(f"  len('{s}') = {result} {status}")</textarea>
+                <div class="code-figure-output" id="outputcode24"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.24:</strong> Counting length by adding 1 for each character until we reach the empty string.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 8: ANALYZING COMPLEXITY -->
+        <!-- ============================================== -->
+        <section id="analysis">
+            <h2>8. Analyzing Recursive Complexity</h2>
+            
+            <p>Analyzing recursive algorithms requires understanding <span class="term">recurrence relations</span>—equations that express the cost of a computation in terms of the cost of smaller subcomputations.</p>
+            
+            <h3>Common Recurrence Patterns</h3>
+            
+            <table>
+                <tr>
+                    <th>Recurrence</th>
+                    <th>Solution</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>T(n) = T(n-1) + O(1)</td>
+                    <td>O(n)</td>
+                    <td>Factorial, list sum</td>
+                </tr>
+                <tr>
+                    <td>T(n) = T(n-1) + O(n)</td>
+                    <td>O(n²)</td>
+                    <td>Selection sort</td>
+                </tr>
+                <tr>
+                    <td>T(n) = T(n/2) + O(1)</td>
+                    <td>O(log n)</td>
+                    <td>Binary search</td>
+                </tr>
+                <tr>
+                    <td>T(n) = T(n/2) + O(n)</td>
+                    <td>O(n)</td>
+                    <td>Finding median</td>
+                </tr>
+                <tr>
+                    <td>T(n) = 2T(n/2) + O(1)</td>
+                    <td>O(n)</td>
+                    <td>Tree traversal</td>
+                </tr>
+                <tr>
+                    <td>T(n) = 2T(n/2) + O(n)</td>
+                    <td>O(n log n)</td>
+                    <td>Merge sort</td>
+                </tr>
+                <tr>
+                    <td>T(n) = T(n-1) + T(n-2)</td>
+                    <td>O(2<sup>n</sup>)</td>
+                    <td>Naive Fibonacci</td>
+                </tr>
+                <tr>
+                    <td>T(n) = 2T(n-1)</td>
+                    <td>O(2<sup>n</sup>)</td>
+                    <td>Power set, permutations</td>
+                </tr>
+            </table>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.25 — Counting Recursive Calls</span>
+                    <button class="code-figure-run" onclick="runCode('code25')">▶ Run</button>
+                </div>
+                <textarea id="code25" spellcheck="false"># Count calls to verify complexity analysis
+
+# O(n) - Linear recursion
+def linear_calls(n, counter):
+    counter['calls'] += 1
+    if n <= 0:
+        return
+    linear_calls(n - 1, counter)
+
+# O(log n) - Halving recursion
+def log_calls(n, counter):
+    counter['calls'] += 1
+    if n <= 1:
+        return
+    log_calls(n // 2, counter)
+
+# O(2^n) - Exponential recursion
+def exp_calls(n, counter):
+    counter['calls'] += 1
+    if n <= 0:
+        return
+    exp_calls(n - 1, counter)
+    exp_calls(n - 1, counter)
+
+print("Call counts by recursion type:")
+print("-" * 50)
+print(f"{'n':<8} {'Linear O(n)':<15} {'Log O(log n)':<15} {'Exp O(2^n)'}")
+print("-" * 50)
+
+for n in [5, 10, 15, 20]:
+    c1, c2, c3 = {'calls': 0}, {'calls': 0}, {'calls': 0}
+    linear_calls(n, c1)
+    log_calls(n, c2)
+    if n <= 20:
+        exp_calls(n, c3)
+        exp_str = str(c3['calls'])
+    else:
+        exp_str = "too many"
+    
+    print(f"{n:<8} {c1['calls']:<15} {c2['calls']:<15} {exp_str}")
+
+print("-" * 50)</textarea>
+                <div class="code-figure-output" id="outputcode25"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.25:</strong> Empirical verification of time complexity by counting recursive calls.
+                </div>
+            </div>
+            
+            <h3>Space Complexity</h3>
+            
+            <p>Recursive space complexity is determined by the <strong>maximum depth</strong> of the call stack multiplied by the space per frame. Even exponential-time algorithms like naive Fibonacci have only O(n) space because the stack never gets deeper than n.</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.26 — Measuring Stack Depth</span>
+                    <button class="code-figure-run" onclick="runCode('code26')">▶ Run</button>
+                </div>
+                <textarea id="code26" spellcheck="false"># Track maximum stack depth
+def track_depth(n, current=1, max_depth=None):
+    if max_depth is None:
+        max_depth = [0]
+    
+    max_depth[0] = max(max_depth[0], current)
+    
+    if n <= 1:
+        return max_depth[0]
+    
+    return track_depth(n - 1, current + 1, max_depth)
+
+# For binary recursion, depth is still O(n), not O(2^n)
+def binary_depth(n, current=1, max_depth=None):
+    if max_depth is None:
+        max_depth = [0]
+    
+    max_depth[0] = max(max_depth[0], current)
+    
+    if n <= 0:
+        return max_depth[0]
+    
+    # Even with two recursive calls, only one path is active at a time
+    binary_depth(n - 1, current + 1, max_depth)
+    binary_depth(n - 1, current + 1, max_depth)
+    
+    return max_depth[0]
+
+print("Stack depth analysis:")
+print("-" * 40)
+print(f"{'n':<10} {'Linear':<15} {'Binary'}")
+print("-" * 40)
+
+for n in [5, 10, 15, 20]:
+    linear = track_depth(n)
+    binary = binary_depth(n)
+    print(f"{n:<10} {linear:<15} {binary}")
+
+print("-" * 40)
+print("Note: Binary recursion depth = n, NOT 2^n!")
+print("Only one branch is active at any time.")</textarea>
+                <div class="code-figure-output" id="outputcode26"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.26:</strong> Stack depth for binary recursion is still O(n) because only one path through the call tree is active at any moment.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 9: RECURSION VS ITERATION -->
+        <!-- ============================================== -->
+        <section id="comparison">
+            <h2>9. Recursion vs Iteration</h2>
+            
+            <p>Any recursive algorithm can be converted to iteration, and vice versa. The choice depends on clarity, efficiency, and the nature of the problem.</p>
+            
+            <h3>When to Use Recursion</h3>
+            
+            <ul>
+                <li><strong>Tree/graph structures:</strong> Traversal is naturally recursive</li>
+                <li><strong>Divide and conquer:</strong> Mergesort, quicksort, binary search</li>
+                <li><strong>Mathematical definitions:</strong> Factorial, Fibonacci, combinations</li>
+                <li><strong>Nested structures:</strong> Parsing, flattening, XML/JSON processing</li>
+                <li><strong>Backtracking:</strong> Puzzles, constraint satisfaction</li>
+            </ul>
+            
+            <h3>When to Use Iteration</h3>
+            
+            <ul>
+                <li><strong>Simple loops:</strong> Summing, counting, transforming sequences</li>
+                <li><strong>Performance critical:</strong> Avoiding function call overhead</li>
+                <li><strong>Deep recursion:</strong> When stack overflow is a risk</li>
+                <li><strong>Tail recursion:</strong> (Python doesn't optimize this anyway)</li>
+            </ul>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.27 — Converting Recursion to Iteration</span>
+                    <button class="code-figure-run" onclick="runCode('code27')">▶ Run</button>
+                </div>
+                <textarea id="code27" spellcheck="false"># Converting between recursion and iteration
+
+# Example 1: Factorial
+def fact_recursive(n):
+    if n <= 1:
+        return 1
+    return n * fact_recursive(n - 1)
+
+def fact_iterative(n):
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result
+
+# Example 2: Sum of list
+def sum_recursive(lst):
+    if not lst:
+        return 0
+    return lst[0] + sum_recursive(lst[1:])
+
+def sum_iterative(lst):
+    total = 0
+    for x in lst:
+        total += x
+    return total
+
+# Example 3: Reverse string
+def rev_recursive(s):
+    if len(s) <= 1:
+        return s
+    return rev_recursive(s[1:]) + s[0]
+
+def rev_iterative(s):
+    result = ""
+    for char in s:
+        result = char + result
+    return result
+
+# Test all pairs
+print("Recursive vs Iterative:")
+print("-" * 50)
+
+# Factorial
+print(f"factorial(10):")
+print(f"  Recursive: {fact_recursive(10)}")
+print(f"  Iterative: {fact_iterative(10)}")
+
+# Sum
+lst = [1, 2, 3, 4, 5]
+print(f"\nsum({lst}):")
+print(f"  Recursive: {sum_recursive(lst)}")
+print(f"  Iterative: {sum_iterative(lst)}")
+
+# Reverse
+s = "Python"
+print(f"\nreverse('{s}'):")
+print(f"  Recursive: '{rev_recursive(s)}'")
+print(f"  Iterative: '{rev_iterative(s)}'")</textarea>
+                <div class="code-figure-output" id="outputcode27"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.27:</strong> Side-by-side comparison of recursive and iterative implementations.
+                </div>
+            </div>
+            
+            <h3>Using an Explicit Stack</h3>
+            
+            <p>Any recursion can be converted to iteration using an explicit stack data structure:</p>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.28 — Explicit Stack for Recursion</span>
+                    <button class="code-figure-run" onclick="runCode('code28')">▶ Run</button>
+                </div>
+                <textarea id="code28" spellcheck="false"># Converting recursion to iteration with explicit stack
+
+# Factorial with explicit stack
+def fact_explicit_stack(n):
+    """Factorial using explicit stack (simulating call stack)."""
+    stack = []
+    
+    # Push phase: simulate recursive descent
+    while n > 1:
+        stack.append(n)
+        n -= 1
+    
+    # Pop phase: simulate returns
+    result = 1
+    while stack:
+        result *= stack.pop()
+    
+    return result
+
+# Test
+print("Factorial with explicit stack:")
+for n in [1, 5, 10]:
+    result = fact_explicit_stack(n)
+    expected = fact_recursive(n)
+    status = "✓" if result == expected else "✗"
+    print(f"  {n}! = {result} {status}")
+
+# This technique is essential for tree traversal (Week 6)
+# where we might need iterative versions to avoid stack overflow</textarea>
+                <div class="code-figure-output" id="outputcode28"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.28:</strong> Using an explicit stack to simulate recursion. This technique becomes important for tree and graph algorithms.
+                </div>
+            </div>
+            
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Recursion</th>
+                    <th>Iteration</th>
+                </tr>
+                <tr>
+                    <td>Code clarity</td>
+                    <td>Often cleaner for recursive problems</td>
+                    <td>May be verbose for trees/graphs</td>
+                </tr>
+                <tr>
+                    <td>Space</td>
+                    <td>O(depth) stack frames</td>
+                    <td>O(1) or explicit stack on heap</td>
+                </tr>
+                <tr>
+                    <td>Function overhead</td>
+                    <td>Higher (call/return cost)</td>
+                    <td>Lower (no call overhead)</td>
+                </tr>
+                <tr>
+                    <td>Stack overflow risk</td>
+                    <td>Yes, for deep recursion</td>
+                    <td>No (if using heap for stack)</td>
+                </tr>
+                <tr>
+                    <td>Debugging</td>
+                    <td>Stack trace helpful</td>
+                    <td>May need to track state manually</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 10: COMMON PITFALLS -->
+        <!-- ============================================== -->
+        <section id="pitfalls">
+            <h2>10. Common Pitfalls</h2>
+            
+            <h3>Pitfall 1: Missing Base Case</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.29 — Missing Base Case</span>
+                    <button class="code-figure-run" onclick="runCode('code29')">▶ Run</button>
+                </div>
+                <textarea id="code29" spellcheck="false"># BAD: No base case - infinite recursion!
+def bad_countdown(n):
+    print(n)
+    bad_countdown(n - 1)  # Never stops!
+
+# GOOD: Has base case
+def good_countdown(n):
+    if n <= 0:            # BASE CASE!
+        print("Blastoff!")
+        return
+    print(n)
+    good_countdown(n - 1)
+
+print("Good countdown:")
+good_countdown(3)
+print("\nbad_countdown would run forever (RecursionError)")</textarea>
+                <div class="code-figure-output" id="outputcode29"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.29:</strong> Always include a base case to prevent infinite recursion.
+                </div>
+            </div>
+            
+            <h3>Pitfall 2: Not Making Progress</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.30 — Not Making Progress</span>
+                    <button class="code-figure-run" onclick="runCode('code30')">▶ Run</button>
+                </div>
+                <textarea id="code30" spellcheck="false"># BAD: Recursive call doesn't make progress
+def bad_sum(lst):
+    if not lst:
+        return 0
+    return lst[0] + bad_sum(lst)  # WRONG! Should be lst[1:]
+
+# GOOD: Each call processes smaller list
+def good_sum(lst):
+    if not lst:
+        return 0
+    return lst[0] + good_sum(lst[1:])  # lst[1:] is smaller
+
+print("Good sum:")
+print(f"  sum([1,2,3,4,5]) = {good_sum([1,2,3,4,5])}")
+print("\nbad_sum would recurse forever on the same list!")</textarea>
+                <div class="code-figure-output" id="outputcode30"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.30:</strong> Each recursive call must make progress toward the base case.
+                </div>
+            </div>
+            
+            <h3>Pitfall 3: Wrong Base Case</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.31 — Wrong Base Case</span>
+                    <button class="code-figure-run" onclick="runCode('code31')">▶ Run</button>
+                </div>
+                <textarea id="code31" spellcheck="false"># BAD: Base case doesn't cover all terminating inputs
+def bad_factorial(n):
+    if n == 1:          # What about n=0?
+        return 1
+    return n * bad_factorial(n - 1)
+
+# GOOD: Base case handles all valid terminating inputs
+def good_factorial(n):
+    if n <= 1:          # Handles both 0 and 1
+        return 1
+    return n * good_factorial(n - 1)
+
+print("Factorial edge cases:")
+print(f"  good_factorial(0) = {good_factorial(0)}")
+print(f"  good_factorial(1) = {good_factorial(1)}")
+print(f"  good_factorial(5) = {good_factorial(5)}")
+print("\nbad_factorial(0) would cause infinite recursion!")</textarea>
+                <div class="code-figure-output" id="outputcode31"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.31:</strong> Base cases must handle all valid terminating inputs.
+                </div>
+            </div>
+            
+            <h3>Pitfall 4: Forgetting to Return</h3>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 2.32 — Forgetting to Return</span>
+                    <button class="code-figure-run" onclick="runCode('code32')">▶ Run</button>
+                </div>
+                <textarea id="code32" spellcheck="false"># BAD: Forgetting to return the recursive result
+def bad_factorial(n):
+    if n <= 1:
+        return 1
+    bad_factorial(n - 1) * n  # Missing return!
+
+# GOOD: Return the result
+def good_factorial(n):
+    if n <= 1:
+        return 1
+    return n * good_factorial(n - 1)  # Don't forget return!
+
+print("Return values:")
+print(f"  good_factorial(5) = {good_factorial(5)}")
+print(f"  bad_factorial(5) = {bad_factorial(5)}")  # Returns None!</textarea>
+                <div class="code-figure-output" id="outputcode32"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 2.32:</strong> Always return the result of recursive calls. Forgetting <code>return</code> gives <code>None</code>.
+                </div>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-title">Key Takeaways</div>
+                <ul>
+                    <li><strong>Recursion</strong> solves problems by breaking them into smaller versions of themselves</li>
+                    <li>Every recursive function needs a <strong>base case</strong> and a <strong>recursive case</strong></li>
+                    <li>The <strong>call stack</strong> tracks active function calls; deep recursion can overflow it</li>
+                    <li><strong>Memoization</strong> eliminates redundant computation (e.g., Fibonacci O(2<sup>n</sup>) → O(n))</li>
+                    <li>Common recurrences: T(n-1)+O(1)=O(n), T(n/2)+O(1)=O(log n), 2T(n/2)+O(n)=O(n log n)</li>
+                    <li>Recursion and iteration are interchangeable; choose based on clarity and efficiency</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 11: EXERCISES -->
+        <!-- ============================================== -->
+        <section id="exercises">
+            <h2>11. Exercises</h2>
+            
+            <!-- Exercise 1 -->
+            <div class="exercise" data-exercise="ex1">
+                <div class="exercise-title">Exercise 1: Power Function</div>
+                <p class="exercise-description">Write <code>power(base, exp)</code> that calculates base<sup>exp</sup> recursively without using the <code>**</code> operator. Assume exp ≥ 0.</p>
+                <p class="answer">(Expected: power(2, 10) = 1024, power(3, 4) = 81, power(5, 0) = 1)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex1', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex1-hint1">
+                        <strong>Hint 1 - Base Case:</strong><br>
+                        Any number raised to the power of 0 equals 1.<br>
+                        <code>if exp == 0: return 1</code>
+                    </div>
+                    <div class="hint-content" id="ex1-hint2">
+                        <strong>Hint 2 - Recursive Case:</strong><br>
+                        <code>base^exp = base × base^(exp-1)</code><br>
+                        Example: 2³ = 2 × 2² = 2 × 2 × 2¹ = 2 × 2 × 2 × 2⁰
+                    </div>
+                    <div class="hint-content" id="ex1-hint3">
+                        <strong>Hint 3 - Structure:</strong><br>
+                        <code>return base * power(base, exp - 1)</code>
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 1 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex1')">▶ Run</button>
+                </div>
+                <textarea id="ex1" spellcheck="false"># Power Function - Calculate base^exp recursively
+
+def power(base, exp):
+    # Your code here
+    pass
+
+# Test your function (uncomment these lines)
+# print(f"power(2, 10) = {power(2, 10)}")   # Expected: 1024
+# print(f"power(3, 4) = {power(3, 4)}")     # Expected: 81
+# print(f"power(5, 0) = {power(5, 0)}")     # Expected: 1
+# print(f"power(7, 1) = {power(7, 1)}")     # Expected: 7</textarea>
+                <div class="code-figure-output" id="outputex1"></div>
+            </div>
+            
+            <!-- Exercise 2 -->
+            <div class="exercise" data-exercise="ex2">
+                <div class="exercise-title">Exercise 2: Sum of Digits</div>
+                <p class="exercise-description">Write <code>digit_sum(n)</code> that returns the sum of all digits in a positive integer n.</p>
+                <p class="answer">(Expected: digit_sum(12345) = 15, digit_sum(9999) = 36, digit_sum(7) = 7)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex2', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex2-hint1">
+                        <strong>Hint 1 - Extract Last Digit:</strong><br>
+                        Use modulo to get the last digit: <code>n % 10</code><br>
+                        Example: 12345 % 10 = 5
+                    </div>
+                    <div class="hint-content" id="ex2-hint2">
+                        <strong>Hint 2 - Remove Last Digit:</strong><br>
+                        Use integer division: <code>n // 10</code><br>
+                        Example: 12345 // 10 = 1234
+                    </div>
+                    <div class="hint-content" id="ex2-hint3">
+                        <strong>Hint 3 - Base Case:</strong><br>
+                        When n is a single digit (n < 10), return n itself.<br>
+                        <code>digit_sum(12345) = 5 + digit_sum(1234)</code>
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 2 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex2')">▶ Run</button>
+                </div>
+                <textarea id="ex2" spellcheck="false"># Sum of Digits - Return the sum of all digits in n
+
+def digit_sum(n):
+    # Your code here
+    pass
+
+# Test your function (uncomment these lines)
+# print(f"digit_sum(12345) = {digit_sum(12345)}")  # Expected: 15
+# print(f"digit_sum(9999) = {digit_sum(9999)}")    # Expected: 36
+# print(f"digit_sum(7) = {digit_sum(7)}")          # Expected: 7
+# print(f"digit_sum(100) = {digit_sum(100)}")      # Expected: 1</textarea>
+                <div class="code-figure-output" id="outputex2"></div>
+            </div>
+            
+            <!-- Exercise 3 -->
+            <div class="exercise" data-exercise="ex3">
+                <div class="exercise-title">Exercise 3: GCD (Euclid's Algorithm)</div>
+                <p class="exercise-description">Write <code>gcd(a, b)</code> to find the greatest common divisor using Euclid's algorithm: gcd(a, b) = gcd(b, a % b), with base case gcd(a, 0) = a.</p>
+                <p class="answer">(Expected: gcd(48, 18) = 6, gcd(100, 25) = 25, gcd(17, 13) = 1)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex3', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex3-hint1">
+                        <strong>Hint 1 - Base Case:</strong><br>
+                        When b equals 0, return a.<br>
+                        <code>if b == 0: return a</code>
+                    </div>
+                    <div class="hint-content" id="ex3-hint2">
+                        <strong>Hint 2 - Euclid's Formula:</strong><br>
+                        <code>gcd(a, b) = gcd(b, a % b)</code><br>
+                        The remainder replaces the larger number.
+                    </div>
+                    <div class="hint-content" id="ex3-hint3">
+                        <strong>Hint 3 - Trace Example:</strong><br>
+                        gcd(48, 18) → gcd(18, 12) → gcd(12, 6) → gcd(6, 0) = 6
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 3 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex3')">▶ Run</button>
+                </div>
+                <textarea id="ex3" spellcheck="false"># GCD using Euclid's Algorithm
+
+def gcd(a, b):
+    # Your code here
+    pass
+
+# Test your function (uncomment these lines)
+# print(f"gcd(48, 18) = {gcd(48, 18)}")    # Expected: 6
+# print(f"gcd(100, 25) = {gcd(100, 25)}")  # Expected: 25
+# print(f"gcd(17, 13) = {gcd(17, 13)}")    # Expected: 1
+# print(f"gcd(54, 24) = {gcd(54, 24)}")    # Expected: 6</textarea>
+                <div class="code-figure-output" id="outputex3"></div>
+            </div>
+            
+            <!-- Exercise 4 -->
+            <div class="exercise" data-exercise="ex4">
+                <div class="exercise-title">Exercise 4: Count Occurrences in List</div>
+                <p class="exercise-description">Write <code>count_occurrences(lst, target)</code> that counts how many times target appears in lst, recursively (without using <code>.count()</code>).</p>
+                <p class="answer">(Expected: count_occurrences([1,2,3,2,4,2], 2) = 3, count_occurrences([1,1,1,1], 1) = 4)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex4', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex4-hint1">
+                        <strong>Hint 1 - Base Case:</strong><br>
+                        Empty list has 0 occurrences.<br>
+                        <code>if not lst: return 0</code>
+                    </div>
+                    <div class="hint-content" id="ex4-hint2">
+                        <strong>Hint 2 - Check First Element:</strong><br>
+                        If <code>lst[0] == target</code>, add 1; otherwise add 0.<br>
+                        Use a conditional expression: <code>(1 if lst[0] == target else 0)</code>
+                    </div>
+                    <div class="hint-content" id="ex4-hint3">
+                        <strong>Hint 3 - Recurse on Rest:</strong><br>
+                        Add the count from the rest of the list: <code>lst[1:]</code><br>
+                        <code>return (match) + count_occurrences(lst[1:], target)</code>
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 4 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex4')">▶ Run</button>
+                </div>
+                <textarea id="ex4" spellcheck="false"># Count Occurrences - Count target appearances in list recursively
+
+def count_occurrences(lst, target):
+    # Your code here
+    pass
+
+# Test your function (uncomment these lines)
+# print(f"count_occurrences([1,2,3,2,4,2], 2) = {count_occurrences([1,2,3,2,4,2], 2)}")  # Expected: 3
+# print(f"count_occurrences([1,1,1,1], 1) = {count_occurrences([1,1,1,1], 1)}")          # Expected: 4
+# print(f"count_occurrences([1,2,3], 5) = {count_occurrences([1,2,3], 5)}")              # Expected: 0
+# print(f"count_occurrences([], 1) = {count_occurrences([], 1)}")                        # Expected: 0</textarea>
+                <div class="code-figure-output" id="outputex4"></div>
+            </div>
+            
+            <!-- Exercise 5 -->
+            <div class="exercise" data-exercise="ex5">
+                <div class="exercise-title">Exercise 5: Tower of Hanoi</div>
+                <p class="exercise-description">Write <code>hanoi(n, source, target, auxiliary)</code> that prints the moves needed to solve the Tower of Hanoi puzzle with n disks.</p>
+                <p class="answer">(Expected: hanoi(3, 'A', 'C', 'B') prints 7 moves, hanoi(4, ...) prints 15 moves)</p>
+                
+                <div class="hint-section">
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 1)">💡 Hint 1</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 2)">💡 Hint 2</button>
+                    <button class="hint-toggle" onclick="toggleHint('ex5', 3)">💡 Hint 3</button>
+                    
+                    
+                    <div class="hint-content" id="ex5-hint1">
+                        <strong>Hint 1 - Base Case:</strong><br>
+                        When n == 1, just move the single disk directly:<br>
+                        <code>print(f"Move disk from {source} to {target}")</code>
+                    </div>
+                    <div class="hint-content" id="ex5-hint2">
+                        <strong>Hint 2 - The Three-Step Strategy:</strong><br>
+                        To move n disks from A to C using B:<br>
+                        1. Move n-1 disks from A to B (using C)<br>
+                        2. Move disk n from A to C<br>
+                        3. Move n-1 disks from B to C (using A)
+                    </div>
+                    <div class="hint-content" id="ex5-hint3">
+                        <strong>Hint 3 - Recursive Calls:</strong><br>
+                        <code>hanoi(n-1, source, auxiliary, target)</code> - step 1<br>
+                        <code>print(move)</code> - step 2<br>
+                        <code>hanoi(n-1, auxiliary, target, source)</code> - step 3
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Exercise 5 — Your Solution</span>
+                    <button class="code-figure-run" onclick="runCode('ex5')">▶ Run</button>
+                </div>
+                <textarea id="ex5" spellcheck="false"># Tower of Hanoi: Move n disks from source to target using auxiliary
+
+def hanoi(n, source, target, auxiliary):
+    # Your code here
+    pass
+
+# Test your function (uncomment these lines)
+# print("Tower of Hanoi with 3 disks:")
+# hanoi(3, 'A', 'C', 'B')</textarea>
+                <div class="code-figure-output" id="outputex5"></div>
+            </div>
+        </section>
+
+        <!-- SUBMIT SECTION -->
+        <section class="submit-section">
+            <h2>Submit Your Work</h2>
+            <p>After completing the exercises, submit your attendance below.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student ID</label>
+                    <input type="text" id="studentId" placeholder="Enter your student ID">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" placeholder="Enter your full name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email (@istun.edu.tr)</label>
+                    <input type="email" id="studentEmail" placeholder="your.email@istun.edu.tr">
+                </div>
+                <div class="form-group">
+                    <label>Class Code</label>
+                    <input type="text" id="classCode" placeholder="From instructor">
+                </div>
+            </div>
+            <input type="text" id="hp" class="hp" tabindex="-1" autocomplete="off">
+            <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
+            <div class="submit-status" id="submitStatus"></div>
+        </section>
+    </main>
+
+    <script>
+        const pageLoadTime = Date.now();
+        
+        // ============ HINT SYSTEM ============
+        function toggleHint(exerciseId, hintNum) {
+            const hintId = exerciseId + '-hint' + hintNum;
+            const hintEl = document.getElementById(hintId);
+            const btn = event.target;
+            
+            if (hintEl.classList.contains('show')) {
+                hintEl.classList.remove('show');
+                btn.classList.remove('revealed');
+            } else {
+                hintEl.classList.add('show');
+                btn.classList.add('revealed');
+            }
+        }
+        
+        // ============ ANTI-CHEAT SYSTEM ============
+        const originalExerciseCode = {};
+        const keystrokeCounts = {};
+        const pasteAttempts = {};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('textarea[id^="ex"]').forEach(textarea => {
+                const exId = textarea.id;
+                originalExerciseCode[exId] = textarea.value;
+                keystrokeCounts[exId] = 0;
+                pasteAttempts[exId] = 0;
+                
+                textarea.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    pasteAttempts[exId]++;
+                    const warning = document.createElement('div');
+                    warning.textContent = '⚠️ Paste is disabled. Please type your code.';
+                    warning.className = 'paste-warning';
+                    const existingWarning = textarea.parentElement.querySelector('.paste-warning');
+                    if (existingWarning) existingWarning.remove();
+                    textarea.parentElement.appendChild(warning);
+                    setTimeout(() => warning.remove(), 3000);
+                });
+                
+                textarea.addEventListener('drop', function(e) { e.preventDefault(); });
+                
+                textarea.addEventListener('keydown', function(e) {
+                    if (e.key.length === 1 || ['Backspace', 'Delete', 'Enter', 'Tab'].includes(e.key)) {
+                        keystrokeCounts[exId]++;
+                    }
+                });
+            });
+        });
+        
+        function isCodeModified(exId, currentCode) {
+            const original = originalExerciseCode[exId] || '';
+            const keystrokes = keystrokeCounts[exId] || 0;
+            const normalizedOriginal = original.trim().replace(/\s+/g, ' ');
+            const normalizedCurrent = currentCode.trim().replace(/\s+/g, ' ');
+            if (normalizedOriginal === normalizedCurrent) return false;
+            if (keystrokes < 20) return false;
+            const withoutComments = currentCode.replace(/#.*$/gm, '').replace(/"""[\s\S]*?"""/g, '').replace(/'''[\s\S]*?'''/g, '').trim();
+            const originalWithoutComments = original.replace(/#.*$/gm, '').replace(/"""[\s\S]*?"""/g, '').replace(/'''[\s\S]*?'''/g, '').trim();
+            if (withoutComments.length <= originalWithoutComments.length + 10) return false;
+            return true;
+        }
+        
+        // ============ PYODIDE CODE RUNNER ============
+        async function runCode(codeId) {
+            const codeEl = document.getElementById(codeId);
+            const outputEl = document.getElementById('output' + codeId);
+            const code = codeEl.value;
+            outputEl.classList.add('show');
+            outputEl.textContent = 'Loading Python...';
+            
+            try {
+                if (!window.pyodideReady) {
+                    if (typeof loadPyodide === 'undefined') {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
+                        document.head.appendChild(script);
+                        await new Promise((resolve, reject) => {
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            setTimeout(reject, 10000);
+                        });
+                    }
+                    outputEl.textContent = 'Initializing Python (first run may take a moment)...';
+                    window.pyodide = await loadPyodide();
+                    window.pyodideReady = true;
+                }
+                
+                outputEl.textContent = 'Running...';
+                window.pyodide.runPython(`
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+`);
+                try {
+                    window.pyodide.runPython(code);
+                } catch (pyErr) {
+                    outputEl.textContent = 'Error: ' + pyErr.message;
+                    return;
+                }
+                const output = window.pyodide.runPython('sys.stdout.getvalue()');
+                outputEl.textContent = output || '(no output)';
+            } catch(e) {
+                outputEl.textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        // ============ VALIDATION FUNCTIONS ============
+        function validateStudentId(id) {
+            if (id.length < 6 || id.length > 10) return false;
+            if (!/^\d+$/.test(id)) return false;
+            if (/^(\d)\1+$/.test(id)) return false;
+            return true;
+        }
+        
+        function validateName(name) {
+            if (name.length < 5) return false;
+            const words = name.trim().split(/\s+/);
+            if (words.length < 2) return false;
+            if (!/^[A-Za-zğüşıöçĞÜŞİÖÇ\s]+$/.test(name)) return false;
+            const blockedWords = ['test', 'fake', 'asdf', 'qwer', 'spam', 'admin', 'null', 'undefined', 'xxx', 'abc', 'aaa', 'deneme', 'örnek'];
+            const nameLower = name.toLowerCase();
+            for (const word of blockedWords) {
+                if (nameLower.includes(word)) return false;
+            }
+            return true;
+        }
+        
+        function validateEmail(email) {
+            return email.endsWith('@istun.edu.tr') && email.length > 15;
+        }
+        
+        // ============ SUBMIT FUNCTION ============
+        async function submitWork() {
+            const status = document.getElementById('submitStatus');
+            status.style.display = 'none';
+            
+            const studentId = document.getElementById('studentId').value.trim();
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentEmail = document.getElementById('studentEmail').value.trim().toLowerCase();
+            const classCode = document.getElementById('classCode').value.trim().toUpperCase();
+            const honeypot = document.getElementById('hp').value;
+            
+            if (honeypot) {
+                status.textContent = '❌ Submission rejected.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            const timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000);
+            if (timeOnPage < 60) {
+                status.textContent = '❌ Please spend more time reviewing the material.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            if (!studentId || !studentName || !studentEmail || !classCode) {
+                status.textContent = '❌ All fields are required.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            if (!validateStudentId(studentId)) {
+                status.textContent = '❌ Invalid Student ID (must be 6-10 digits).';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            if (!validateName(studentName)) {
+                status.textContent = '❌ Please use your real information.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            if (!validateEmail(studentEmail)) {
+                status.textContent = '❌ Use your @istun.edu.tr email.';
+                status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                return;
+            }
+            
+            status.textContent = '⏳ Collecting answers and submitting...';
+            status.style.cssText = 'display:block;background:rgba(124,58,237,0.2);color:#a78bfa';
+            
+            const answers = {};
+            document.querySelectorAll('.exercise[data-exercise]').forEach(exercise => {
+                const exId = exercise.getAttribute('data-exercise');
+                const titleEl = exercise.querySelector('.exercise-title');
+                const descEl = exercise.querySelector('.exercise-description');
+                const codeEl = document.getElementById(exId);
+                
+                if (codeEl) {
+                    const code = codeEl.value || '';
+                    const wasModified = isCodeModified(exId, code);
+                    answers[exId] = {
+                        title: titleEl ? titleEl.textContent.replace(/^Exercise \d+:\s*/, '').trim() : 'Exercise',
+                        description: descEl ? descEl.textContent.trim() : '',
+                        code: code,
+                        modified: wasModified,
+                        keystrokes: keystrokeCounts[exId] || 0,
+                        pasteAttempts: pasteAttempts[exId] || 0
+                    };
+                }
+            });
+            
+            let ipAddress = 'Unknown';
+            let location = 'Unknown';
+            try {
+                const ipResponse = await fetch('https://ipapi.co/json/', { timeout: 5000 });
+                if (ipResponse.ok) {
+                    const ipData = await ipResponse.json();
+                    ipAddress = ipData.ip || 'Unknown';
+                    location = (ipData.city && ipData.country_name) ? `${ipData.city}, ${ipData.country_name}` : (ipData.country_name || 'Unknown');
+                }
+            } catch (e) { console.log('Could not fetch IP info'); }
+            
+            const data = {
+                week: 'Week_02',
+                studentId: studentId,
+                studentName: studentName,
+                studentEmail: studentEmail,
+                classCode: classCode,
+                timeOnPage: timeOnPage,
+                answers: answers,
+                ipAddress: ipAddress,
+                location: location,
+                source: 'dsa-web'
+            };
+            
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbxepk2NvNg3Whad-WOPxdZI-mWnVJeNKCsZVspvk7Ku5YHC_oWv7376VrWLn_30nyI_vw/exec';
+            
+            fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(res => {
+                if (res.success) {
+                    status.textContent = '✅ Submitted successfully! Check your email for confirmation.';
+                    status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80';
+                } else {
+                    status.textContent = '❌ ' + (res.message || 'Submission failed. Please try again.');
+                    status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(data)
+                })
+                .then(() => {
+                    status.textContent = '⏳ Request sent. Check your email for confirmation.';
+                    status.style.cssText = 'display:block;background:rgba(251,191,36,0.2);color:#fbbf24';
+                })
+                .catch(() => {
+                    status.textContent = '❌ Connection error. Please try again.';
+                    status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
