@@ -228,40 +228,45 @@
         
         /* Split layout for inline code figures */
         .code-figure .code-split {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: row;
             overflow: hidden;
+            resize: vertical;
             position: relative;
             border-radius: 0 0 4px 4px;
         }
         
         .code-figure .code-split textarea {
+            flex: 1 1 50%;
+            min-width: 0;
             max-height: none;
-            height: auto;
             resize: none;
             border-right: 1px solid #28283c;
             font-size: 0.82rem;
             line-height: 1.7;
             padding: 14px 16px;
-            overflow-y: hidden;
-            overflow-x: auto;
-            white-space: pre;
-            word-wrap: normal;
+            overflow: hidden;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            box-sizing: border-box;
         }
         .code-figure .code-split .code-figure-output {
+            flex: 1 1 50%;
+            min-width: 0;
             border-top: none;
             display: block;
             max-height: none;
-            height: auto;
-            overflow-y: hidden;
+            overflow: hidden;
             font-size: 0.82rem;
             line-height: 1.7;
             padding: 14px 16px;
-            white-space: pre;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            box-sizing: border-box;
         }
-        .code-figure .code-split .code-figure-output.show { display: flex; }
+        .code-figure .code-split .code-figure-output.show { display: block; }
         .code-figure .code-split .code-figure-output:not(.show) {
-            display: flex;
+            display: block;
             opacity: 0.4;
         }
         
@@ -274,8 +279,8 @@
         
         /* Exercise split layout */
         .exercise-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             margin: 40px 0 20px;
             border: 1px solid #bbf7d0;
             border-radius: 8px;
@@ -285,9 +290,7 @@
             margin: 0;
             border: none;
             border-radius: 0;
-            border-right: 1px solid #bbf7d0;
-            overflow-y: auto;
-            max-height: 500px;
+            border-bottom: 1px solid #bbf7d0;
         }
         .exercise-wrapper .code-figure {
             margin: 0;
@@ -301,7 +304,7 @@
             max-height: none;
             resize: none;
         }
-        .exercise-wrapper .code-split {
+        .exercise-wrapper .code-figure .code-split {
             min-height: 150px;
         }
         .exercise-wrapper .code-figure-output {
@@ -312,25 +315,22 @@
         }
         
         @media (max-width: 900px) {
-            .exercise-wrapper {
-                grid-template-columns: 1fr;
-            }
             .exercise-wrapper .exercise {
-                border-right: none;
                 border-bottom: 1px solid #bbf7d0;
-                max-height: none;
             }
             .code-figure .code-split {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
             .code-figure .code-split textarea {
+                flex: none;
+                width: 100%;
                 border-right: none;
                 border-bottom: 1px solid #28283c;
-                height: auto;
                 min-height: 100px;
             }
-            .code-split {
-                resize: vertical;
+            .code-figure .code-split .code-figure-output {
+                flex: none;
+                width: 100%;
             }
         }
         .code-figure-caption {
@@ -923,7 +923,7 @@
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code1" spellcheck="false" wrap="off">print("Hello, World!")
+                    <textarea id="code1" spellcheck="false">print("Hello, World!")
 print("Welcome to Python programming.")
 print("This is line three.")</textarea>
 
@@ -948,7 +948,7 @@ print("This is line three.")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code2" spellcheck="false" wrap="off"># Multiple arguments are separated by spaces
+                    <textarea id="code2" spellcheck="false"># Multiple arguments are separated by spaces
 print("The answer is", 42)
 print("Python", "is", "fun")
 
@@ -978,7 +978,7 @@ print("World")  # Continues on same line</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code3" spellcheck="false" wrap="off"># This entire line is a comment - Python ignores it
+                    <textarea id="code3" spellcheck="false"># This entire line is a comment - Python ignores it
 print("This line executes")  # Inline comment after code
 
 # Use comments to explain WHY, not just WHAT
@@ -1025,7 +1025,7 @@ print("Program continues")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code4" spellcheck="false" wrap="off"># Creating variables with assignment
+                    <textarea id="code4" spellcheck="false"># Creating variables with assignment
 name = "Alice"
 age = 25
 height = 1.68
@@ -1067,7 +1067,7 @@ print("Is student:", is_student)</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code5" spellcheck="false" wrap="off"># Valid variable names
+                    <textarea id="code5" spellcheck="false"># Valid variable names
 student_name = "Bob"
 _private = 100
 counter2 = 0
@@ -1108,7 +1108,7 @@ print(student_name, _private, counter2, PI)</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code6" spellcheck="false" wrap="off"># The type() function returns a value's type
+                    <textarea id="code6" spellcheck="false"># The type() function returns a value's type
 print("Type of 42:", type(42))
 print("Type of 3.14:", type(3.14))
 print("Type of 'Hello':", type("Hello"))
@@ -1141,7 +1141,7 @@ print("x =", x, "| type:", type(x))</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code7" spellcheck="false" wrap="off"># Converting between types
+                    <textarea id="code7" spellcheck="false"># Converting between types
 num_str = "42"
 num_int = int(num_str)      # String to integer
 print(f"'{num_str}' -> {num_int} (type: {type(num_int).__name__})")
@@ -1199,7 +1199,7 @@ print(f"float(10) = {float(10)}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code8" spellcheck="false" wrap="off"># Basic arithmetic
+                    <textarea id="code8" spellcheck="false"># Basic arithmetic
 print("7 + 3 =", 7 + 3)
 print("7 - 3 =", 7 - 3)
 print("7 * 3 =", 7 * 3)
@@ -1248,7 +1248,7 @@ print("(2 + 3) * 4 =", result)</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code9" spellcheck="false" wrap="off">x = 10
+                    <textarea id="code9" spellcheck="false">x = 10
 y = 5
 
 print(f"x = {x}, y = {y}")
@@ -1289,7 +1289,7 @@ print(f"\n5 < {z} < 10: {5 < z < 10}")  # True</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code10" spellcheck="false" wrap="off">age = 25
+                    <textarea id="code10" spellcheck="false">age = 25
 has_license = True
 
 # Combining conditions
@@ -1328,7 +1328,7 @@ print(f"\nRaining: {is_raining}, Go outside: {go_outside}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code11" spellcheck="false" wrap="off">x = 10
+                    <textarea id="code11" spellcheck="false">x = 10
 print(f"Initial x: {x}")
 
 x += 5      # Same as: x = x + 5
@@ -1377,7 +1377,7 @@ print(f"After x **= 2: {x}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code12" spellcheck="false" wrap="off"># Single or double quotes
+                    <textarea id="code12" spellcheck="false"># Single or double quotes
 s1 = 'Hello'
 s2 = "World"
 
@@ -1418,7 +1418,7 @@ print(s7)</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code13" spellcheck="false" wrap="off"># Concatenation (joining strings)
+                    <textarea id="code13" spellcheck="false"># Concatenation (joining strings)
 first = "Hello"
 second = "World"
 combined = first + " " + second
@@ -1461,7 +1461,7 @@ print(f"Reversed: {message[::-1]}")  # 'nohtyP'</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code14" spellcheck="false" wrap="off">text = "  Hello, World!  "
+                    <textarea id="code14" spellcheck="false">text = "  Hello, World!  "
 
 # Case methods
 print(text.upper())          # "  HELLO, WORLD!  "
@@ -1506,7 +1506,7 @@ print("-".join(words))       # "apple-banana-cherry"</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code15" spellcheck="false" wrap="off">name = "Alice"
+                    <textarea id="code15" spellcheck="false">name = "Alice"
 age = 30
 height = 1.756
 
@@ -1559,7 +1559,7 @@ print(f"Success rate: {ratio:.1%}")    # 75.6%</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code16" spellcheck="false" wrap="off">score = 85
+                    <textarea id="code16" spellcheck="false">score = 85
 
 # Simple if
 if score >= 60:
@@ -1608,7 +1608,7 @@ print(f"Score: {score}, Grade: {grade}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code17" spellcheck="false" wrap="off"># Count from 1 to 5
+                    <textarea id="code17" spellcheck="false"># Count from 1 to 5
 count = 1
 while count <= 5:
     print(f"Count: {count}")
@@ -1644,7 +1644,7 @@ print(f"\nSum exceeded 20 at total = {total}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code18" spellcheck="false" wrap="off"># Iterate over a list
+                    <textarea id="code18" spellcheck="false"># Iterate over a list
 fruits = ["apple", "banana", "cherry"]
 for fruit in fruits:
     print(f"I like {fruit}")
@@ -1684,7 +1684,7 @@ for i in range(0, 11, 2):    # 0, 2, 4, 6, 8, 10
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code19" spellcheck="false" wrap="off"># break: exit loop entirely
+                    <textarea id="code19" spellcheck="false"># break: exit loop entirely
 print("Finding first even number:")
 for num in [1, 3, 5, 4, 7, 2]:
     if num % 2 == 0:
@@ -1730,7 +1730,7 @@ for num in range(10):
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code20" spellcheck="false" wrap="off"># Creating lists
+                    <textarea id="code20" spellcheck="false"># Creating lists
 numbers = [10, 20, 30, 40, 50]
 mixed = [1, "two", 3.0, True, None]
 empty = []
@@ -1769,7 +1769,7 @@ print(f"Length: {len(numbers)}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code21" spellcheck="false" wrap="off">nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                    <textarea id="code21" spellcheck="false">nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 # Slicing: [start:stop:step]
 print(f"Original: {nums}")
@@ -1803,7 +1803,7 @@ print(f"\nOriginal: {original}, Copy: {copy}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code22" spellcheck="false" wrap="off">fruits = ["apple", "banana", "cherry"]
+                    <textarea id="code22" spellcheck="false">fruits = ["apple", "banana", "cherry"]
 print(f"Original: {fruits}")
 
 # Modify element
@@ -1846,7 +1846,7 @@ print(f"After pop(0): {fruits}, removed: {first}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code23" spellcheck="false" wrap="off">numbers = [3, 1, 4, 1, 5, 9, 2, 6]
+                    <textarea id="code23" spellcheck="false">numbers = [3, 1, 4, 1, 5, 9, 2, 6]
 
 # Membership test - O(n)
 print(f"5 in list: {5 in numbers}")
@@ -1892,7 +1892,7 @@ print(f"\nsum: {sum(nums)}, min: {min(nums)}, max: {max(nums)}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code24" spellcheck="false" wrap="off"># Traditional loop approach
+                    <textarea id="code24" spellcheck="false"># Traditional loop approach
 squares = []
 for x in range(1, 6):
     squares.append(x ** 2)
@@ -1942,7 +1942,7 @@ print(f"Lowercase, length > 3: {lower_long}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code25" spellcheck="false" wrap="off"># Function with no parameters, no return
+                    <textarea id="code25" spellcheck="false"># Function with no parameters, no return
 def greet():
     print("Hello, World!")
 
@@ -1979,7 +1979,7 @@ print(f"5 squared is {result}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code26" spellcheck="false" wrap="off"># Multiple parameters
+                    <textarea id="code26" spellcheck="false"># Multiple parameters
 def add(a, b):
     return a + b
 
@@ -2017,7 +2017,7 @@ print(f"Min: {minimum}, Max: {maximum}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code27" spellcheck="false" wrap="off">def calculate_area(length, width):
+                    <textarea id="code27" spellcheck="false">def calculate_area(length, width):
     """
     Calculate the area of a rectangle.
     
@@ -2136,7 +2136,7 @@ print(f"\nArea: {calculate_area(10, 5)}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code28" spellcheck="false" wrap="off"># O(1) operations
+                    <textarea id="code28" spellcheck="false"># O(1) operations
 data = [10, 20, 30, 40, 50]
 
 # Array index access - O(1)
@@ -2174,7 +2174,7 @@ print(f"After append: {data}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code29" spellcheck="false" wrap="off"># O(n) - Linear time algorithms
+                    <textarea id="code29" spellcheck="false"># O(n) - Linear time algorithms
 
 def linear_search(data, target):
     """Search for target in data. O(n)"""
@@ -2223,7 +2223,7 @@ print(f"Max: {find_max(numbers)}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code30" spellcheck="false" wrap="off"># O(n²) - Quadratic time algorithms
+                    <textarea id="code30" spellcheck="false"># O(n²) - Quadratic time algorithms
 
 def has_duplicates_naive(data):
     """Check for duplicates by comparing all pairs. O(n²)"""
@@ -2282,7 +2282,7 @@ print(f"Sorted: {bubble_sort(unsorted)}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="code31" spellcheck="false" wrap="off"># O(1) space - uses constant extra memory
+                    <textarea id="code31" spellcheck="false"># O(1) space - uses constant extra memory
 def sum_in_place(data):
     total = 0  # Only one extra variable
     for x in data:
@@ -2371,7 +2371,7 @@ print(f"Doubled (O(n) space): {double_values(nums)}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="ex1" spellcheck="false" wrap="off"># Temperature Conversion
+                    <textarea id="ex1" spellcheck="false"># Temperature Conversion
 # Implement the celsius_to_fahrenheit function
 
 def celsius_to_fahrenheit(celsius):
@@ -2425,7 +2425,7 @@ def celsius_to_fahrenheit(celsius):
                 </div>
                 <div class="code-split">
 
-                    <textarea id="ex2" spellcheck="false" wrap="off">scores = [85, 92, 78, 90, 88, 76, 95, 89]
+                    <textarea id="ex2" spellcheck="false">scores = [85, 92, 78, 90, 88, 76, 95, 89]
 
 # Calculate the statistics using Python built-in functions
 count = None    # Replace None with your code
@@ -2483,7 +2483,7 @@ print(f"Max: {maximum}")</textarea>
                 </div>
                 <div class="code-split">
 
-                    <textarea id="ex3" spellcheck="false" wrap="off"># FizzBuzz Challenge
+                    <textarea id="ex3" spellcheck="false"># FizzBuzz Challenge
 # Print numbers 1-20, but Fizz for multiples of 3, Buzz for 5, FizzBuzz for both
 
 for num in range(1, 21):
@@ -2532,7 +2532,7 @@ for num in range(1, 21):
                 </div>
                 <div class="code-split">
 
-                    <textarea id="ex4" spellcheck="false" wrap="off"># Count Vowels Function
+                    <textarea id="ex4" spellcheck="false"># Count Vowels Function
 # Return the number of vowels (a, e, i, o, u) in a string
 
 def count_vowels(text):
@@ -2585,7 +2585,7 @@ def count_vowels(text):
                 </div>
                 <div class="code-split">
 
-                    <textarea id="ex5" spellcheck="false" wrap="off"># Big O Analysis
+                    <textarea id="ex5" spellcheck="false"># Big O Analysis
 # Update the docstrings with the correct time complexity
 
 def func_a(data):
@@ -2789,19 +2789,7 @@ print("\nUpdate the docstrings with your Big O answers!")</textarea>
                 }
             });
             
-            // Split layout for inline code figures (not in exercise wrappers)
-            document.querySelectorAll('.code-figure').forEach(function(figure) {
-                if (figure.closest('.exercise-wrapper')) return;
-                var textarea = figure.querySelector('textarea');
-                var output = figure.querySelector('.code-figure-output');
-                if (textarea && output) {
-                    var splitDiv = document.createElement('div');
-                    splitDiv.className = 'code-split';
-                    textarea.parentNode.insertBefore(splitDiv, textarea);
-                    splitDiv.appendChild(textarea);
-                    splitDiv.appendChild(output);
-                }
-            });
+            // Split layout for inline code figures is already in HTML markup
         });
         
         // ============ HINT SYSTEM ============
@@ -3188,22 +3176,27 @@ _fb.getvalue()
             });
         }
     
-        // Auto-size textareas based on actual line count (not visual wrap)
-        function autoSizeTextarea(ta) {
-            const lineCount = ta.value.split('\n').length;
-            const style = window.getComputedStyle(ta);
-            const lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.7;
-            const paddingTop = parseFloat(style.paddingTop) || 14;
-            const paddingBottom = parseFloat(style.paddingBottom) || 14;
-            const height = (lineCount * lineHeight) + paddingTop + paddingBottom;
-            ta.style.height = height + 'px';
-            // Match output panel height
+        // Auto-size code-split height to fit textarea content
+        function autoSizeCodeBlock(ta) {
             const split = ta.closest('.code-split');
-            if (split) split.style.height = height + 'px';
+            if (!split) return;
+            ta.style.height = 'auto';
+            split.style.height = 'auto';
+            const h = ta.scrollHeight + 2;
+            ta.style.height = h + 'px';
+            split.style.height = h + 'px';
         }
-        document.querySelectorAll('.code-split textarea').forEach(ta => {
-            autoSizeTextarea(ta);
-            ta.addEventListener('input', () => autoSizeTextarea(ta));
+        function initAutoSize() {
+            document.querySelectorAll('.code-split textarea').forEach(ta => {
+                autoSizeCodeBlock(ta);
+                ta.addEventListener('input', () => autoSizeCodeBlock(ta));
+            });
+        }
+        if (document.fonts) { document.fonts.ready.then(initAutoSize); }
+        else { window.addEventListener('load', initAutoSize); }
+        // Also run on resize in case layout changes
+        window.addEventListener('resize', () => {
+            document.querySelectorAll('.code-split textarea').forEach(autoSizeCodeBlock);
         });
 
         </script>
