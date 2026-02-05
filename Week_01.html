@@ -2958,7 +2958,8 @@ sys.stdout = StringIO()
 _r = []
 for _i in range(1, ${totalLines} + 1):
     if _i in _lt.lo:
-        _r.append(chr(10).join(_lt.lo[_i]))
+        _parts = [p for p in _lt.lo[_i] if p.strip()]
+        _r.append(chr(10).join(_parts) if _parts else '')
     else:
         _r.append('')
 chr(10).join(_r)
