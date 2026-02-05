@@ -230,32 +230,55 @@
         .code-figure .code-split {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            min-height: 200px;
+            min-height: 120px;
+            resize: both;
+            overflow: hidden;
+            position: relative;
+            border-radius: 0 0 4px 4px;
+        }
+        .code-split::after {
+            content: '⇲';
+            position: absolute;
+            bottom: 2px;
+            right: 6px;
+            font-size: 0.7rem;
+            color: #555;
+            pointer-events: none;
+            z-index: 2;
         }
         .code-figure .code-split textarea {
-            max-height: 400px;
+            max-height: none;
+            height: 100%;
+            resize: none;
             border-right: 1px solid #28283c;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            padding: 14px 16px;
+            overflow-y: auto;
         }
         .code-figure .code-split .code-figure-output {
             border-top: none;
-            display: flex;
-            flex-direction: column;
-            max-height: 400px;
+            display: block;
+            max-height: none;
+            height: 100%;
             overflow-y: auto;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            padding: 14px 16px;
+            white-space: pre;
         }
         .code-figure .code-split .code-figure-output.show { display: flex; }
         .code-figure .code-split .code-figure-output:not(.show) {
             display: flex;
             opacity: 0.4;
         }
-        .code-figure .code-split .code-figure-output:not(.show)::after {
-            content: 'Click ▶ Run to see output here';
-            color: #666;
-            font-style: italic;
-            font-size: 0.8rem;
-            padding: 15px 18px;
-        }
+        
         .code-figure .code-split .code-figure-output.show { opacity: 1; }
+        .code-figure .code-split .code-figure-output:not(.show)::before {
+            content: '← Click ▶ Run to see aligned output';
+            color: #555;
+            font-style: italic;
+        }
         
         /* Exercise split layout */
         .exercise-wrapper {
@@ -282,13 +305,15 @@
             flex-direction: column;
         }
         .exercise-wrapper .code-figure textarea {
-            flex: 1;
             min-height: 150px;
             max-height: none;
             resize: none;
         }
+        .exercise-wrapper .code-split {
+            min-height: 180px;
+        }
         .exercise-wrapper .code-figure-output {
-            max-height: 180px;
+            max-height: none;
         }
         .exercise-wrapper .code-figure-caption {
             border-top: 1px solid #28283c;
@@ -309,6 +334,11 @@
             .code-figure .code-split textarea {
                 border-right: none;
                 border-bottom: 1px solid #28283c;
+                height: auto;
+                min-height: 100px;
+            }
+            .code-split {
+                resize: vertical;
             }
         }
         .code-figure-caption {
@@ -899,10 +929,15 @@
                     <span class="code-figure-label">Listing 1.1 — The print() Function</span>
                     <button class="code-figure-run" onclick="runCode('code1')">▶ Run</button>
                 </div>
-                <textarea id="code1" spellcheck="false">print("Hello, World!")
+                <div class="code-split">
+
+                    <textarea id="code1" spellcheck="false">print("Hello, World!")
 print("Welcome to Python programming.")
 print("This is line three.")</textarea>
-                <div class="code-figure-output" id="outputcode1"></div>
+
+                    <div class="code-figure-output" id="outputcode1"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.1:</strong> The <code>print()</code> function outputs text. Each call produces a new line by default.
                 </div>
@@ -919,7 +954,9 @@ print("This is line three.")</textarea>
                     <span class="code-figure-label">Listing 1.2 — Multiple Arguments</span>
                     <button class="code-figure-run" onclick="runCode('code2')">▶ Run</button>
                 </div>
-                <textarea id="code2" spellcheck="false"># Multiple arguments are separated by spaces
+                <div class="code-split">
+
+                    <textarea id="code2" spellcheck="false"># Multiple arguments are separated by spaces
 print("The answer is", 42)
 print("Python", "is", "fun")
 
@@ -929,7 +966,10 @@ print("2024", "01", "15", sep="-")
 # Change the ending with end parameter
 print("Hello", end=" ")
 print("World")  # Continues on same line</textarea>
-                <div class="code-figure-output" id="outputcode2"></div>
+
+                    <div class="code-figure-output" id="outputcode2"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.2:</strong> The <code>sep</code> parameter changes the separator between arguments; <code>end</code> changes what appears at the end (default is newline).
                 </div>
@@ -944,7 +984,9 @@ print("World")  # Continues on same line</textarea>
                     <span class="code-figure-label">Listing 1.3 — Comments</span>
                     <button class="code-figure-run" onclick="runCode('code3')">▶ Run</button>
                 </div>
-                <textarea id="code3" spellcheck="false"># This entire line is a comment - Python ignores it
+                <div class="code-split">
+
+                    <textarea id="code3" spellcheck="false"># This entire line is a comment - Python ignores it
 print("This line executes")  # Inline comment after code
 
 # Use comments to explain WHY, not just WHAT
@@ -957,7 +999,10 @@ as comments, though they're technically string literals
 that aren't assigned to anything.
 """
 print("Program continues")</textarea>
-                <div class="code-figure-output" id="outputcode3"></div>
+
+                    <div class="code-figure-output" id="outputcode3"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.3:</strong> Single-line comments use <code>#</code>. Multi-line comments can use triple quotes.
                 </div>
@@ -986,7 +1031,9 @@ print("Program continues")</textarea>
                     <span class="code-figure-label">Listing 1.4 — Creating Variables</span>
                     <button class="code-figure-run" onclick="runCode('code4')">▶ Run</button>
                 </div>
-                <textarea id="code4" spellcheck="false"># Creating variables with assignment
+                <div class="code-split">
+
+                    <textarea id="code4" spellcheck="false"># Creating variables with assignment
 name = "Alice"
 age = 25
 height = 1.68
@@ -997,7 +1044,10 @@ print("Name:", name)
 print("Age:", age)
 print("Height:", height, "meters")
 print("Is student:", is_student)</textarea>
-                <div class="code-figure-output" id="outputcode4"></div>
+
+                    <div class="code-figure-output" id="outputcode4"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.4:</strong> Variables store values of different types. The assignment operator <code>=</code> stores the value on the right into the variable on the left.
                 </div>
@@ -1023,7 +1073,9 @@ print("Is student:", is_student)</textarea>
                     <span class="code-figure-label">Listing 1.5 — Valid and Invalid Names</span>
                     <button class="code-figure-run" onclick="runCode('code5')">▶ Run</button>
                 </div>
-                <textarea id="code5" spellcheck="false"># Valid variable names
+                <div class="code-split">
+
+                    <textarea id="code5" spellcheck="false"># Valid variable names
 student_name = "Bob"
 _private = 100
 counter2 = 0
@@ -1035,7 +1087,10 @@ PI = 3.14159  # Convention: ALL_CAPS for constants
 # class = "Math"        # 'class' is a reserved keyword
 
 print(student_name, _private, counter2, PI)</textarea>
-                <div class="code-figure-output" id="outputcode5"></div>
+
+                    <div class="code-figure-output" id="outputcode5"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.5:</strong> Variable names should be descriptive. Python convention uses <code>snake_case</code> (lowercase with underscores).
                 </div>
@@ -1059,7 +1114,9 @@ print(student_name, _private, counter2, PI)</textarea>
                     <span class="code-figure-label">Listing 1.6 — Data Types and type()</span>
                     <button class="code-figure-run" onclick="runCode('code6')">▶ Run</button>
                 </div>
-                <textarea id="code6" spellcheck="false"># The type() function returns a value's type
+                <div class="code-split">
+
+                    <textarea id="code6" spellcheck="false"># The type() function returns a value's type
 print("Type of 42:", type(42))
 print("Type of 3.14:", type(3.14))
 print("Type of 'Hello':", type("Hello"))
@@ -1072,7 +1129,10 @@ print("\nx =", x, "| type:", type(x))
 
 x = "now I'm a string"
 print("x =", x, "| type:", type(x))</textarea>
-                <div class="code-figure-output" id="outputcode6"></div>
+
+                    <div class="code-figure-output" id="outputcode6"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.6:</strong> The <code>type()</code> function reveals a value's type. In Python, variables can be reassigned to values of different types.
                 </div>
@@ -1087,7 +1147,9 @@ print("x =", x, "| type:", type(x))</textarea>
                     <span class="code-figure-label">Listing 1.7 — Type Conversion</span>
                     <button class="code-figure-run" onclick="runCode('code7')">▶ Run</button>
                 </div>
-                <textarea id="code7" spellcheck="false"># Converting between types
+                <div class="code-split">
+
+                    <textarea id="code7" spellcheck="false"># Converting between types
 num_str = "42"
 num_int = int(num_str)      # String to integer
 print(f"'{num_str}' -> {num_int} (type: {type(num_int).__name__})")
@@ -1103,7 +1165,10 @@ print(f"{value} -> '{value_str}' (type: {type(value_str).__name__})")
 # float() converts to floating-point
 print(f"float('3.14') = {float('3.14')}")
 print(f"float(10) = {float(10)}")</textarea>
-                <div class="code-figure-output" id="outputcode7"></div>
+
+                    <div class="code-figure-output" id="outputcode7"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.7:</strong> Type conversion functions: <code>int()</code>, <code>float()</code>, <code>str()</code>, <code>bool()</code>.
                 </div>
@@ -1140,7 +1205,9 @@ print(f"float(10) = {float(10)}")</textarea>
                     <span class="code-figure-label">Listing 1.8 — Arithmetic Operators</span>
                     <button class="code-figure-run" onclick="runCode('code8')">▶ Run</button>
                 </div>
-                <textarea id="code8" spellcheck="false"># Basic arithmetic
+                <div class="code-split">
+
+                    <textarea id="code8" spellcheck="false"># Basic arithmetic
 print("7 + 3 =", 7 + 3)
 print("7 - 3 =", 7 - 3)
 print("7 * 3 =", 7 * 3)
@@ -1155,7 +1222,10 @@ print("\n2 + 3 * 4 =", result)
 
 result = (2 + 3) * 4        # Parentheses override
 print("(2 + 3) * 4 =", result)</textarea>
-                <div class="code-figure-output" id="outputcode8"></div>
+
+                    <div class="code-figure-output" id="outputcode8"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.8:</strong> Python follows standard mathematical precedence: parentheses, exponents, multiplication/division, addition/subtraction.
                 </div>
@@ -1184,7 +1254,9 @@ print("(2 + 3) * 4 =", result)</textarea>
                     <span class="code-figure-label">Listing 1.9 — Comparison Operators</span>
                     <button class="code-figure-run" onclick="runCode('code9')">▶ Run</button>
                 </div>
-                <textarea id="code9" spellcheck="false">x = 10
+                <div class="code-split">
+
+                    <textarea id="code9" spellcheck="false">x = 10
 y = 5
 
 print(f"x = {x}, y = {y}")
@@ -1198,7 +1270,10 @@ print(f"x <= y: {x <= y}")   # Less or equal
 # Chained comparisons (Python feature)
 z = 7
 print(f"\n5 < {z} < 10: {5 < z < 10}")  # True</textarea>
-                <div class="code-figure-output" id="outputcode9"></div>
+
+                    <div class="code-figure-output" id="outputcode9"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.9:</strong> Comparison operators return boolean values. Note: <code>==</code> tests equality; <code>=</code> is assignment.
                 </div>
@@ -1220,7 +1295,9 @@ print(f"\n5 < {z} < 10: {5 < z < 10}")  # True</textarea>
                     <span class="code-figure-label">Listing 1.10 — Logical Operators</span>
                     <button class="code-figure-run" onclick="runCode('code10')">▶ Run</button>
                 </div>
-                <textarea id="code10" spellcheck="false">age = 25
+                <div class="code-split">
+
+                    <textarea id="code10" spellcheck="false">age = 25
 has_license = True
 
 # Combining conditions
@@ -1239,7 +1316,10 @@ print(f"Day off: {day_off}")
 is_raining = False
 go_outside = not is_raining
 print(f"\nRaining: {is_raining}, Go outside: {go_outside}")</textarea>
-                <div class="code-figure-output" id="outputcode10"></div>
+
+                    <div class="code-figure-output" id="outputcode10"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.10:</strong> Logical operators are essential for complex conditions in if statements and loops.
                 </div>
@@ -1254,7 +1334,9 @@ print(f"\nRaining: {is_raining}, Go outside: {go_outside}")</textarea>
                     <span class="code-figure-label">Listing 1.11 — Assignment Operators</span>
                     <button class="code-figure-run" onclick="runCode('code11')">▶ Run</button>
                 </div>
-                <textarea id="code11" spellcheck="false">x = 10
+                <div class="code-split">
+
+                    <textarea id="code11" spellcheck="false">x = 10
 print(f"Initial x: {x}")
 
 x += 5      # Same as: x = x + 5
@@ -1271,7 +1353,10 @@ print(f"After x //= 4: {x}")
 
 x **= 2     # Same as: x = x ** 2
 print(f"After x **= 2: {x}")</textarea>
-                <div class="code-figure-output" id="outputcode11"></div>
+
+                    <div class="code-figure-output" id="outputcode11"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.11:</strong> Compound assignment operators provide a concise syntax for common operations.
                 </div>
@@ -1298,7 +1383,9 @@ print(f"After x **= 2: {x}")</textarea>
                     <span class="code-figure-label">Listing 1.12 — String Creation</span>
                     <button class="code-figure-run" onclick="runCode('code12')">▶ Run</button>
                 </div>
-                <textarea id="code12" spellcheck="false"># Single or double quotes
+                <div class="code-split">
+
+                    <textarea id="code12" spellcheck="false"># Single or double quotes
 s1 = 'Hello'
 s2 = "World"
 
@@ -1321,7 +1408,10 @@ print(s4)
 print(s5)
 print(s6)
 print(s7)</textarea>
-                <div class="code-figure-output" id="outputcode12"></div>
+
+                    <div class="code-figure-output" id="outputcode12"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.12:</strong> Strings can be created with single, double, or triple quotes. Escape sequences represent special characters.
                 </div>
@@ -1334,7 +1424,9 @@ print(s7)</textarea>
                     <span class="code-figure-label">Listing 1.13 — String Operations</span>
                     <button class="code-figure-run" onclick="runCode('code13')">▶ Run</button>
                 </div>
-                <textarea id="code13" spellcheck="false"># Concatenation (joining strings)
+                <div class="code-split">
+
+                    <textarea id="code13" spellcheck="false"># Concatenation (joining strings)
 first = "Hello"
 second = "World"
 combined = first + " " + second
@@ -1357,7 +1449,10 @@ print(f"First 3: {message[0:3]}")    # 'Pyt'
 print(f"Last 3: {message[-3:]}")     # 'hon'
 print(f"Every 2nd: {message[::2]}")  # 'Pto'
 print(f"Reversed: {message[::-1]}")  # 'nohtyP'</textarea>
-                <div class="code-figure-output" id="outputcode13"></div>
+
+                    <div class="code-figure-output" id="outputcode13"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.13:</strong> String operations include concatenation, repetition, indexing, and slicing.
                 </div>
@@ -1372,7 +1467,9 @@ print(f"Reversed: {message[::-1]}")  # 'nohtyP'</textarea>
                     <span class="code-figure-label">Listing 1.14 — String Methods</span>
                     <button class="code-figure-run" onclick="runCode('code14')">▶ Run</button>
                 </div>
-                <textarea id="code14" spellcheck="false">text = "  Hello, World!  "
+                <div class="code-split">
+
+                    <textarea id="code14" spellcheck="false">text = "  Hello, World!  "
 
 # Case methods
 print(text.upper())          # "  HELLO, WORLD!  "
@@ -1397,7 +1494,10 @@ print("hello".endswith("lo"))    # True
 words = "apple,banana,cherry".split(",")
 print(words)                 # ['apple', 'banana', 'cherry']
 print("-".join(words))       # "apple-banana-cherry"</textarea>
-                <div class="code-figure-output" id="outputcode14"></div>
+
+                    <div class="code-figure-output" id="outputcode14"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.14:</strong> String methods provide powerful text processing capabilities.
                 </div>
@@ -1412,7 +1512,9 @@ print("-".join(words))       # "apple-banana-cherry"</textarea>
                     <span class="code-figure-label">Listing 1.15 — F-strings</span>
                     <button class="code-figure-run" onclick="runCode('code15')">▶ Run</button>
                 </div>
-                <textarea id="code15" spellcheck="false">name = "Alice"
+                <div class="code-split">
+
+                    <textarea id="code15" spellcheck="false">name = "Alice"
 age = 30
 height = 1.756
 
@@ -1433,7 +1535,10 @@ print(f"{'left':<10}|{'center':^10}|{'right':>10}")
 # Percentage
 ratio = 0.756
 print(f"Success rate: {ratio:.1%}")    # 75.6%</textarea>
-                <div class="code-figure-output" id="outputcode15"></div>
+
+                    <div class="code-figure-output" id="outputcode15"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.15:</strong> F-strings allow embedded expressions and sophisticated formatting. They're prefixed with <code>f</code> before the quotes.
                 </div>
@@ -1460,7 +1565,9 @@ print(f"Success rate: {ratio:.1%}")    # 75.6%</textarea>
                     <span class="code-figure-label">Listing 1.16 — If Statements</span>
                     <button class="code-figure-run" onclick="runCode('code16')">▶ Run</button>
                 </div>
-                <textarea id="code16" spellcheck="false">score = 85
+                <div class="code-split">
+
+                    <textarea id="code16" spellcheck="false">score = 85
 
 # Simple if
 if score >= 60:
@@ -1485,7 +1592,10 @@ else:
     grade = "F"
 
 print(f"Score: {score}, Grade: {grade}")</textarea>
-                <div class="code-figure-output" id="outputcode16"></div>
+
+                    <div class="code-figure-output" id="outputcode16"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.16:</strong> Conditional statements use indentation to define code blocks. Python requires consistent indentation (typically 4 spaces).
                 </div>
@@ -1504,7 +1614,9 @@ print(f"Score: {score}, Grade: {grade}")</textarea>
                     <span class="code-figure-label">Listing 1.17 — While Loops</span>
                     <button class="code-figure-run" onclick="runCode('code17')">▶ Run</button>
                 </div>
-                <textarea id="code17" spellcheck="false"># Count from 1 to 5
+                <div class="code-split">
+
+                    <textarea id="code17" spellcheck="false"># Count from 1 to 5
 count = 1
 while count <= 5:
     print(f"Count: {count}")
@@ -1520,7 +1632,10 @@ while total <= 20:
     num += 1
 
 print(f"\nSum exceeded 20 at total = {total}")</textarea>
-                <div class="code-figure-output" id="outputcode17"></div>
+
+                    <div class="code-figure-output" id="outputcode17"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.17:</strong> While loops continue as long as the condition is True. Be careful to avoid infinite loops!
                 </div>
@@ -1535,7 +1650,9 @@ print(f"\nSum exceeded 20 at total = {total}")</textarea>
                     <span class="code-figure-label">Listing 1.18 — For Loops</span>
                     <button class="code-figure-run" onclick="runCode('code18')">▶ Run</button>
                 </div>
-                <textarea id="code18" spellcheck="false"># Iterate over a list
+                <div class="code-split">
+
+                    <textarea id="code18" spellcheck="false"># Iterate over a list
 fruits = ["apple", "banana", "cherry"]
 for fruit in fruits:
     print(f"I like {fruit}")
@@ -1557,7 +1674,10 @@ for i in range(2, 7):        # 2, 3, 4, 5, 6
 print("\n\nEven numbers 0-10:")
 for i in range(0, 11, 2):    # 0, 2, 4, 6, 8, 10
     print(i, end=" ")</textarea>
-                <div class="code-figure-output" id="outputcode18"></div>
+
+                    <div class="code-figure-output" id="outputcode18"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.18:</strong> The <code>range(start, stop, step)</code> function generates sequences of integers. Note: <code>stop</code> is exclusive.
                 </div>
@@ -1570,7 +1690,9 @@ for i in range(0, 11, 2):    # 0, 2, 4, 6, 8, 10
                     <span class="code-figure-label">Listing 1.19 — Break and Continue</span>
                     <button class="code-figure-run" onclick="runCode('code19')">▶ Run</button>
                 </div>
-                <textarea id="code19" spellcheck="false"># break: exit loop entirely
+                <div class="code-split">
+
+                    <textarea id="code19" spellcheck="false"># break: exit loop entirely
 print("Finding first even number:")
 for num in [1, 3, 5, 4, 7, 2]:
     if num % 2 == 0:
@@ -1584,7 +1706,10 @@ for num in range(10):
     if num % 2 == 0:
         continue    # Skip even numbers
     print(num, end=" ")</textarea>
-                <div class="code-figure-output" id="outputcode19"></div>
+
+                    <div class="code-figure-output" id="outputcode19"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.19:</strong> <code>break</code> exits the loop completely; <code>continue</code> skips to the next iteration.
                 </div>
@@ -1611,7 +1736,9 @@ for num in range(10):
                     <span class="code-figure-label">Listing 1.20 — List Basics</span>
                     <button class="code-figure-run" onclick="runCode('code20')">▶ Run</button>
                 </div>
-                <textarea id="code20" spellcheck="false"># Creating lists
+                <div class="code-split">
+
+                    <textarea id="code20" spellcheck="false"># Creating lists
 numbers = [10, 20, 30, 40, 50]
 mixed = [1, "two", 3.0, True, None]
 empty = []
@@ -1628,7 +1755,10 @@ print(f"Nested [1][0]: {nested[1][0]}")  # 3
 
 # Length
 print(f"Length: {len(numbers)}")</textarea>
-                <div class="code-figure-output" id="outputcode20"></div>
+
+                    <div class="code-figure-output" id="outputcode20"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.20:</strong> Lists use zero-based indexing. The first element is at index 0; negative indices count from the end.
                 </div>
@@ -1645,7 +1775,9 @@ print(f"Length: {len(numbers)}")</textarea>
                     <span class="code-figure-label">Listing 1.21 — List Slicing</span>
                     <button class="code-figure-run" onclick="runCode('code21')">▶ Run</button>
                 </div>
-                <textarea id="code21" spellcheck="false">nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                <div class="code-split">
+
+                    <textarea id="code21" spellcheck="false">nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 # Slicing: [start:stop:step]
 print(f"Original: {nums}")
@@ -1661,7 +1793,10 @@ original = [1, 2, 3]
 copy = original[:]
 copy[0] = 999
 print(f"\nOriginal: {original}, Copy: {copy}")</textarea>
-                <div class="code-figure-output" id="outputcode21"></div>
+
+                    <div class="code-figure-output" id="outputcode21"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.21:</strong> Slicing syntax: <code>[start:stop:step]</code>. The <code>stop</code> index is exclusive. Omitted values default to start=0, stop=len, step=1.
                 </div>
@@ -1674,7 +1809,9 @@ print(f"\nOriginal: {original}, Copy: {copy}")</textarea>
                     <span class="code-figure-label">Listing 1.22 — List Modification</span>
                     <button class="code-figure-run" onclick="runCode('code22')">▶ Run</button>
                 </div>
-                <textarea id="code22" spellcheck="false">fruits = ["apple", "banana", "cherry"]
+                <div class="code-split">
+
+                    <textarea id="code22" spellcheck="false">fruits = ["apple", "banana", "cherry"]
 print(f"Original: {fruits}")
 
 # Modify element
@@ -1699,7 +1836,10 @@ print(f"After pop(): {fruits}, removed: {last}")
 
 first = fruits.pop(0)
 print(f"After pop(0): {fruits}, removed: {first}")</textarea>
-                <div class="code-figure-output" id="outputcode22"></div>
+
+                    <div class="code-figure-output" id="outputcode22"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.22:</strong> Lists are mutable—elements can be added, removed, or changed. Time complexities are noted for each operation.
                 </div>
@@ -1712,7 +1852,9 @@ print(f"After pop(0): {fruits}, removed: {first}")</textarea>
                     <span class="code-figure-label">Listing 1.23 — List Operations</span>
                     <button class="code-figure-run" onclick="runCode('code23')">▶ Run</button>
                 </div>
-                <textarea id="code23" spellcheck="false">numbers = [3, 1, 4, 1, 5, 9, 2, 6]
+                <div class="code-split">
+
+                    <textarea id="code23" spellcheck="false">numbers = [3, 1, 4, 1, 5, 9, 2, 6]
 
 # Membership test - O(n)
 print(f"5 in list: {5 in numbers}")
@@ -1738,7 +1880,10 @@ print(f"Reversed: {numbers}")
 # Aggregation functions
 nums = [10, 20, 30, 40, 50]
 print(f"\nsum: {sum(nums)}, min: {min(nums)}, max: {max(nums)}")</textarea>
-                <div class="code-figure-output" id="outputcode23"></div>
+
+                    <div class="code-figure-output" id="outputcode23"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.23:</strong> Common list operations and built-in functions for aggregation.
                 </div>
@@ -1753,7 +1898,9 @@ print(f"\nsum: {sum(nums)}, min: {min(nums)}, max: {max(nums)}")</textarea>
                     <span class="code-figure-label">Listing 1.24 — List Comprehensions</span>
                     <button class="code-figure-run" onclick="runCode('code24')">▶ Run</button>
                 </div>
-                <textarea id="code24" spellcheck="false"># Traditional loop approach
+                <div class="code-split">
+
+                    <textarea id="code24" spellcheck="false"># Traditional loop approach
 squares = []
 for x in range(1, 6):
     squares.append(x ** 2)
@@ -1771,7 +1918,10 @@ print(f"Even numbers: {evens}")
 words = ["hello", "WORLD", "Python", "AI"]
 lower_long = [w.lower() for w in words if len(w) > 3]
 print(f"Lowercase, length > 3: {lower_long}")</textarea>
-                <div class="code-figure-output" id="outputcode24"></div>
+
+                    <div class="code-figure-output" id="outputcode24"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.24:</strong> List comprehensions: <code>[expression for item in iterable if condition]</code>. They're often faster and more readable than explicit loops.
                 </div>
@@ -1798,7 +1948,9 @@ print(f"Lowercase, length > 3: {lower_long}")</textarea>
                     <span class="code-figure-label">Listing 1.25 — Function Definition</span>
                     <button class="code-figure-run" onclick="runCode('code25')">▶ Run</button>
                 </div>
-                <textarea id="code25" spellcheck="false"># Function with no parameters, no return
+                <div class="code-split">
+
+                    <textarea id="code25" spellcheck="false"># Function with no parameters, no return
 def greet():
     print("Hello, World!")
 
@@ -1817,7 +1969,10 @@ def square(x):
 
 result = square(5)
 print(f"5 squared is {result}")</textarea>
-                <div class="code-figure-output" id="outputcode25"></div>
+
+                    <div class="code-figure-output" id="outputcode25"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.25:</strong> Functions are defined with <code>def</code>, followed by the name, parameters in parentheses, and a colon. The body is indented.
                 </div>
@@ -1830,7 +1985,9 @@ print(f"5 squared is {result}")</textarea>
                     <span class="code-figure-label">Listing 1.26 — Function Parameters</span>
                     <button class="code-figure-run" onclick="runCode('code26')">▶ Run</button>
                 </div>
-                <textarea id="code26" spellcheck="false"># Multiple parameters
+                <div class="code-split">
+
+                    <textarea id="code26" spellcheck="false"># Multiple parameters
 def add(a, b):
     return a + b
 
@@ -1850,7 +2007,10 @@ def min_max(numbers):
 
 minimum, maximum = min_max([3, 1, 4, 1, 5, 9])
 print(f"Min: {minimum}, Max: {maximum}")</textarea>
-                <div class="code-figure-output" id="outputcode26"></div>
+
+                    <div class="code-figure-output" id="outputcode26"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.26:</strong> Parameters can have default values. Arguments can be passed by position or keyword.
                 </div>
@@ -1863,7 +2023,9 @@ print(f"Min: {minimum}, Max: {maximum}")</textarea>
                     <span class="code-figure-label">Listing 1.27 — Function Documentation</span>
                     <button class="code-figure-run" onclick="runCode('code27')">▶ Run</button>
                 </div>
-                <textarea id="code27" spellcheck="false">def calculate_area(length, width):
+                <div class="code-split">
+
+                    <textarea id="code27" spellcheck="false">def calculate_area(length, width):
     """
     Calculate the area of a rectangle.
     
@@ -1885,7 +2047,10 @@ print(calculate_area.__doc__)
 
 # Use the function
 print(f"\nArea: {calculate_area(10, 5)}")</textarea>
-                <div class="code-figure-output" id="outputcode27"></div>
+
+                    <div class="code-figure-output" id="outputcode27"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.27:</strong> Docstrings document what a function does. They're accessed via the <code>__doc__</code> attribute or <code>help()</code> function.
                 </div>
@@ -1977,7 +2142,9 @@ print(f"\nArea: {calculate_area(10, 5)}")</textarea>
                     <span class="code-figure-label">Listing 1.28 — O(1) Examples</span>
                     <button class="code-figure-run" onclick="runCode('code28')">▶ Run</button>
                 </div>
-                <textarea id="code28" spellcheck="false"># O(1) operations
+                <div class="code-split">
+
+                    <textarea id="code28" spellcheck="false"># O(1) operations
 data = [10, 20, 30, 40, 50]
 
 # Array index access - O(1)
@@ -1997,7 +2164,10 @@ print(f"Alice's phone: {alice_phone}")
 # Append to list - O(1) amortized
 data.append(60)
 print(f"After append: {data}")</textarea>
-                <div class="code-figure-output" id="outputcode28"></div>
+
+                    <div class="code-figure-output" id="outputcode28"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.28:</strong> O(1) operations execute in constant time—performance doesn't depend on data size.
                 </div>
@@ -2010,7 +2180,9 @@ print(f"After append: {data}")</textarea>
                     <span class="code-figure-label">Listing 1.29 — O(n) Examples</span>
                     <button class="code-figure-run" onclick="runCode('code29')">▶ Run</button>
                 </div>
-                <textarea id="code29" spellcheck="false"># O(n) - Linear time algorithms
+                <div class="code-split">
+
+                    <textarea id="code29" spellcheck="false"># O(n) - Linear time algorithms
 
 def linear_search(data, target):
     """Search for target in data. O(n)"""
@@ -2041,7 +2213,10 @@ print(f"List: {numbers}")
 print(f"Index of 16: {linear_search(numbers, 16)}")
 print(f"Sum: {find_sum(numbers)}")
 print(f"Max: {find_max(numbers)}")</textarea>
-                <div class="code-figure-output" id="outputcode29"></div>
+
+                    <div class="code-figure-output" id="outputcode29"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.29:</strong> O(n) algorithms examine each element at most a constant number of times.
                 </div>
@@ -2054,7 +2229,9 @@ print(f"Max: {find_max(numbers)}")</textarea>
                     <span class="code-figure-label">Listing 1.30 — O(n²) Examples</span>
                     <button class="code-figure-run" onclick="runCode('code30')">▶ Run</button>
                 </div>
-                <textarea id="code30" spellcheck="false"># O(n²) - Quadratic time algorithms
+                <div class="code-split">
+
+                    <textarea id="code30" spellcheck="false"># O(n²) - Quadratic time algorithms
 
 def has_duplicates_naive(data):
     """Check for duplicates by comparing all pairs. O(n²)"""
@@ -2085,7 +2262,10 @@ print(f"Has duplicates: {has_dup} (found in {comps} comparisons)")
 unsorted = [64, 34, 25, 12, 22, 11, 90]
 print(f"\nUnsorted: {unsorted}")
 print(f"Sorted: {bubble_sort(unsorted)}")</textarea>
-                <div class="code-figure-output" id="outputcode30"></div>
+
+                    <div class="code-figure-output" id="outputcode30"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.30:</strong> O(n²) algorithms often involve nested loops. They become impractical for large inputs.
                 </div>
@@ -2108,7 +2288,9 @@ print(f"Sorted: {bubble_sort(unsorted)}")</textarea>
                     <span class="code-figure-label">Listing 1.31 — Space Complexity</span>
                     <button class="code-figure-run" onclick="runCode('code31')">▶ Run</button>
                 </div>
-                <textarea id="code31" spellcheck="false"># O(1) space - uses constant extra memory
+                <div class="code-split">
+
+                    <textarea id="code31" spellcheck="false"># O(1) space - uses constant extra memory
 def sum_in_place(data):
     total = 0  # Only one extra variable
     for x in data:
@@ -2129,7 +2311,10 @@ def double_values_v2(data):
 nums = [1, 2, 3, 4, 5]
 print(f"Sum (O(1) space): {sum_in_place(nums)}")
 print(f"Doubled (O(n) space): {double_values(nums)}")</textarea>
-                <div class="code-figure-output" id="outputcode31"></div>
+
+                    <div class="code-figure-output" id="outputcode31"></div>
+
+                </div>
                 <div class="code-figure-caption">
                     <strong>Figure 1.31:</strong> Space complexity measures additional memory used, not including the input itself.
                 </div>
@@ -2192,7 +2377,9 @@ print(f"Doubled (O(n) space): {double_values(nums)}")</textarea>
                     <span class="code-figure-label">Exercise 1 — Your Solution</span>
                     <button class="code-figure-run" onclick="runCode('ex1')">▶ Run</button>
                 </div>
-                <textarea id="ex1" spellcheck="false"># Temperature Conversion
+                <div class="code-split">
+
+                    <textarea id="ex1" spellcheck="false"># Temperature Conversion
 # Implement the celsius_to_fahrenheit function
 
 def celsius_to_fahrenheit(celsius):
@@ -2203,7 +2390,10 @@ def celsius_to_fahrenheit(celsius):
 # print(f"0°C = {celsius_to_fahrenheit(0)}°F")
 # print(f"100°C = {celsius_to_fahrenheit(100)}°F")
 # print(f"37°C = {celsius_to_fahrenheit(37)}°F")</textarea>
-                <div class="code-figure-output" id="outputex1"></div>
+
+                    <div class="code-figure-output" id="outputex1"></div>
+
+                </div>
             </div>
             
             <!-- EXERCISE 2 -->
@@ -2241,7 +2431,9 @@ def celsius_to_fahrenheit(celsius):
                     <span class="code-figure-label">Exercise 2 — Your Solution</span>
                     <button class="code-figure-run" onclick="runCode('ex2')">▶ Run</button>
                 </div>
-                <textarea id="ex2" spellcheck="false">scores = [85, 92, 78, 90, 88, 76, 95, 89]
+                <div class="code-split">
+
+                    <textarea id="ex2" spellcheck="false">scores = [85, 92, 78, 90, 88, 76, 95, 89]
 
 # Calculate the statistics using Python built-in functions
 count = None    # Replace None with your code
@@ -2255,7 +2447,10 @@ print(f"Sum: {total}")
 print(f"Average: {average}")
 print(f"Min: {minimum}")
 print(f"Max: {maximum}")</textarea>
-                <div class="code-figure-output" id="outputex2"></div>
+
+                    <div class="code-figure-output" id="outputex2"></div>
+
+                </div>
             </div>
             
             <!-- EXERCISE 3 -->
@@ -2294,13 +2489,18 @@ print(f"Max: {maximum}")</textarea>
                     <span class="code-figure-label">Exercise 3 — Your Solution</span>
                     <button class="code-figure-run" onclick="runCode('ex3')">▶ Run</button>
                 </div>
-                <textarea id="ex3" spellcheck="false"># FizzBuzz Challenge
+                <div class="code-split">
+
+                    <textarea id="ex3" spellcheck="false"># FizzBuzz Challenge
 # Print numbers 1-20, but Fizz for multiples of 3, Buzz for 5, FizzBuzz for both
 
 for num in range(1, 21):
     # Your code here: use if/elif/else to check divisibility
     pass  # Remove this and add your logic</textarea>
-                <div class="code-figure-output" id="outputex3"></div>
+
+                    <div class="code-figure-output" id="outputex3"></div>
+
+                </div>
             </div>
             
             <!-- EXERCISE 4 -->
@@ -2338,7 +2538,9 @@ for num in range(1, 21):
                     <span class="code-figure-label">Exercise 4 — Your Solution</span>
                     <button class="code-figure-run" onclick="runCode('ex4')">▶ Run</button>
                 </div>
-                <textarea id="ex4" spellcheck="false"># Count Vowels Function
+                <div class="code-split">
+
+                    <textarea id="ex4" spellcheck="false"># Count Vowels Function
 # Return the number of vowels (a, e, i, o, u) in a string
 
 def count_vowels(text):
@@ -2348,7 +2550,10 @@ def count_vowels(text):
 # Test your function (uncomment these lines)
 # print(f'"Hello World" has {count_vowels("Hello World")} vowels')
 # print(f'"Python Programming" has {count_vowels("Python Programming")} vowels')</textarea>
-                <div class="code-figure-output" id="outputex4"></div>
+
+                    <div class="code-figure-output" id="outputex4"></div>
+
+                </div>
             </div>
             
             <!-- EXERCISE 5 -->
@@ -2386,7 +2591,9 @@ def count_vowels(text):
                     <span class="code-figure-label">Exercise 5 — Your Solution</span>
                     <button class="code-figure-run" onclick="runCode('ex5')">▶ Run</button>
                 </div>
-                <textarea id="ex5" spellcheck="false"># Big O Analysis
+                <div class="code-split">
+
+                    <textarea id="ex5" spellcheck="false"># Big O Analysis
 # Update the docstrings with the correct time complexity
 
 def func_a(data):
@@ -2424,7 +2631,10 @@ print(f"func_c result: {func_c(test_data)}")
 print(f"func_d result: {func_d(test_data)}")
 
 print("\nUpdate the docstrings with your Big O answers!")</textarea>
-                <div class="code-figure-output" id="outputex5"></div>
+
+                    <div class="code-figure-output" id="outputex5"></div>
+
+                </div>
             </div>
         </section>
 
@@ -2707,22 +2917,90 @@ print("\nUpdate the docstrings with your Big O answers!")</textarea>
                 }
                 
                 outputEl.textContent = 'Running...';
+                const totalLines = code.split('\n').length;
                 
-                pyodide.runPython(`
+                // Set up line-tracking stdout capture
+                let lineTracking = true;
+                try {
+                    pyodide.runPython(`
+import sys
+
+class _LineTracker:
+    def __init__(self):
+        self.lo = {}
+        self._cl = 0
+        self._buf = ""
+        self._top = None
+    def _t(self, frame, event, arg):
+        if self._top is None and event == 'call' and frame.f_code.co_filename == '<exec>':
+            self._top = frame
+        if event == 'line' and frame is self._top:
+            self._cl = frame.f_lineno
+        return self._t
+    def write(self, text):
+        self._buf += text
+        while '\\n' in self._buf:
+            lt, self._buf = self._buf.split('\\n', 1)
+            if self._cl not in self.lo:
+                self.lo[self._cl] = []
+            self.lo[self._cl].append(lt)
+    def flush(self):
+        if self._buf:
+            if self._cl not in self.lo:
+                self.lo[self._cl] = []
+            self.lo[self._cl].append(self._buf)
+            self._buf = ""
+
+_lt = _LineTracker()
+sys.stdout = _lt
+sys.settrace(_lt._t)
+`);
+                } catch(e) {
+                    lineTracking = false;
+                    pyodide.runPython(`
 import sys
 from io import StringIO
 sys.stdout = StringIO()
 `);
+                }
                 
                 try {
                     pyodide.runPython(code);
                 } catch (pyErr) {
+                    try { pyodide.runPython('sys.settrace(None)'); } catch(x) {}
                     outputEl.textContent = 'Error: ' + pyErr.message;
                     return;
                 }
                 
-                const output = pyodide.runPython('sys.stdout.getvalue()');
-                outputEl.textContent = output || '(no output)';
+                if (lineTracking) {
+                    try {
+                        pyodide.runPython('sys.settrace(None)');
+                        pyodide.runPython('_lt.flush()');
+                        const aligned = pyodide.runPython(`
+_r = []
+for _i in range(1, ${totalLines} + 1):
+    if _i in _lt.lo:
+        _r.append(chr(10).join(_lt.lo[_i]))
+    else:
+        _r.append('')
+chr(10).join(_r)
+`);
+                        outputEl.textContent = aligned || '(no output)';
+                    } catch(e) {
+                        const output = pyodide.runPython(`
+sys.settrace(None)
+import io; _fb = io.StringIO()
+for _k in sorted(_lt.lo.keys()):
+    for _v in _lt.lo[_k]:
+        _fb.write(_v + chr(10))
+_fb.getvalue()
+`);
+                        outputEl.textContent = output || '(no output)';
+                    }
+                } else {
+                    const output = pyodide.runPython('sys.stdout.getvalue()');
+                    outputEl.textContent = output || '(no output)';
+                }
                 
             } catch(e) {
                 outputEl.textContent = 'Error: ' + e.message;
