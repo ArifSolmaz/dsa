@@ -4,22 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Week 05: Stacks &amp; Queues | DSA Course</title>
-    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
-    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
-    <script type="module">
-        // Wait for PyScript to be ready
-        const pyReady = new Promise((resolve) => {
-            const check = setInterval(() => {
-                if (typeof pyscript !== 'undefined' && pyscript.interpreter) {
-                    clearInterval(check);
-                    resolve();
-                }
-            }, 100);
-            // Timeout after 15 seconds
-            setTimeout(() => { clearInterval(check); resolve(); }, 15000);
-        });
-        window.pyReady = pyReady;
-    </script>
+    <!-- Pyodide for Python execution -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,22 +23,23 @@
             top: 0;
             background: #1a1a2e;
             color: white;
-            padding: 12px 30px;
+            padding: 0 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 100;
+            height: 48px;
         }
-        .topbar .title { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 500; }
-        .topbar a { font-family: system-ui, sans-serif; color: white; text-decoration: none; font-size: 0.85rem; padding: 6px 14px; background: rgba(255,255,255,0.1); border-radius: 5px; }
-        .topbar a:hover { background: rgba(255,255,255,0.2); }
+        .topbar .title { font-family: system-ui, sans-serif; font-size: 0.9rem; font-weight: 500; white-space: nowrap; }
+        .topbar a.home-link { font-family: system-ui, sans-serif; color: white; text-decoration: none; font-size: 0.85rem; padding: 6px 14px; background: rgba(255,255,255,0.1); border-radius: 5px; white-space: nowrap; }
+        .topbar a.home-link:hover { background: rgba(255,255,255,0.2); }
         
-        .book { max-width: 750px; margin: 0 auto; padding: 60px 40px 100px; }
+        .book { max-width: 1100px; margin: 0 auto; padding: 60px 40px 100px; }
         
         .chapter-header { text-align: center; padding: 50px 0 60px; border-bottom: 1px solid #ddd; margin-bottom: 50px; }
         .chapter-num { font-family: system-ui, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; color: #7c3aed; margin-bottom: 15px; }
         .chapter-header h1 { font-size: 2.8rem; font-weight: 600; color: #1a1a2e; margin-bottom: 15px; letter-spacing: -0.5px; }
-        .chapter-header .subtitle { font-style: italic; color: #666; font-size: 1.1rem; }
+        .chapter-header .subtitle { font-style: italic; color: #666; font-size: 1.1rem; text-align: center; }
         
         h2 { font-size: 1.6rem; font-weight: 600; color: #1a1a2e; margin: 60px 0 25px; padding-top: 30px; border-top: 1px solid #e5e5e5; }
         h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
@@ -84,10 +71,32 @@
         .code-figure-label { font-family: system-ui, sans-serif; font-size: 0.75rem; color: #a0a0b0; text-transform: uppercase; letter-spacing: 0.5px; }
         .code-figure-run { font-family: system-ui, sans-serif; background: #7c3aed; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
         .code-figure-run:hover { background: #6d28d9; }
-        .code-figure textarea { width: 100%; min-height: 100px; padding: 18px; background: #1e1e2e; color: #e0e0e0; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; }
+        .code-figure textarea { width: 100%; min-height: 80px; max-height: 300px; padding: 18px; background: #1e1e2e; color: #e0e0e0; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; overflow-y: auto; }
         .code-figure textarea:focus { outline: none; }
-        .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; }
+        .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
         .code-figure-output.show { display: block; }
+        
+        .code-figure .code-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 200px; }
+        .code-figure .code-split textarea { max-height: 400px; border-right: 1px solid #28283c; }
+        .code-figure .code-split .code-figure-output { border-top: none; display: flex; flex-direction: column; max-height: 400px; overflow-y: auto; }
+        .code-figure .code-split .code-figure-output.show { display: flex; }
+        .code-figure .code-split .code-figure-output:not(.show) { display: flex; opacity: 0.4; }
+        .code-figure .code-split .code-figure-output:not(.show)::after { content: 'Click ▶ Run to see output here'; color: #666; font-style: italic; font-size: 0.8rem; padding: 15px 18px; }
+        .code-figure .code-split .code-figure-output.show { opacity: 1; }
+        
+        .exercise-wrapper { display: grid; grid-template-columns: 1fr 1fr; margin: 40px 0 20px; border: 1px solid #bbf7d0; border-radius: 8px; overflow: hidden; }
+        .exercise-wrapper .exercise { margin: 0; border: none; border-radius: 0; border-right: 1px solid #bbf7d0; overflow-y: auto; max-height: 500px; }
+        .exercise-wrapper .code-figure { margin: 0; border: none; border-radius: 0; display: flex; flex-direction: column; }
+        .exercise-wrapper .code-figure textarea { flex: 1; min-height: 150px; max-height: none; resize: none; }
+        .exercise-wrapper .code-figure-output { max-height: 180px; }
+        .exercise-wrapper .code-figure-caption { border-top: 1px solid #28283c; }
+        
+        @media (max-width: 900px) {
+            .exercise-wrapper { grid-template-columns: 1fr; }
+            .exercise-wrapper .exercise { border-right: none; border-bottom: 1px solid #bbf7d0; max-height: none; }
+            .code-figure .code-split { grid-template-columns: 1fr; }
+            .code-figure .code-split textarea { border-right: none; border-bottom: 1px solid #28283c; }
+        }
         .code-figure-caption { background: #f8f8f8; padding: 12px 18px; font-size: 0.85rem; color: #666; border-top: 1px solid #e0e0e0; }
         .code-figure-caption strong { color: #333; }
         
@@ -137,19 +146,53 @@
         .toc a { color: #7c3aed; text-decoration: none; }
         .toc a:hover { text-decoration: underline; }
         
+        .topbar-toc-wrap { position: relative; flex: 1; display: flex; justify-content: center; align-items: center; height: 100%; }
+        .topbar-toc-current { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 16px; border-radius: 6px; transition: background 0.2s; max-width: 400px; }
+        .topbar-toc-current:hover { background: rgba(255,255,255,0.08); }
+        .topbar-toc-current .cur-dot { width: 7px; height: 7px; min-width: 7px; border-radius: 50%; background: #7c3aed; box-shadow: 0 0 6px rgba(124,58,237,0.5); }
+        .topbar-toc-current .cur-label { font-family: system-ui, sans-serif; font-size: 0.78rem; color: rgba(255,255,255,0.85); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .topbar-toc-current .cur-chevron { font-size: 0.55rem; color: rgba(255,255,255,0.4); transition: transform 0.25s; margin-left: 2px; }
+        .topbar-toc-wrap:hover .cur-chevron { transform: rotate(180deg); }
+        .topbar-toc-dropdown { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); min-width: 320px; max-width: 400px; background: rgba(26,26,46,0.97); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 0 0 12px 12px; box-shadow: 0 12px 36px rgba(0,0,0,0.25); padding: 0; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease, padding 0.3s ease; pointer-events: none; }
+        .topbar-toc-wrap:hover .topbar-toc-dropdown { max-height: 500px; opacity: 1; padding: 10px 8px 14px; pointer-events: auto; }
+        .topbar-toc-dropdown a { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 7px; text-decoration: none; color: rgba(255,255,255,0.5); font-family: system-ui, sans-serif; font-size: 0.8rem; font-weight: 400; transition: all 0.15s; line-height: 1.3; }
+        .topbar-toc-dropdown a:hover { background: rgba(124,58,237,0.15); color: rgba(255,255,255,0.95); }
+        .topbar-toc-dropdown a .t-dot { width: 6px; height: 6px; min-width: 6px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: all 0.25s; }
+        .topbar-toc-dropdown a.active { color: #fff; font-weight: 600; background: rgba(124,58,237,0.2); }
+        .topbar-toc-dropdown a.active .t-dot { background: #7c3aed; box-shadow: 0 0 6px rgba(124,58,237,0.6); width: 8px; height: 8px; min-width: 8px; }
+        .topbar-toc-dropdown a.visited-section { color: rgba(255,255,255,0.65); }
+        .topbar-toc-dropdown a.visited-section .t-dot { background: rgba(124,58,237,0.45); }
+        .scroll-progress { position: fixed; bottom: 20px; right: 24px; z-index: 90; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 500; color: rgba(124,58,237,0.55); background: rgba(250,249,247,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 5px 10px; border-radius: 20px; border: 1px solid rgba(124,58,237,0.12); transition: opacity 0.4s, color 0.3s, border-color 0.3s; pointer-events: none; user-select: none; }
+        .scroll-progress.at-end { color: rgba(74,222,128,0.8); border-color: rgba(74,222,128,0.2); }
+        .topbar-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: linear-gradient(90deg, #7c3aed, #a78bfa); transition: width 0.15s ease-out; border-radius: 0 1px 1px 0; }
+
         @media (max-width: 600px) {
             .book { padding: 30px 20px; }
             .chapter-header h1 { font-size: 2rem; }
             h2 { font-size: 1.4rem; }
             .form-row { grid-template-columns: 1fr; }
+            .topbar { padding: 0 15px; }
+            .topbar-toc-current .cur-label { max-width: 140px; }
+            .topbar-toc-dropdown { min-width: 260px; }
+            .scroll-progress { bottom: 12px; right: 14px; }
         }
     </style>
 </head>
 <body>
-    <nav class="topbar">
+    <nav class="topbar" id="topbar">
         <span class="title">Data Structures &amp; Algorithms</span>
-        <a href="index.html?home=true">← Course Home</a>
+        <div class="topbar-toc-wrap" id="tocWrap">
+            <div class="topbar-toc-current">
+                <span class="cur-dot"></span>
+                <span class="cur-label" id="tocCurrentLabel">Contents</span>
+                <span class="cur-chevron">▼</span>
+            </div>
+            <div class="topbar-toc-dropdown" id="tocDropdown"></div>
+        </div>
+        <a class="home-link" href="index.html?home=true">← Course Home</a>
+        <div class="topbar-progress" id="topbarProgress"></div>
     </nav>
+    <div class="scroll-progress" id="scrollProgress">0%</div>
     
     <main class="book">
         <header class="chapter-header">
@@ -2585,7 +2628,114 @@ class RecentCounter:
     </main>
 
     <script>
+    (function() {
+        const sections = [
+            { id: 'intro', label: '1. Introduction to Stacks and Queues' },
+            { id: 'stack-concept', label: '2. The Stack: LIFO Principle' },
+            { id: 'stack-impl', label: '3. Stack Implementations' },
+            { id: 'stack-apps', label: '4. Stack Applications' },
+            { id: 'queue-concept', label: '5. The Queue: FIFO Principle' },
+            { id: 'queue-impl', label: '6. Queue Implementations' },
+            { id: 'queue-variants', label: '7. Queue Variants' },
+            { id: 'queue-apps', label: '8. Queue Applications' },
+            { id: 'comparison', label: '9. Stacks vs Queues' },
+            { id: 'pitfalls', label: '10. Common Pitfalls' },
+            { id: 'exercises', label: '11. Exercises' }
+        ];
+        const visitedSections = new Set();
+        let currentSectionId = null;
+        function init() {
+            const dropdown = document.getElementById('tocDropdown');
+            const currentLabel = document.getElementById('tocCurrentLabel');
+            const scrollProgress = document.getElementById('scrollProgress');
+            const topbarProgress = document.getElementById('topbarProgress');
+            sections.forEach(s => {
+                const a = document.createElement('a');
+                a.href = '#' + s.id;
+                a.dataset.section = s.id;
+                a.innerHTML = '<span class="t-dot"></span>' + s.label;
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.getElementById(s.id);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+                dropdown.appendChild(a);
+            });
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.id;
+                        if (id && sections.some(s => s.id === id)) setActive(id);
+                    }
+                });
+            }, { rootMargin: '-10% 0px -75% 0px', threshold: 0 });
+            sections.forEach(s => { const el = document.getElementById(s.id); if (el) observer.observe(el); });
+            function setActive(id) {
+                if (currentSectionId === id) return;
+                currentSectionId = id;
+                visitedSections.add(id);
+                const sec = sections.find(s => s.id === id);
+                if (sec) currentLabel.textContent = sec.label;
+                dropdown.querySelectorAll('a').forEach(a => {
+                    const sid = a.dataset.section;
+                    a.classList.remove('active', 'visited-section');
+                    if (sid === id) a.classList.add('active');
+                    else if (visitedSections.has(sid)) a.classList.add('visited-section');
+                });
+            }
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        const scrollTop = window.scrollY;
+                        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                        const pct = docHeight > 0 ? Math.min(100, Math.round((scrollTop / docHeight) * 100)) : 0;
+                        scrollProgress.textContent = pct + '%';
+                        topbarProgress.style.width = pct + '%';
+                        scrollProgress.classList.toggle('at-end', pct >= 98);
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+            setActive(sections[0].id);
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+        else init();
+    })();
+    </script>
+
+    <script>
         const pageLoadTime = Date.now();
+        
+        // ============ SPLIT LAYOUT INIT ============
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.exercise[data-exercise]').forEach(function(exercise) {
+                var nextEl = exercise.nextElementSibling;
+                while (nextEl && !nextEl.classList.contains('code-figure') && !nextEl.classList.contains('exercise')) {
+                    nextEl = nextEl.nextElementSibling;
+                }
+                if (nextEl && nextEl.classList.contains('code-figure')) {
+                    var wrapper = document.createElement('div');
+                    wrapper.className = 'exercise-wrapper';
+                    exercise.parentNode.insertBefore(wrapper, exercise);
+                    wrapper.appendChild(exercise);
+                    wrapper.appendChild(nextEl);
+                }
+            });
+            document.querySelectorAll('.code-figure').forEach(function(figure) {
+                if (figure.closest('.exercise-wrapper')) return;
+                var textarea = figure.querySelector('textarea');
+                var output = figure.querySelector('.code-figure-output');
+                if (textarea && output) {
+                    var splitDiv = document.createElement('div');
+                    splitDiv.className = 'code-split';
+                    textarea.parentNode.insertBefore(splitDiv, textarea);
+                    splitDiv.appendChild(textarea);
+                    splitDiv.appendChild(output);
+                }
+            });
+        });
         
         // ============ HINT SYSTEM ============
         function toggleHint(exerciseId, hintNum) {
@@ -2656,42 +2806,36 @@ class RecentCounter:
         }
         
         // ============ PYODIDE CODE RUNNER ============
+        // ============ PYODIDE PYTHON EXECUTION ============
+        let pyodideReady = false;
+        let pyodide = null;
+        
         async function runCode(codeId) {
             const codeEl = document.getElementById(codeId);
             const outputEl = document.getElementById('output' + codeId);
             const code = codeEl.value;
             outputEl.classList.add('show');
-            outputEl.textContent = 'Loading Python...';
             
             try {
-                if (!window.pyodideReady) {
-                    if (typeof loadPyodide === 'undefined') {
-                        const script = document.createElement('script');
-                        script.src = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
-                        document.head.appendChild(script);
-                        await new Promise((resolve, reject) => {
-                            script.onload = resolve;
-                            script.onerror = reject;
-                            setTimeout(reject, 10000);
-                        });
-                    }
+                if (!pyodideReady) {
                     outputEl.textContent = 'Initializing Python (first run may take a moment)...';
-                    window.pyodide = await loadPyodide();
-                    window.pyodideReady = true;
+                    pyodide = await loadPyodide();
+                    pyodideReady = true;
                 }
+                
                 outputEl.textContent = 'Running...';
-                window.pyodide.runPython(`
+                pyodide.runPython(`
 import sys
 from io import StringIO
 sys.stdout = StringIO()
 `);
                 try {
-                    window.pyodide.runPython(code);
+                    pyodide.runPython(code);
                 } catch (pyErr) {
                     outputEl.textContent = 'Error: ' + pyErr.message;
                     return;
                 }
-                const output = window.pyodide.runPython('sys.stdout.getvalue()');
+                const output = pyodide.runPython('sys.stdout.getvalue()');
                 outputEl.textContent = output || '(no output)';
             } catch(e) {
                 outputEl.textContent = 'Error: ' + e.message;
