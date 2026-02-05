@@ -230,7 +230,9 @@
         .code-figure .code-split {
             display: flex;
             flex-direction: row;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
+            max-height: 500px;
             resize: vertical;
             position: relative;
             border-radius: 0 0 4px 4px;
@@ -239,13 +241,13 @@
         .code-figure .code-split textarea {
             flex: 1 1 50%;
             min-width: 0;
-            max-height: none;
             resize: none;
             border-right: 1px solid #28283c;
             font-size: 0.82rem;
             line-height: 1.7;
             padding: 14px 16px;
-            overflow: auto;
+            overflow-x: auto;
+            overflow-y: hidden;
             white-space: pre;
             box-sizing: border-box;
         }
@@ -254,8 +256,8 @@
             min-width: 0;
             border-top: none;
             display: block;
-            max-height: none;
-            overflow: auto;
+            overflow-x: auto;
+            overflow-y: hidden;
             font-size: 0.82rem;
             line-height: 1.7;
             padding: 14px 16px;
@@ -2959,7 +2961,7 @@ _r = []
 for _i in range(1, ${totalLines} + 1):
     if _i in _lt.lo:
         _parts = [p for p in _lt.lo[_i] if p.strip()]
-        _r.append(chr(10).join(_parts) if _parts else '')
+        _r.append(' \\u21b5 '.join(_parts) if _parts else '')
     else:
         _r.append('')
 chr(10).join(_r)
