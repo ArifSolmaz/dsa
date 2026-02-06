@@ -78,26 +78,129 @@
         .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
         .code-figure-output.show { display: block; }
         
-        .code-figure .code-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 200px; }
-        .code-figure .code-split textarea { max-height: 400px; border-right: 1px solid #28283c; }
-        .code-figure .code-split .code-figure-output { border-top: none; display: flex; flex-direction: column; max-height: 400px; overflow-y: auto; }
-        .code-figure .code-split .code-figure-output.show { display: flex; }
-        .code-figure .code-split .code-figure-output:not(.show) { display: flex; opacity: 0.4; }
-        .code-figure .code-split .code-figure-output:not(.show)::after { content: 'Click ▶ Run to see output here'; color: #666; font-style: italic; font-size: 0.8rem; padding: 15px 18px; }
-        .code-figure .code-split .code-figure-output.show { opacity: 1; }
+        .code-figure .code-split {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            border-radius: 0 0 4px 4px;
+        }
         
-        .exercise-wrapper { display: grid; grid-template-columns: 1fr 1fr; margin: 40px 0 20px; border: 1px solid #bbf7d0; border-radius: 8px; overflow: hidden; }
-        .exercise-wrapper .exercise { margin: 0; border: none; border-radius: 0; border-right: 1px solid #bbf7d0; overflow-y: auto; max-height: 500px; }
-        .exercise-wrapper .code-figure { margin: 0; border: none; border-radius: 0; display: flex; flex-direction: column; }
-        .exercise-wrapper .code-figure textarea { flex: 1; min-height: 150px; max-height: none; resize: none; }
-        .exercise-wrapper .code-figure-output { max-height: 180px; }
-        .exercise-wrapper .code-figure-caption { border-top: 1px solid #28283c; }
+        /* Wrapper injected by JS: textarea + hidden mirror share one grid cell */
+        .code-figure .code-split .code-input-sizer {
+            flex: 1 1 50%;
+            min-width: 0;
+            display: grid;
+            border-right: 1px solid #28283c;
+            background: #1e1e2e;
+        }
+        .code-figure .code-split .code-input-sizer > textarea,
+        .code-figure .code-split .code-input-sizer > .code-input-mirror {
+            grid-area: 1 / 1;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            padding: 14px 16px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            box-sizing: border-box;
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 60px;
+        }
+        .code-figure .code-split .code-input-sizer > textarea {
+            resize: none;
+            overflow: hidden;
+            color: #e0e0e0;
+            background: transparent;
+            border: none;
+            outline: none;
+            z-index: 1;
+            max-height: none;
+        }
+        .code-figure .code-split .code-input-sizer > .code-input-mirror {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .code-figure .code-split .code-figure-output {
+            flex: 1 1 50%;
+            min-width: 0;
+            border-top: none;
+            display: block;
+            overflow-y: auto;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            padding: 14px 16px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            box-sizing: border-box;
+            max-height: none;
+        }
+        .code-figure .code-split .code-figure-output.show { display: block; }
+        .code-figure .code-split .code-figure-output:not(.show) {
+            display: block;
+            opacity: 0.4;
+        }
+        
+        .code-figure .code-split .code-figure-output.show { opacity: 1; }
+        .code-figure .code-split .code-figure-output:not(.show)::before {
+            content: '← Click ▶ Run to see aligned output';
+            color: #555;
+            font-style: italic;
+        }
+        
+        /* Exercise split layout */
+        .exercise-wrapper {
+            display: flex;
+            flex-direction: column;
+            margin: 40px 0 20px;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .exercise-wrapper .exercise {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid #bbf7d0;
+        }
+        .exercise-wrapper .code-figure {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .exercise-wrapper .code-figure textarea {
+            min-height: 150px;
+            max-height: none;
+            resize: none;
+        }
+        .exercise-wrapper .code-figure .code-split {
+            min-height: 150px;
+        }
+        .exercise-wrapper .code-figure-output {
+            max-height: none;
+        }
+        .exercise-wrapper .code-figure-caption {
+            border-top: 1px solid #28283c;
+        }
         
         @media (max-width: 900px) {
-            .exercise-wrapper { grid-template-columns: 1fr; }
-            .exercise-wrapper .exercise { border-right: none; border-bottom: 1px solid #bbf7d0; max-height: none; }
-            .code-figure .code-split { grid-template-columns: 1fr; }
-            .code-figure .code-split textarea { border-right: none; border-bottom: 1px solid #28283c; }
+            .exercise-wrapper .exercise {
+                border-bottom: 1px solid #bbf7d0;
+            }
+            .code-figure .code-split {
+                flex-direction: column;
+            }
+            .code-figure .code-split .code-input-sizer {
+                flex: none;
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #28283c;
+            }
+            .code-figure .code-split .code-figure-output {
+                flex: none;
+                width: 100%;
+            }
         }
         .code-figure-caption { background: #f8f8f8; padding: 12px 18px; font-size: 0.85rem; color: #666; border-top: 1px solid #e0e0e0; }
         .code-figure-caption strong { color: #333; }
@@ -289,6 +392,52 @@
             border-radius: 0 1px 1px 0;
         }
 
+        /* Run All button */
+        .run-all-btn {
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 4px 14px;
+            border-radius: 4px;
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        .run-all-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .run-all-btn.running {
+            color: #a78bfa;
+            border-color: rgba(124,58,237,0.4);
+            pointer-events: none;
+        }
+        .run-all-btn.success {
+            color: #4ade80;
+            border-color: rgba(74,222,128,0.4);
+            background: rgba(74,222,128,0.1);
+        }
+        .run-all-btn.failure {
+            color: #f87171;
+            border-color: rgba(248,113,113,0.4);
+            background: rgba(248,113,113,0.1);
+        }
+
+        /* Per-block run status indicator */
+        .code-run-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: system-ui, sans-serif;
+            font-size: 0.7rem;
+            margin-left: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .code-run-status.visible { opacity: 1; }
+        .code-run-status.pass { color: #4ade80; }
+        .code-run-status.fail { color: #f87171; }
+
         @media (max-width: 600px) {
             .book { padding: 30px 20px; }
             .chapter-header h1 { font-size: 2rem; }
@@ -298,6 +447,7 @@
             .topbar-toc-current .cur-label { max-width: 140px; }
             .topbar-toc-dropdown { min-width: 260px; }
             .scroll-progress { bottom: 12px; right: 14px; }
+            .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
     </style>
 </head>
@@ -313,6 +463,7 @@
             <div class="topbar-toc-dropdown" id="tocDropdown"></div>
         </div>
         <a class="home-link" href="index.html?home=true">← Course Home</a>
+        <button class="run-all-btn" id="runAllBtn" onclick="runAllCode()">▶ Run All</button>
         <div class="topbar-progress" id="topbarProgress"></div>
     </nav>
 
@@ -2111,7 +2262,14 @@ def good_factorial(n):
 
 print("Return values:")
 print(f"  good_factorial(5) = {good_factorial(5)}")
-print(f"  bad_factorial(5) = {bad_factorial(5)}")  # Returns None!</textarea>
+try:
+    result = bad_factorial(5)
+    print(f"  bad_factorial(5) = {result}")
+except TypeError as e:
+    print(f"  bad_factorial(5) crashed: {e}")
+print()
+print("Without return, the recursive call's result is lost.")
+print("Python returns None by default → None * n → TypeError!")</textarea>
                 <div class="code-figure-output" id="outputcode32"></div>
                 <div class="code-figure-caption">
                     <strong>Figure 2.32:</strong> Always return the result of recursive calls. Forgetting <code>return</code> gives <code>None</code>.
@@ -2411,6 +2569,16 @@ def hanoi(n, source, target, auxiliary):
             <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
             <div class="submit-status" id="submitStatus"></div>
         </section>
+        <nav class="week-nav" style="display:flex;justify-content:space-between;margin-top:60px;padding:30px 0;border-top:1px solid #ddd;">
+            <a href="Week_01.html" style="display:flex;flex-direction:column;color:#7c3aed;text-decoration:none;padding:12px 20px;border-radius:8px;max-width:45%;transition:background 0.2s;" onmouseover="this.style.background='#f3f0ff'" onmouseout="this.style.background='transparent'">
+                <span style="font-family:system-ui,sans-serif;font-size:0.75rem;color:#888;">← Previous Week</span>
+                <span style="font-family:system-ui,sans-serif;font-size:0.95rem;font-weight:600;">Foundations &amp; Big O</span>
+            </a>
+            <a href="Week_03.html" style="display:flex;flex-direction:column;align-items:flex-end;color:#7c3aed;text-decoration:none;padding:12px 20px;border-radius:8px;max-width:45%;transition:background 0.2s;" onmouseover="this.style.background='#f3f0ff'" onmouseout="this.style.background='transparent'">
+                <span style="font-family:system-ui,sans-serif;font-size:0.75rem;color:#888;">Next Week →</span>
+                <span style="font-family:system-ui,sans-serif;font-size:0.95rem;font-weight:600;">Arrays, Lists &amp; Strings</span>
+            </a>
+        </nav>
     </main>
 
     <!-- Smart Topbar TOC & Progress Script -->
@@ -2500,7 +2668,7 @@ def hanoi(n, source, target, auxiliary):
             // Wrap exercise + code-figure sibling pairs
             document.querySelectorAll('.exercise[data-exercise]').forEach(function(exercise) {
                 var nextEl = exercise.nextElementSibling;
-                while (nextEl && !nextEl.classList.contains('code-figure') && !nextEl.classList.contains('exercise')) {
+                while (nextEl && nextEl.nodeType === 1 && !nextEl.classList.contains('code-figure') && !nextEl.classList.contains('exercise')) {
                     nextEl = nextEl.nextElementSibling;
                 }
                 if (nextEl && nextEl.classList.contains('code-figure')) {
@@ -2511,12 +2679,11 @@ def hanoi(n, source, target, auxiliary):
                     wrapper.appendChild(nextEl);
                 }
             });
-            // Split layout for inline code figures
+            // Split layout for all code figures (code left, output right)
             document.querySelectorAll('.code-figure').forEach(function(figure) {
-                if (figure.closest('.exercise-wrapper')) return;
                 var textarea = figure.querySelector('textarea');
                 var output = figure.querySelector('.code-figure-output');
-                if (textarea && output) {
+                if (textarea && output && !textarea.closest('.code-split')) {
                     var splitDiv = document.createElement('div');
                     splitDiv.className = 'code-split';
                     textarea.parentNode.insertBefore(splitDiv, textarea);
@@ -2598,7 +2765,6 @@ def hanoi(n, source, target, auxiliary):
         }
         
         // ============ PYODIDE CODE RUNNER ============
-        // ============ PYODIDE PYTHON EXECUTION ============
         let pyodideReady = false;
         let pyodide = null;
         
@@ -2607,6 +2773,7 @@ def hanoi(n, source, target, auxiliary):
             const outputEl = document.getElementById('output' + codeId);
             const code = codeEl.value;
             outputEl.classList.add('show');
+            let success = true;
             
             try {
                 if (!pyodideReady) {
@@ -2625,13 +2792,94 @@ sys.stdout = StringIO()
                     pyodide.runPython(code);
                 } catch (pyErr) {
                     outputEl.textContent = 'Error: ' + pyErr.message;
-                    return;
+                    if (typeof autoSizeCodeBlock === 'function') autoSizeCodeBlock(codeEl);
+                    return false;
                 }
                 const output = pyodide.runPython('sys.stdout.getvalue()');
                 outputEl.textContent = output || '(no output)';
             } catch(e) {
                 outputEl.textContent = 'Error: ' + e.message;
+                success = false;
             }
+            // Re-size textarea in case output changes layout
+            if (typeof autoSizeCodeBlock === 'function') autoSizeCodeBlock(codeEl);
+            return success;
+        }
+
+        // ============ RUN ALL CODE BLOCKS ============
+        async function runAllCode() {
+            const btn = document.getElementById('runAllBtn');
+            btn.className = 'run-all-btn running';
+            btn.textContent = '⏳ Running...';
+
+            // Collect all code-figure blocks (listing blocks only, not exercises)
+            const allTextareas = document.querySelectorAll('.code-split textarea[id^="code"]');
+            let passed = 0, failed = 0, total = allTextareas.length;
+            const failedListings = [];
+            let firstFailedFigure = null;
+
+            // Clear any previous status indicators
+            document.querySelectorAll('.code-run-status').forEach(el => el.remove());
+
+            for (const ta of allTextareas) {
+                const codeId = ta.id;
+                const figure = ta.closest('.code-figure');
+                const header = figure.querySelector('.code-figure-header');
+                const label = header.querySelector('.code-figure-label');
+
+                // Create status indicator
+                const status = document.createElement('span');
+                status.className = 'code-run-status';
+                header.appendChild(status);
+
+                try {
+                    const ok = await runCode(codeId);
+                    if (ok) {
+                        status.textContent = '✓';
+                        status.classList.add('pass', 'visible');
+                        passed++;
+                    } else {
+                        const listingName = label ? label.textContent.trim() : codeId;
+                        status.textContent = '✗ error';
+                        status.classList.add('fail', 'visible');
+                        failedListings.push(listingName);
+                        if (!firstFailedFigure) firstFailedFigure = figure;
+                        failed++;
+                    }
+                } catch (e) {
+                    const listingName = label ? label.textContent.trim() : codeId;
+                    status.textContent = '✗ error';
+                    status.classList.add('fail', 'visible');
+                    failedListings.push(listingName);
+                    if (!firstFailedFigure) firstFailedFigure = figure;
+                    failed++;
+                }
+            }
+
+            // Update button with final result
+            if (failed === 0) {
+                btn.className = 'run-all-btn success';
+                btn.textContent = `✓ All ${passed} passed`;
+            } else {
+                btn.className = 'run-all-btn failure';
+                btn.textContent = `✗ ${failed}/${total} failed`;
+                // Scroll to first failed block
+                if (firstFailedFigure) {
+                    firstFailedFigure.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstFailedFigure.style.outline = '2px solid #f87171';
+                    firstFailedFigure.style.outlineOffset = '4px';
+                    firstFailedFigure.style.borderRadius = '8px';
+                    setTimeout(() => { firstFailedFigure.style.outline = 'none'; }, 5000);
+                }
+                // Log failed listings to console
+                console.log('Failed listings:', failedListings);
+            }
+
+            // Reset button after 10 seconds
+            setTimeout(() => {
+                btn.className = 'run-all-btn';
+                btn.textContent = '▶ Run All';
+            }, 10000);
         }
         
         // ============ VALIDATION FUNCTIONS ============
@@ -2799,6 +3047,32 @@ sys.stdout = StringIO()
                 });
             });
         }
-    </script>
+    
+        // Wrap each code-split textarea in a sizer grid + mirror div.
+        // The mirror (invisible) holds the same text and determines the natural height.
+        // No scrollHeight measurement, no explicit pixel heights anywhere.
+        function initAutoSize() {
+            document.querySelectorAll('.code-split textarea').forEach(ta => {
+                const sizer = document.createElement('div');
+                sizer.className = 'code-input-sizer';
+                ta.parentNode.insertBefore(sizer, ta);
+                sizer.appendChild(ta);
+
+                const mirror = document.createElement('div');
+                mirror.className = 'code-input-mirror';
+                mirror.setAttribute('aria-hidden', 'true');
+                sizer.appendChild(mirror);
+
+                function sync() { mirror.textContent = ta.value + '\n'; }
+                ta.addEventListener('input', sync);
+                sync();
+            });
+        }
+        // autoSizeCodeBlock kept as no-op for any existing calls
+        function autoSizeCodeBlock() {}
+        if (document.fonts) { document.fonts.ready.then(initAutoSize); }
+        else { window.addEventListener('load', initAutoSize); }
+
+        </script>
 </body>
 </html>

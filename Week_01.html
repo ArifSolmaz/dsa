@@ -230,39 +230,58 @@
         .code-figure .code-split {
             display: flex;
             flex-direction: row;
-            overflow-x: hidden;
-            overflow-y: auto;
-            max-height: 500px;
-            resize: vertical;
-            position: relative;
+            align-items: stretch;
             border-radius: 0 0 4px 4px;
         }
         
-        .code-figure .code-split textarea {
+        /* Wrapper injected by JS: textarea + hidden mirror share one grid cell */
+        .code-figure .code-split .code-input-sizer {
             flex: 1 1 50%;
             min-width: 0;
-            resize: none;
+            display: grid;
             border-right: 1px solid #28283c;
+            background: #1e1e2e;
+        }
+        .code-figure .code-split .code-input-sizer > textarea,
+        .code-figure .code-split .code-input-sizer > .code-input-mirror {
+            grid-area: 1 / 1;
             font-size: 0.82rem;
             line-height: 1.7;
             padding: 14px 16px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            white-space: pre;
+            white-space: pre-wrap;
+            word-wrap: break-word;
             box-sizing: border-box;
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 60px;
         }
+        .code-figure .code-split .code-input-sizer > textarea {
+            resize: none;
+            overflow: hidden;
+            color: #e0e0e0;
+            background: transparent;
+            border: none;
+            outline: none;
+            z-index: 1;
+            max-height: none;
+        }
+        .code-figure .code-split .code-input-sizer > .code-input-mirror {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
         .code-figure .code-split .code-figure-output {
             flex: 1 1 50%;
             min-width: 0;
             border-top: none;
             display: block;
-            overflow-x: auto;
-            overflow-y: hidden;
+            overflow-y: auto;
             font-size: 0.82rem;
             line-height: 1.7;
             padding: 14px 16px;
-            white-space: pre;
+            white-space: pre-wrap;
+            word-wrap: break-word;
             box-sizing: border-box;
+            max-height: none;
         }
         .code-figure .code-split .code-figure-output.show { display: block; }
         .code-figure .code-split .code-figure-output:not(.show) {
@@ -321,12 +340,11 @@
             .code-figure .code-split {
                 flex-direction: column;
             }
-            .code-figure .code-split textarea {
+            .code-figure .code-split .code-input-sizer {
                 flex: none;
                 width: 100%;
                 border-right: none;
                 border-bottom: 1px solid #28283c;
-                min-height: 100px;
             }
             .code-figure .code-split .code-figure-output {
                 flex: none;
@@ -542,6 +560,39 @@
         }
         .hp { position: absolute; left: -9999px; }
         
+        /* Week Navigation */
+        .week-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 60px;
+            padding: 30px 0;
+            border-top: 1px solid #ddd;
+        }
+        .week-nav a {
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: #7c3aed;
+            font-family: system-ui, sans-serif;
+            font-size: 0.9rem;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            max-width: 45%;
+        }
+        .week-nav a:hover { background: #f3f0ff; }
+        .week-nav a .nav-direction {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        .week-nav a .nav-title { font-weight: 600; }
+        .week-nav a.nav-next { text-align: right; margin-left: auto; }
+        .week-nav a.nav-prev { text-align: left; margin-right: auto; }
+        
         .toc {
             background: #f8f7f5;
             padding: 30px 35px;
@@ -754,6 +805,52 @@
             border-radius: 0 1px 1px 0;
         }
 
+        /* Run All button */
+        .run-all-btn {
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 4px 14px;
+            border-radius: 4px;
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        .run-all-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .run-all-btn.running {
+            color: #a78bfa;
+            border-color: rgba(124,58,237,0.4);
+            pointer-events: none;
+        }
+        .run-all-btn.success {
+            color: #4ade80;
+            border-color: rgba(74,222,128,0.4);
+            background: rgba(74,222,128,0.1);
+        }
+        .run-all-btn.failure {
+            color: #f87171;
+            border-color: rgba(248,113,113,0.4);
+            background: rgba(248,113,113,0.1);
+        }
+
+        /* Per-block run status indicator */
+        .code-run-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: system-ui, sans-serif;
+            font-size: 0.7rem;
+            margin-left: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .code-run-status.visible { opacity: 1; }
+        .code-run-status.pass { color: #4ade80; }
+        .code-run-status.fail { color: #f87171; }
+
         @media (max-width: 700px) {
             body { font-size: 17px; }
             .book { padding: 30px 20px 60px; }
@@ -767,6 +864,7 @@
             .topbar-toc-current .cur-label { max-width: 140px; }
             .topbar-toc-dropdown { min-width: 260px; left: 50%; }
             .scroll-progress { bottom: 12px; right: 14px; }
+            .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
     </style>
 </head>
@@ -787,6 +885,7 @@
         </div>
         
         <a class="home-link" href="index.html?home=true">← Course Home</a>
+        <button class="run-all-btn" id="runAllBtn" onclick="runAllCode()">▶ Run All</button>
         <div class="topbar-progress" id="topbarProgress"></div>
     </nav>
 
@@ -2659,6 +2758,15 @@ print("\nUpdate the docstrings with your Big O answers!")</textarea>
             <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
             <div class="submit-status" id="submitStatus"></div>
         </section>
+
+        <!-- Week Navigation -->
+        <nav class="week-nav">
+            <span></span>
+            <a class="nav-next" href="Week_02.html">
+                <span class="nav-direction">Next Week →</span>
+                <span class="nav-title">Recursion &amp; Math Foundations</span>
+            </a>
+        </nav>
     </main>
 
     <!-- Smart Topbar TOC & Progress Script -->
@@ -2888,6 +2996,7 @@ print("\nUpdate the docstrings with your Big O answers!")</textarea>
             const outputEl = document.getElementById('output' + codeId);
             const code = codeEl.value;
             outputEl.classList.add('show');
+            let success = true;
             
             try {
                 if (!pyodideReady) {
@@ -2897,95 +3006,83 @@ print("\nUpdate the docstrings with your Big O answers!")</textarea>
                 }
                 
                 outputEl.textContent = 'Running...';
-                const totalLines = code.split('\n').length;
-                
-                // Set up line-tracking stdout capture
-                let lineTracking = true;
-                try {
-                    pyodide.runPython(`
-import sys
-
-class _LineTracker:
-    def __init__(self):
-        self.lo = {}
-        self._cl = 0
-        self._buf = ""
-        self._top = None
-    def _t(self, frame, event, arg):
-        if self._top is None and event == 'call' and frame.f_code.co_filename == '<exec>':
-            self._top = frame
-        if event == 'line' and frame is self._top:
-            self._cl = frame.f_lineno
-        return self._t
-    def write(self, text):
-        self._buf += text
-        while '\\n' in self._buf:
-            lt, self._buf = self._buf.split('\\n', 1)
-            if self._cl not in self.lo:
-                self.lo[self._cl] = []
-            self.lo[self._cl].append(lt)
-    def flush(self):
-        if self._buf:
-            if self._cl not in self.lo:
-                self.lo[self._cl] = []
-            self.lo[self._cl].append(self._buf)
-            self._buf = ""
-
-_lt = _LineTracker()
-sys.stdout = _lt
-sys.settrace(_lt._t)
-`);
-                } catch(e) {
-                    lineTracking = false;
-                    pyodide.runPython(`
+                pyodide.runPython(`
 import sys
 from io import StringIO
 sys.stdout = StringIO()
 `);
-                }
-                
                 try {
                     pyodide.runPython(code);
                 } catch (pyErr) {
-                    try { pyodide.runPython('sys.settrace(None)'); } catch(x) {}
                     outputEl.textContent = 'Error: ' + pyErr.message;
-                    return;
+                    if (typeof autoSizeCodeBlock === 'function') autoSizeCodeBlock(codeEl);
+                    return false;
                 }
-                
-                if (lineTracking) {
-                    try {
-                        pyodide.runPython('sys.settrace(None)');
-                        pyodide.runPython('_lt.flush()');
-                        const aligned = pyodide.runPython(`
-_r = []
-for _i in range(1, ${totalLines} + 1):
-    if _i in _lt.lo:
-        _parts = [p for p in _lt.lo[_i] if p.strip()]
-        _r.append(' \\u21b5 '.join(_parts) if _parts else '')
-    else:
-        _r.append('')
-chr(10).join(_r)
-`);
-                        outputEl.textContent = aligned || '(no output)';
-                    } catch(e) {
-                        const output = pyodide.runPython(`
-sys.settrace(None)
-import io; _fb = io.StringIO()
-for _k in sorted(_lt.lo.keys()):
-    for _v in _lt.lo[_k]:
-        _fb.write(_v + chr(10))
-_fb.getvalue()
-`);
-                        outputEl.textContent = output || '(no output)';
-                    }
-                } else {
-                    const output = pyodide.runPython('sys.stdout.getvalue()');
-                    outputEl.textContent = output || '(no output)';
-                }
-                
+                const output = pyodide.runPython('sys.stdout.getvalue()');
+                outputEl.textContent = output || '(no output)';
             } catch(e) {
                 outputEl.textContent = 'Error: ' + e.message;
+                success = false;
             }
+            // Re-size textarea in case output changes layout
+            if (typeof autoSizeCodeBlock === 'function') autoSizeCodeBlock(codeEl);
+            return success;
+        }
+
+        // ============ RUN ALL CODE BLOCKS ============
+        async function runAllCode() {
+            const btn = document.getElementById('runAllBtn');
+            btn.className = 'run-all-btn running';
+            btn.textContent = '⏳ Running...';
+
+            // Collect all code-figure blocks (listing blocks only, not exercises)
+            const allTextareas = document.querySelectorAll('.code-split textarea[id^="code"]');
+            let passed = 0, failed = 0, total = allTextareas.length;
+
+            // Clear any previous status indicators
+            document.querySelectorAll('.code-run-status').forEach(el => el.remove());
+
+            for (const ta of allTextareas) {
+                const codeId = ta.id;
+                const header = ta.closest('.code-figure').querySelector('.code-figure-header');
+
+                // Create status indicator
+                const status = document.createElement('span');
+                status.className = 'code-run-status';
+                header.appendChild(status);
+
+                try {
+                    const ok = await runCode(codeId);
+                    if (ok) {
+                        status.textContent = '✓';
+                        status.classList.add('pass', 'visible');
+                        passed++;
+                    } else {
+                        status.textContent = '✗ error';
+                        status.classList.add('fail', 'visible');
+                        failed++;
+                    }
+                } catch (e) {
+                    status.textContent = '✗ error';
+                    status.classList.add('fail', 'visible');
+                    failed++;
+                }
+            }
+
+            // Update button with final result
+            if (failed === 0) {
+                btn.className = 'run-all-btn success';
+                btn.textContent = `✓ All ${passed} passed`;
+            } else {
+                btn.className = 'run-all-btn failure';
+                btn.textContent = `✗ ${failed}/${total} failed`;
+            }
+
+            // Reset button after 8 seconds
+            setTimeout(() => {
+                btn.className = 'run-all-btn';
+                btn.textContent = '▶ Run All';
+            }, 8000);
         }
         
         // ============ VALIDATION FUNCTIONS ============
@@ -3175,28 +3272,30 @@ _fb.getvalue()
             });
         }
     
-        // Auto-size code-split height to fit textarea content
-        function autoSizeCodeBlock(ta) {
-            const split = ta.closest('.code-split');
-            if (!split) return;
-            ta.style.height = 'auto';
-            split.style.height = 'auto';
-            const h = ta.scrollHeight + 2;
-            ta.style.height = h + 'px';
-            split.style.height = h + 'px';
-        }
+        // Wrap each code-split textarea in a sizer grid + mirror div.
+        // The mirror (invisible) holds the same text and determines the natural height.
+        // No scrollHeight measurement, no explicit pixel heights anywhere.
         function initAutoSize() {
             document.querySelectorAll('.code-split textarea').forEach(ta => {
-                autoSizeCodeBlock(ta);
-                ta.addEventListener('input', () => autoSizeCodeBlock(ta));
+                const sizer = document.createElement('div');
+                sizer.className = 'code-input-sizer';
+                ta.parentNode.insertBefore(sizer, ta);
+                sizer.appendChild(ta);
+
+                const mirror = document.createElement('div');
+                mirror.className = 'code-input-mirror';
+                mirror.setAttribute('aria-hidden', 'true');
+                sizer.appendChild(mirror);
+
+                function sync() { mirror.textContent = ta.value + '\n'; }
+                ta.addEventListener('input', sync);
+                sync();
             });
         }
+        // autoSizeCodeBlock kept as no-op for any existing calls
+        function autoSizeCodeBlock() {}
         if (document.fonts) { document.fonts.ready.then(initAutoSize); }
         else { window.addEventListener('load', initAutoSize); }
-        // Also run on resize in case layout changes
-        window.addEventListener('resize', () => {
-            document.querySelectorAll('.code-split textarea').forEach(autoSizeCodeBlock);
-        });
 
         </script>
 </body>

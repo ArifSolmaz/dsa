@@ -76,26 +76,128 @@
         .code-figure-output { display: none; border-top: 1px solid #28283c; padding: 15px 18px; background: #161622; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
         .code-figure-output.show { display: block; }
         
-        .code-figure .code-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 200px; }
-        .code-figure .code-split textarea { max-height: 400px; border-right: 1px solid #28283c; }
-        .code-figure .code-split .code-figure-output { border-top: none; display: flex; flex-direction: column; max-height: 400px; overflow-y: auto; }
-        .code-figure .code-split .code-figure-output.show { display: flex; }
-        .code-figure .code-split .code-figure-output:not(.show) { display: flex; opacity: 0.4; }
-        .code-figure .code-split .code-figure-output:not(.show)::after { content: 'Click ▶ Run to see output here'; color: #666; font-style: italic; font-size: 0.8rem; padding: 15px 18px; }
+        /* Split layout for inline code figures */
+        .code-figure .code-split {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .code-figure .code-split .code-input-sizer {
+            flex: 1 1 50%;
+            min-width: 0;
+            display: grid;
+            border-right: 1px solid #28283c;
+            background: #1e1e2e;
+        }
+        .code-figure .code-split .code-input-sizer > textarea,
+        .code-figure .code-split .code-input-sizer > .code-input-mirror {
+            grid-area: 1 / 1;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            padding: 14px 16px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            box-sizing: border-box;
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 60px;
+        }
+        .code-figure .code-split .code-input-sizer > textarea {
+            resize: none;
+            overflow: hidden;
+            color: #e0e0e0;
+            background: transparent;
+            border: none;
+            outline: none;
+            z-index: 1;
+            max-height: none;
+        }
+        .code-figure .code-split .code-input-sizer > .code-input-mirror {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .code-figure .code-split .code-figure-output {
+            flex: 1 1 50%;
+            min-width: 0;
+            border-top: none;
+            display: block;
+            overflow-y: auto;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            padding: 14px 16px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            box-sizing: border-box;
+            max-height: none;
+        }
+        .code-figure .code-split .code-figure-output.show { display: block; }
+        .code-figure .code-split .code-figure-output:not(.show) {
+            display: block;
+            opacity: 0.4;
+        }
+
         .code-figure .code-split .code-figure-output.show { opacity: 1; }
-        
-        .exercise-wrapper { display: grid; grid-template-columns: 1fr 1fr; margin: 40px 0 20px; border: 1px solid #bbf7d0; border-radius: 8px; overflow: hidden; }
-        .exercise-wrapper .exercise { margin: 0; border: none; border-radius: 0; border-right: 1px solid #bbf7d0; overflow-y: auto; max-height: 500px; }
-        .exercise-wrapper .code-figure { margin: 0; border: none; border-radius: 0; display: flex; flex-direction: column; }
-        .exercise-wrapper .code-figure textarea { flex: 1; min-height: 150px; max-height: none; resize: none; }
-        .exercise-wrapper .code-figure-output { max-height: 180px; }
-        .exercise-wrapper .code-figure-caption { border-top: 1px solid #28283c; }
-        
+        .code-figure .code-split .code-figure-output:not(.show)::before {
+            content: '← Click ▶ Run to see aligned output';
+            color: #555;
+            font-style: italic;
+        }
+
+        .exercise-wrapper {
+            display: flex;
+            flex-direction: column;
+            margin: 40px 0 20px;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .exercise-wrapper .exercise {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid #bbf7d0;
+        }
+        .exercise-wrapper .code-figure {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .exercise-wrapper .code-figure textarea {
+            min-height: 150px;
+            max-height: none;
+            resize: none;
+        }
+        .exercise-wrapper .code-figure .code-split {
+            min-height: 150px;
+        }
+        .exercise-wrapper .code-figure-output {
+            max-height: none;
+        }
+        .exercise-wrapper .code-figure-caption {
+            border-top: 1px solid #28283c;
+        }
+
         @media (max-width: 900px) {
-            .exercise-wrapper { grid-template-columns: 1fr; }
-            .exercise-wrapper .exercise { border-right: none; border-bottom: 1px solid #bbf7d0; max-height: none; }
-            .code-figure .code-split { grid-template-columns: 1fr; }
-            .code-figure .code-split textarea { border-right: none; border-bottom: 1px solid #28283c; }
+            .exercise-wrapper .exercise {
+                border-bottom: 1px solid #bbf7d0;
+            }
+            .code-figure .code-split {
+                flex-direction: column;
+            }
+            .code-figure .code-split .code-input-sizer {
+                flex: none;
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #28283c;
+            }
+            .code-figure .code-split .code-figure-output {
+                flex: none;
+                width: 100%;
+            }
         }
         .code-figure-caption { background: #f8f8f8; padding: 12px 18px; font-size: 0.85rem; color: #666; border-top: 1px solid #e0e0e0; }
         .code-figure-caption strong { color: #333; }
@@ -166,6 +268,34 @@
         .scroll-progress.at-end { color: rgba(74,222,128,0.8); border-color: rgba(74,222,128,0.2); }
         .topbar-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: linear-gradient(90deg, #7c3aed, #a78bfa); transition: width 0.15s ease-out; border-radius: 0 1px 1px 0; }
 
+        /* Run All button */
+        .run-all-btn {
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 4px 14px;
+            border-radius: 4px;
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        .run-all-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .run-all-btn.running { color: #a78bfa; border-color: rgba(124,58,237,0.4); pointer-events: none; }
+        .run-all-btn.success { color: #4ade80; border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.1); }
+        .run-all-btn.failure { color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.1); }
+
+        .code-run-status {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-family: system-ui, sans-serif; font-size: 0.7rem;
+            margin-left: 10px; opacity: 0; transition: opacity 0.3s;
+        }
+        .code-run-status.visible { opacity: 1; }
+        .code-run-status.pass { color: #4ade80; }
+        .code-run-status.fail { color: #f87171; }
+
         @media (max-width: 600px) {
             .book { padding: 30px 20px; }
             .chapter-header h1 { font-size: 2rem; }
@@ -175,6 +305,7 @@
             .topbar-toc-current .cur-label { max-width: 140px; }
             .topbar-toc-dropdown { min-width: 260px; }
             .scroll-progress { bottom: 12px; right: 14px; }
+            .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
     </style>
 </head>
@@ -190,6 +321,7 @@
             <div class="topbar-toc-dropdown" id="tocDropdown"></div>
         </div>
         <a class="home-link" href="index.html?home=true">← Course Home</a>
+        <button class="run-all-btn" id="runAllBtn" onclick="runAllCode()">▶ Run All</button>
         <div class="topbar-progress" id="topbarProgress"></div>
     </nav>
     <div class="scroll-progress" id="scrollProgress">0%</div>
@@ -2320,6 +2452,17 @@ def find_min_arrow_shots(points):
             <button class="submit-btn" onclick="submitWork()">Submit Attendance</button>
             <div class="submit-status" id="submitStatus"></div>
         </section>
+
+        <nav class="week-nav" style="display:flex;justify-content:space-between;margin-top:60px;padding:30px 0;border-top:1px solid #ddd;">
+            <a href="Week_12.html" style="display:flex;flex-direction:column;color:#7c3aed;text-decoration:none;padding:12px 20px;border-radius:8px;max-width:45%;transition:background 0.2s;" onmouseover="this.style.background='#f3f0ff'" onmouseout="this.style.background='transparent'">
+                <span style="font-family:system-ui,sans-serif;font-size:0.75rem;color:#888;">← Previous Week</span>
+                <span style="font-family:system-ui,sans-serif;font-size:0.95rem;font-weight:600;">Dynamic Programming</span>
+            </a>
+            <a href="Week_14.html" style="display:flex;flex-direction:column;align-items:flex-end;color:#7c3aed;text-decoration:none;padding:12px 20px;border-radius:8px;max-width:45%;transition:background 0.2s;" onmouseover="this.style.background='#f3f0ff'" onmouseout="this.style.background='transparent'">
+                <span style="font-family:system-ui,sans-serif;font-size:0.75rem;color:#888;">Next Week →</span>
+                <span style="font-family:system-ui,sans-serif;font-size:0.95rem;font-weight:600;">Final Review &amp; Project</span>
+            </a>
+        </nav>
     </main>
 
     <script>
@@ -2502,7 +2645,6 @@ def find_min_arrow_shots(points):
         }
         
         // ============ PYODIDE CODE RUNNER ============
-        // ============ PYODIDE PYTHON EXECUTION ============
         let pyodideReady = false;
         let pyodide = null;
         
@@ -2511,6 +2653,7 @@ def find_min_arrow_shots(points):
             const outputEl = document.getElementById('output' + codeId);
             const code = codeEl.value;
             outputEl.classList.add('show');
+            let success = true;
             
             try {
                 if (!pyodideReady) {
@@ -2529,13 +2672,86 @@ sys.stdout = StringIO()
                     pyodide.runPython(code);
                 } catch (pyErr) {
                     outputEl.textContent = 'Error: ' + pyErr.message;
-                    return;
+                    if (typeof autoSizeCodeBlock === 'function') autoSizeCodeBlock(codeEl);
+                    return false;
                 }
                 const output = pyodide.runPython('sys.stdout.getvalue()');
                 outputEl.textContent = output || '(no output)';
             } catch(e) {
                 outputEl.textContent = 'Error: ' + e.message;
+                success = false;
             }
+            if (typeof autoSizeCodeBlock === 'function') autoSizeCodeBlock(codeEl);
+            return success;
+        }
+
+        // ============ RUN ALL CODE BLOCKS ============
+        async function runAllCode() {
+            const btn = document.getElementById('runAllBtn');
+            btn.className = 'run-all-btn running';
+            btn.textContent = '⏳ Running...';
+
+            const allTextareas = document.querySelectorAll('.code-split textarea[id^="code"]');
+            let passed = 0, failed = 0, total = allTextareas.length;
+            const failedListings = [];
+            let firstFailedFigure = null;
+
+            document.querySelectorAll('.code-run-status').forEach(el => el.remove());
+
+            for (const ta of allTextareas) {
+                const codeId = ta.id;
+                const figure = ta.closest('.code-figure');
+                const header = figure.querySelector('.code-figure-header');
+                const label = header.querySelector('.code-figure-label');
+
+                const status = document.createElement('span');
+                status.className = 'code-run-status';
+                header.appendChild(status);
+
+                try {
+                    const ok = await runCode(codeId);
+                    if (ok) {
+                        status.textContent = '✓';
+                        status.classList.add('pass', 'visible');
+                        passed++;
+                    } else {
+                        const listingName = label ? label.textContent.trim() : codeId;
+                        status.textContent = '✗ error';
+                        status.classList.add('fail', 'visible');
+                        failedListings.push(listingName);
+                        if (!firstFailedFigure) firstFailedFigure = figure;
+                        failed++;
+                    }
+                } catch (e) {
+                    const listingName = label ? label.textContent.trim() : codeId;
+                    status.textContent = '✗ error';
+                    status.classList.add('fail', 'visible');
+                    failedListings.push(listingName);
+                    if (!firstFailedFigure) firstFailedFigure = figure;
+                    failed++;
+                }
+            }
+
+            if (failed === 0) {
+                btn.className = 'run-all-btn success';
+                btn.textContent = `✓ All ${passed} passed`;
+            } else {
+                btn.className = 'run-all-btn failure';
+                btn.textContent = `✗ ${failed}/${total} failed`;
+                if (firstFailedFigure) {
+                    firstFailedFigure.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstFailedFigure.style.outline = '2px solid #f87171';
+                    firstFailedFigure.style.outlineOffset = '4px';
+                    firstFailedFigure.style.borderRadius = '8px';
+                    setTimeout(() => { firstFailedFigure.style.outline = 'none'; }, 5000);
+                }
+                console.log('Failed listings:', failedListings);
+            }
+
+            setTimeout(() => {
+                btn.className = 'run-all-btn';
+                btn.textContent = '▶ Run All';
+            }, 10000);
         }
         
         // ============ VALIDATION ============
@@ -2630,6 +2846,29 @@ sys.stdout = StringIO()
                 .catch(() => { submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ Connection error.'; status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; });
             });
         }
+
+        // Wrap each code-split textarea in a sizer grid + mirror div.
+        function initAutoSize() {
+            document.querySelectorAll('.code-split textarea').forEach(ta => {
+                const sizer = document.createElement('div');
+                sizer.className = 'code-input-sizer';
+                ta.parentNode.insertBefore(sizer, ta);
+                sizer.appendChild(ta);
+
+                const mirror = document.createElement('div');
+                mirror.className = 'code-input-mirror';
+                mirror.setAttribute('aria-hidden', 'true');
+                sizer.appendChild(mirror);
+
+                function sync() { mirror.textContent = ta.value + '\n'; }
+                ta.addEventListener('input', sync);
+                sync();
+            });
+        }
+        function autoSizeCodeBlock() {}
+        if (document.fonts) { document.fonts.ready.then(initAutoSize); }
+        else { window.addEventListener('load', initAutoSize); }
+
     </script>
 </body>
 </html>
