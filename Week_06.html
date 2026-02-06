@@ -3065,7 +3065,7 @@ def inorder(node):
         
         document.addEventListener('DOMContentLoaded', function() {
             // Check if already submitted
-            if (localStorage.getItem('cp2_submitted_Week_06')) {
+            if (localStorage.getItem('dsa_submitted_Week_06')) {
                 const btn = document.querySelector('.submit-btn');
                 const status = document.getElementById('submitStatus');
                 if (btn) { btn.disabled = true; btn.textContent = '✓ Already Submitted'; btn.style.opacity = '0.6'; btn.style.cursor = 'not-allowed'; }
@@ -3298,13 +3298,13 @@ sys.stdout = StringIO()
                 }
             } catch (e) { console.log('Could not fetch IP info'); }
             
-            const data = { week: 'Week_06', studentId, studentName, studentEmail, classCode, timeOnPage, answers, ipAddress, location, source: 'cp2-web' };
-            const scriptUrl = 'https://script.google.com/macros/s/AKfycbyf1D3HGSAX4MoIhNlAuWlGrFyyvbM5MIv7ZsLxrVDlATUihrRGEAaibvIZYlCfd8Me/exec';
+            const data = { week: 'Week_06', studentId, studentName, studentEmail, classCode, timeOnPage, answers, ipAddress, location, source: 'dsa-web' };
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbxepk2NvNg3Whad-WOPxdZI-mWnVJeNKCsZVspvk7Ku5YHC_oWv7376VrWLn_30nyI_vw/exec';
             
             fetch(scriptUrl, { method: 'POST', mode: 'cors', cache: 'no-cache', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) })
             .then(response => response.json())
             .then(res => {
-                if (res.success) { localStorage.setItem('cp2_submitted_Week_06', Date.now()); submitBtn.textContent = '✓ Submitted'; status.textContent = '✅ Submitted successfully! Check your email for confirmation.'; status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80'; }
+                if (res.success) { localStorage.setItem('dsa_submitted_Week_06', Date.now()); submitBtn.textContent = '✓ Submitted'; status.textContent = '✅ Submitted successfully! Check your email for confirmation.'; status.style.cssText = 'display:block;background:rgba(74,222,128,0.2);color:#4ade80'; }
                 else { submitBtn.disabled = false; submitBtn.textContent = 'Submit Attendance'; status.textContent = '❌ ' + (res.message || 'Submission failed.'); status.style.cssText = 'display:block;background:rgba(239,68,68,0.2);color:#fca5a5'; }
             })
             .catch(error => {
