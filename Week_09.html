@@ -307,6 +307,110 @@
             .scroll-progress { bottom: 12px; right: 14px; }
             .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
+    
+        /* ========== SCAFFOLDING BOXES ========== */
+        .learning-objectives {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 0 0 30px;
+        }
+        .learning-objectives-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #2563eb;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .learning-objectives-title::before { content: "🎯 "; }
+        .learning-objectives ul { margin: 0; padding-left: 20px; }
+        .learning-objectives li { margin: 6px 0; font-size: 0.95rem; color: #1e3a5f; }
+
+        .prerequisites {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fde047;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 0 0 40px;
+        }
+        .prerequisites-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a16207;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .prerequisites-title::before { content: "📋 "; }
+        .prerequisites p { margin: 0; font-size: 0.92rem; color: #713f12; }
+
+        .week-takeaways {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 50px 0 20px;
+        }
+        .week-takeaways-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .week-takeaways-title::before { content: "✅ "; }
+        .week-takeaways ul { margin: 0; padding-left: 20px; }
+        .week-takeaways li { margin: 6px 0; font-size: 0.95rem; color: #14532d; }
+
+        .connection-note {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border: 1px solid #c084fc;
+            border-left: 4px solid #7c3aed;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 40px 0;
+        }
+        .connection-note-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7c3aed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .connection-note-title::before { content: "🔗 "; }
+        .connection-note p { margin: 0; font-size: 0.92rem; color: #3b0764; }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+        .difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .difficulty-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
     </style>
 </head>
 <body>
@@ -350,6 +454,23 @@
                 <li><a href="#exercises">Exercises</a></li>
             </ol>
         </nav>
+
+        <div class="learning-objectives">
+            <div class="learning-objectives-title">Learning Objectives</div>
+            <ul>
+                <li>Understand graph terminology (vertices, edges, directed/undirected, weighted/unweighted, connected components)</li>
+                <li>Implement graph representations: adjacency list and adjacency matrix, with trade-off analysis</li>
+                <li>Perform BFS and DFS traversals and understand their applications (shortest path, connectivity, cycle detection)</li>
+                <li>Implement topological sort for DAGs and understand its applications in dependency resolution</li>
+                <li>Apply graph patterns: multi-source BFS, bipartite checking, Union-Find for dynamic connectivity</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <div class="prerequisites-title">Prerequisites</div>
+            <p>Queues (Week 5) for BFS implementation. Stacks/recursion (Week 2, 5) for DFS. Hash tables (Week 8) for adjacency list representation. Trees (Week 6) — a tree is a connected acyclic graph.</p>
+        </div>
+
 
         <!-- ============================================== -->
         <!-- SECTION 1: INTRODUCTION TO GRAPHS -->
@@ -2287,13 +2408,31 @@ print(f"Visiting all components: {visit_all_right(disconnected)}")</textarea>
 
         <!-- ============================================== -->
         <!-- SECTION 12: EXERCISES -->
+        
+        <div class="connection-note">
+            <div class="connection-note-title">Looking Ahead</div>
+            <p>Graph algorithms connect to many other topics. Sorting (Week 10) includes topological sort as a graph-based sort. Dijkstra's shortest path (Week 13) extends BFS to weighted graphs using heaps (Week 7). Minimum spanning trees (Week 13) use Union-Find from this week. Many dynamic programming problems (Week 12) can be modeled as shortest-path problems on DAGs.</p>
+        </div>
+
+        <div class="week-takeaways">
+            <div class="week-takeaways-title">Key Takeaways — Week Summary</div>
+            <ul>
+                <li>Graphs model relationships: social networks, maps, dependencies, state machines — they're everywhere</li>
+                <li>Adjacency list uses O(V + E) space and is preferred for sparse graphs; adjacency matrix uses O(V²) and supports O(1) edge lookup</li>
+                <li>BFS finds shortest paths in unweighted graphs and explores level by level; DFS explores as deep as possible first</li>
+                <li>Topological sort orders vertices so all edges point forward — essential for build systems, course prerequisites, and task scheduling</li>
+                <li>Union-Find provides near-O(1) dynamic connectivity queries with path compression and union by rank</li>
+                <li>Always mark nodes as visited to avoid infinite loops — the most common graph bug</li>
+            </ul>
+        </div>
+
         <!-- ============================================== -->
         <section id="exercises">
             <h2>12. Exercises</h2>
             
             <!-- Exercise 1 -->
             <div class="exercise" data-exercise="ex1">
-                <div class="exercise-title">Exercise 1: Valid Path</div>
+                <div class="exercise-title">Exercise 1: Valid Path <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Given n vertices (0 to n-1) and edges, determine if there's a valid path from source to destination.</p>
                 <p class="answer">(Expected: Check reachability using BFS/DFS)</p>
                 
@@ -2339,7 +2478,7 @@ def valid_path(n, edges, source, destination):
             
             <!-- Exercise 2 -->
             <div class="exercise" data-exercise="ex2">
-                <div class="exercise-title">Exercise 2: All Paths from Source to Target</div>
+                <div class="exercise-title">Exercise 2: All Paths from Source to Target <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Given a DAG with n vertices (0 to n-1), find all paths from vertex 0 to vertex n-1.</p>
                 <p class="answer">(Expected: DFS with backtracking)</p>
                 
@@ -2383,7 +2522,7 @@ def all_paths_source_target(graph):
             
             <!-- Exercise 3 -->
             <div class="exercise" data-exercise="ex3">
-                <div class="exercise-title">Exercise 3: Pacific Atlantic Water Flow</div>
+                <div class="exercise-title">Exercise 3: Pacific Atlantic Water Flow <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Given an m×n matrix of heights, find cells where water can flow to both Pacific (top/left) and Atlantic (bottom/right) oceans.</p>
                 <p class="answer">(Expected: DFS from ocean borders, find intersection)</p>
                 
@@ -2427,7 +2566,7 @@ def pacific_atlantic(heights):
             
             <!-- Exercise 4 -->
             <div class="exercise" data-exercise="ex4">
-                <div class="exercise-title">Exercise 4: Course Schedule II</div>
+                <div class="exercise-title">Exercise 4: Course Schedule II <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Return the order to take courses (topological sort), or empty array if impossible.</p>
                 <p class="answer">(Expected: Kahn's algorithm with order tracking)</p>
                 
@@ -2471,7 +2610,7 @@ def find_order(num_courses, prerequisites):
             
             <!-- Exercise 5 -->
             <div class="exercise" data-exercise="ex5">
-                <div class="exercise-title">Exercise 5: Minimum Knight Moves</div>
+                <div class="exercise-title">Exercise 5: Minimum Knight Moves <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Find minimum moves for a knight to reach (x, y) from (0, 0) on an infinite chess board.</p>
                 <p class="answer">(Expected: BFS with knight L-shape moves)</p>
                 

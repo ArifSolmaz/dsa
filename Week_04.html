@@ -336,6 +336,110 @@
             .scroll-progress { bottom: 12px; right: 14px; }
             .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
+    
+        /* ========== SCAFFOLDING BOXES ========== */
+        .learning-objectives {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 0 0 30px;
+        }
+        .learning-objectives-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #2563eb;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .learning-objectives-title::before { content: "🎯 "; }
+        .learning-objectives ul { margin: 0; padding-left: 20px; }
+        .learning-objectives li { margin: 6px 0; font-size: 0.95rem; color: #1e3a5f; }
+
+        .prerequisites {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fde047;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 0 0 40px;
+        }
+        .prerequisites-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a16207;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .prerequisites-title::before { content: "📋 "; }
+        .prerequisites p { margin: 0; font-size: 0.92rem; color: #713f12; }
+
+        .week-takeaways {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 50px 0 20px;
+        }
+        .week-takeaways-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .week-takeaways-title::before { content: "✅ "; }
+        .week-takeaways ul { margin: 0; padding-left: 20px; }
+        .week-takeaways li { margin: 6px 0; font-size: 0.95rem; color: #14532d; }
+
+        .connection-note {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border: 1px solid #c084fc;
+            border-left: 4px solid #7c3aed;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 40px 0;
+        }
+        .connection-note-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7c3aed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .connection-note-title::before { content: "🔗 "; }
+        .connection-note p { margin: 0; font-size: 0.92rem; color: #3b0764; }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+        .difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .difficulty-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
     </style>
 </head>
 <body>
@@ -378,6 +482,23 @@
                 <li><a href="#exercises">Exercises</a></li>
             </ol>
         </nav>
+
+        <div class="learning-objectives">
+            <div class="learning-objectives-title">Learning Objectives</div>
+            <ul>
+                <li>Understand why linked lists exist and their trade-offs compared to arrays</li>
+                <li>Implement singly linked lists with insertion, deletion, search, and traversal operations</li>
+                <li>Build doubly linked and circular linked list variants</li>
+                <li>Apply key linked list patterns: dummy head, fast/slow pointers, and in-place reversal</li>
+                <li>Solve classic linked list problems including cycle detection, merging sorted lists, and list partitioning</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <div class="prerequisites-title">Prerequisites</div>
+            <p>Strong grasp of Python classes and references (Week 1), and recursion (Week 2) for recursive list operations. Understanding of Big O (Week 1) for complexity analysis of each operation.</p>
+        </div>
+
 
         <!-- ============================================== -->
         <!-- SECTION 1: WHY LINKED LISTS? -->
@@ -2843,13 +2964,30 @@ print(f"  good_find_last(single): {good_find_last(head)}")</textarea>
 
         <!-- ============================================== -->
         <!-- SECTION 11: EXERCISES -->
+        
+        <div class="connection-note">
+            <div class="connection-note-title">Looking Ahead</div>
+            <p>Linked lists are building blocks for more complex structures. Stacks and queues (Week 5) can be implemented with linked lists. Trees (Week 6) generalize linked lists to have multiple 'next' pointers. Hash table chaining (Week 8) uses linked lists at each bucket. Graph adjacency lists (Week 9) are essentially arrays of linked lists.</p>
+        </div>
+
+        <div class="week-takeaways">
+            <div class="week-takeaways-title">Key Takeaways — Week Summary</div>
+            <ul>
+                <li>Linked lists trade O(1) random access for O(1) insertion/deletion at known positions</li>
+                <li>Always handle edge cases: empty list, single node, and operations at head/tail</li>
+                <li>The dummy head node pattern eliminates special-case code for operations at the head</li>
+                <li>Fast/slow pointer technique detects cycles (Floyd's algorithm) and finds middle elements in one pass</li>
+                <li>Reversing a linked list in-place requires three pointers: prev, curr, next — a fundamental pattern</li>
+            </ul>
+        </div>
+
         <!-- ============================================== -->
         <section id="exercises">
             <h2>11. Exercises</h2>
             
             <!-- Exercise 1 -->
             <div class="exercise" data-exercise="ex1">
-                <div class="exercise-title">Exercise 1: Implement get(index)</div>
+                <div class="exercise-title">Exercise 1: Implement get(index) <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Add a <code>get(index)</code> method to LinkedList that returns the data at the given index, or raises IndexError if out of bounds.</p>
                 <p class="answer">(Expected: get(0) returns head.data, get(2) returns third element's data)</p>
                 
@@ -2918,7 +3056,7 @@ class LinkedList:
             
             <!-- Exercise 2 -->
             <div class="exercise" data-exercise="ex2">
-                <div class="exercise-title">Exercise 2: Remove Duplicates from Sorted List</div>
+                <div class="exercise-title">Exercise 2: Remove Duplicates from Sorted List <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Write <code>remove_duplicates(head)</code> that removes all duplicates from a sorted linked list, leaving only distinct values.</p>
                 <p class="answer">(Expected: [1, 1, 2, 3, 3, 3, 4] → [1, 2, 3, 4])</p>
                 
@@ -2987,7 +3125,7 @@ def remove_duplicates(head):
             
             <!-- Exercise 3 -->
             <div class="exercise" data-exercise="ex3">
-                <div class="exercise-title">Exercise 3: Add Two Numbers (as Linked Lists)</div>
+                <div class="exercise-title">Exercise 3: Add Two Numbers (as Linked Lists) <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Given two linked lists representing numbers in reverse order (each node contains a single digit), return a new linked list representing their sum.</p>
                 <p class="answer">(Expected: [2,4,3] + [5,6,4] = [7,0,8] representing 342 + 465 = 807)</p>
                 
@@ -3057,7 +3195,7 @@ def add_two_numbers(l1, l2):
             
             <!-- Exercise 4 -->
             <div class="exercise" data-exercise="ex4">
-                <div class="exercise-title">Exercise 4: Intersection of Two Lists</div>
+                <div class="exercise-title">Exercise 4: Intersection of Two Lists <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Write <code>get_intersection(headA, headB)</code> that returns the node where two linked lists intersect, or None if they don't.</p>
                 <p class="answer">(Expected: Return the shared node, not just equal data)</p>
                 
@@ -3120,7 +3258,7 @@ def get_intersection(headA, headB):
             
             <!-- Exercise 5 -->
             <div class="exercise" data-exercise="ex5">
-                <div class="exercise-title">Exercise 5: Reverse Nodes in k-Groups</div>
+                <div class="exercise-title">Exercise 5: Reverse Nodes in k-Groups <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Write <code>reverse_k_group(head, k)</code> that reverses nodes in groups of k. If remaining nodes are less than k, leave them as is.</p>
                 <p class="answer">(Expected: [1,2,3,4,5] with k=2 → [2,1,4,3,5])</p>
                 

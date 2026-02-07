@@ -307,6 +307,110 @@
             .scroll-progress { bottom: 12px; right: 14px; }
             .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
+    
+        /* ========== SCAFFOLDING BOXES ========== */
+        .learning-objectives {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 0 0 30px;
+        }
+        .learning-objectives-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #2563eb;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .learning-objectives-title::before { content: "🎯 "; }
+        .learning-objectives ul { margin: 0; padding-left: 20px; }
+        .learning-objectives li { margin: 6px 0; font-size: 0.95rem; color: #1e3a5f; }
+
+        .prerequisites {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fde047;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 0 0 40px;
+        }
+        .prerequisites-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a16207;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .prerequisites-title::before { content: "📋 "; }
+        .prerequisites p { margin: 0; font-size: 0.92rem; color: #713f12; }
+
+        .week-takeaways {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 50px 0 20px;
+        }
+        .week-takeaways-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .week-takeaways-title::before { content: "✅ "; }
+        .week-takeaways ul { margin: 0; padding-left: 20px; }
+        .week-takeaways li { margin: 6px 0; font-size: 0.95rem; color: #14532d; }
+
+        .connection-note {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border: 1px solid #c084fc;
+            border-left: 4px solid #7c3aed;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 40px 0;
+        }
+        .connection-note-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7c3aed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .connection-note-title::before { content: "🔗 "; }
+        .connection-note p { margin: 0; font-size: 0.92rem; color: #3b0764; }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+        .difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .difficulty-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
     </style>
 </head>
 <body>
@@ -349,6 +453,23 @@
                 <li><a href="#exercises">Exercises</a></li>
             </ol>
         </nav>
+
+        <div class="learning-objectives">
+            <div class="learning-objectives-title">Learning Objectives</div>
+            <ul>
+                <li>Understand tree terminology (root, leaf, height, depth) and distinguish tree types</li>
+                <li>Implement all four tree traversals: inorder, preorder, postorder (recursive + iterative), and level-order (BFS)</li>
+                <li>Build a Binary Search Tree with insert, search, delete, and find min/max operations</li>
+                <li>Analyze BST performance and understand why balanced trees (AVL) are necessary</li>
+                <li>Apply common tree patterns: LCA, path sum, serialization, and trie-based autocomplete</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <div class="prerequisites-title">Prerequisites</div>
+            <p>Recursion (Week 2) is essential — tree algorithms are inherently recursive. Stacks (Week 5) for iterative traversals and queues (Week 5) for level-order traversal. Understanding of linked list nodes (Week 4) as trees extend the concept of node-based structures.</p>
+        </div>
+
 
         <!-- ============================================== -->
         <!-- SECTION 1: INTRODUCTION TO TREES -->
@@ -1610,6 +1731,138 @@ print(f"  Balanced BST:   {random_search_time*1000:.2f} ms")</textarea>
             <div class="margin-note">
                 Self-balancing trees like AVL and Red-Black trees automatically rebalance after each operation, guaranteeing O(log n) height. Python's <code>sortedcontainers</code> module provides balanced implementations.
             </div>
+        
+
+            <h3>AVL Trees: Self-Balancing BSTs</h3>
+
+            <p>A BST degenerates to O(n) when nodes are inserted in sorted order. <strong>AVL trees</strong> (named after Adelson-Velsky and Landis) prevent this by maintaining a balance invariant: for every node, the heights of its left and right subtrees differ by at most 1. After every insertion or deletion, the tree rebalances itself using <em>rotations</em>.</p>
+
+            <div class="definition">
+                <div class="definition-title">AVL Balance Invariant</div>
+                <p>For every node in an AVL tree: |height(left subtree) − height(right subtree)| ≤ 1. This guarantees the tree height is always O(log n), so all operations (search, insert, delete) are O(log n) worst case.</p>
+            </div>
+
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 6.18 — AVL Tree with Rotations</span>
+                    <button class="code-figure-run" onclick="runCode('code18a')">▶ Run</button>
+                </div>
+                <textarea id="code18a" spellcheck="false">class AVLNode:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
+        self.height = 1  # New nodes are leaves with height 1
+
+class AVLTree:
+    def _height(self, node):
+        return node.height if node else 0
+
+    def _balance_factor(self, node):
+        return self._height(node.left) - self._height(node.right)
+
+    def _update_height(self, node):
+        node.height = 1 + max(self._height(node.left), self._height(node.right))
+
+    # ===== THE FOUR ROTATIONS =====
+
+    def _rotate_right(self, y):
+        """Right rotation (for Left-Left case):
+              y              x
+             / \            / \
+            x   C   =>    A   y
+           / \                / \
+          A   B              B   C
+        """
+        x = y.left
+        B = x.right
+        x.right = y
+        y.left = B
+        self._update_height(y)
+        self._update_height(x)
+        return x  # x is the new root
+
+    def _rotate_left(self, x):
+        """Left rotation (for Right-Right case):
+          x                y
+         / \              / \
+        A   y     =>    x   C
+           / \         / \
+          B   C       A   B
+        """
+        y = x.right
+        B = y.left
+        y.left = x
+        x.right = B
+        self._update_height(x)
+        self._update_height(y)
+        return y  # y is the new root
+
+    def _rebalance(self, node):
+        """Check balance and apply rotations if needed."""
+        self._update_height(node)
+        bf = self._balance_factor(node)
+
+        # Left-heavy (bf > 1)
+        if bf > 1:
+            if self._balance_factor(node.left) < 0:
+                # Left-Right case: left rotate child first
+                node.left = self._rotate_left(node.left)
+            return self._rotate_right(node)  # Left-Left case
+
+        # Right-heavy (bf < -1)
+        if bf < -1:
+            if self._balance_factor(node.right) > 0:
+                # Right-Left case: right rotate child first
+                node.right = self._rotate_right(node.right)
+            return self._rotate_left(node)  # Right-Right case
+
+        return node  # Already balanced
+
+    def insert(self, root, key):
+        """Insert key and rebalance. Returns new root."""
+        if not root:
+            return AVLNode(key)
+        if key < root.key:
+            root.left = self.insert(root.left, key)
+        elif key > root.key:
+            root.right = self.insert(root.right, key)
+        else:
+            return root  # Duplicate keys not allowed
+        return self._rebalance(root)
+
+    def inorder(self, node, result=None):
+        if result is None:
+            result = []
+        if node:
+            self.inorder(node.left, result)
+            result.append(f"{node.key}(h={node.height})")
+            self.inorder(node.right, result)
+        return result
+
+# === Demo: Insert sorted data (worst case for plain BST) ===
+avl = AVLTree()
+root = None
+
+print("Inserting 1, 2, 3, 4, 5, 6, 7 (sorted — would create degenerate BST):")
+for key in [1, 2, 3, 4, 5, 6, 7]:
+    root = avl.insert(root, key)
+    print(f"  Insert {key} → root={root.key}, height={root.height}, "
+          f"balance={avl._balance_factor(root)}")
+
+print(f"\nInorder: {avl.inorder(root)}")
+print(f"Tree height: {root.height} (plain BST would be 7!)")
+print(f"Root: {root.key} (balanced around middle value)")</textarea>
+                <div class="code-figure-output" id="outputcode18a"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 6.18:</strong> AVL tree maintains O(log n) height even with sorted insertions. The four rotation cases (LL, RR, LR, RL) cover all possible imbalances.
+                </div>
+            </div>
+
+            <div class="important">
+                There are exactly four rotation cases: <strong>Left-Left</strong> (single right rotation), <strong>Right-Right</strong> (single left rotation), <strong>Left-Right</strong> (left rotate child, then right rotate), <strong>Right-Left</strong> (right rotate child, then left rotate). The first two are single rotations; the last two are double rotations.
+            </div>
+
         </section>
 
         <!-- ============================================== -->
@@ -2605,13 +2858,31 @@ print("Instead, collect what to modify, then modify separately.")</textarea>
 
         <!-- ============================================== -->
         <!-- SECTION 11: EXERCISES -->
+        
+        <div class="connection-note">
+            <div class="connection-note-title">Looking Ahead</div>
+            <p>Trees are the foundation for several upcoming topics. Heaps (Week 7) are complete binary trees with a special ordering property. Many graph algorithms (Week 9) produce spanning trees. Sorting algorithms like heap sort and tree sort (Week 10) rely on tree structures. The recursive decomposition pattern you practiced here is exactly the mindset needed for dynamic programming (Week 12).</p>
+        </div>
+
+        <div class="week-takeaways">
+            <div class="week-takeaways-title">Key Takeaways — Week Summary</div>
+            <ul>
+                <li>Trees represent hierarchical relationships — file systems, HTML DOM, organizational charts</li>
+                <li>Inorder traversal of a BST visits nodes in sorted order — this is why BSTs enable efficient searching</li>
+                <li>BST operations are O(h) where h = height; balanced trees guarantee h = O(log n), while degenerate trees give h = O(n)</li>
+                <li>AVL trees maintain balance through rotations after every insertion/deletion, guaranteeing O(log n) operations</li>
+                <li>Tries (prefix trees) provide O(m) lookup for strings of length m — ideal for autocomplete and spell-checking</li>
+                <li>Most tree problems can be solved with recursive thinking: solve for left subtree, solve for right subtree, combine results</li>
+            </ul>
+        </div>
+
         <!-- ============================================== -->
         <section id="exercises">
             <h2>11. Exercises</h2>
             
             <!-- Exercise 1 -->
             <div class="exercise" data-exercise="ex1">
-                <div class="exercise-title">Exercise 1: Maximum Depth of Binary Tree</div>
+                <div class="exercise-title">Exercise 1: Maximum Depth of Binary Tree <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Write a function that returns the maximum depth (height) of a binary tree. An empty tree has depth 0, a single node has depth 1.</p>
                 <p class="answer">(Expected: Tree with 3 levels returns 3)</p>
                 
@@ -2665,7 +2936,7 @@ def max_depth(root):
             
             <!-- Exercise 2 -->
             <div class="exercise" data-exercise="ex2">
-                <div class="exercise-title">Exercise 2: Invert Binary Tree</div>
+                <div class="exercise-title">Exercise 2: Invert Binary Tree <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Write a function that inverts (mirrors) a binary tree. Swap left and right children at every node.</p>
                 <p class="answer">(Expected: Left and right subtrees swapped at every level)</p>
                 
@@ -2720,7 +2991,7 @@ def invert_tree(root):
             
             <!-- Exercise 3 -->
             <div class="exercise" data-exercise="ex3">
-                <div class="exercise-title">Exercise 3: Kth Smallest in BST</div>
+                <div class="exercise-title">Exercise 3: Kth Smallest in BST <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Given a BST, find the kth smallest element (1-indexed).</p>
                 <p class="answer">(Expected: Inorder traversal gives sorted order)</p>
                 
@@ -2776,7 +3047,7 @@ def kth_smallest(root, k):
             
             <!-- Exercise 4 -->
             <div class="exercise" data-exercise="ex4">
-                <div class="exercise-title">Exercise 4: Symmetric Tree</div>
+                <div class="exercise-title">Exercise 4: Symmetric Tree <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Check if a binary tree is symmetric (mirror of itself around the center).</p>
                 <p class="answer">(Expected: Compare left subtree with right subtree recursively)</p>
                 
@@ -2837,7 +3108,7 @@ def is_symmetric(root):
             
             <!-- Exercise 5 -->
             <div class="exercise" data-exercise="ex5">
-                <div class="exercise-title">Exercise 5: Construct BST from Preorder</div>
+                <div class="exercise-title">Exercise 5: Construct BST from Preorder <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Given a preorder traversal of a BST, construct the original BST.</p>
                 <p class="answer">(Expected: First element is root, partition by BST property)</p>
                 

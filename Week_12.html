@@ -307,6 +307,110 @@
             .scroll-progress { bottom: 12px; right: 14px; }
             .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
+    
+        /* ========== SCAFFOLDING BOXES ========== */
+        .learning-objectives {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 0 0 30px;
+        }
+        .learning-objectives-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #2563eb;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .learning-objectives-title::before { content: "🎯 "; }
+        .learning-objectives ul { margin: 0; padding-left: 20px; }
+        .learning-objectives li { margin: 6px 0; font-size: 0.95rem; color: #1e3a5f; }
+
+        .prerequisites {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fde047;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 0 0 40px;
+        }
+        .prerequisites-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a16207;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .prerequisites-title::before { content: "📋 "; }
+        .prerequisites p { margin: 0; font-size: 0.92rem; color: #713f12; }
+
+        .week-takeaways {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 50px 0 20px;
+        }
+        .week-takeaways-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .week-takeaways-title::before { content: "✅ "; }
+        .week-takeaways ul { margin: 0; padding-left: 20px; }
+        .week-takeaways li { margin: 6px 0; font-size: 0.95rem; color: #14532d; }
+
+        .connection-note {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border: 1px solid #c084fc;
+            border-left: 4px solid #7c3aed;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 40px 0;
+        }
+        .connection-note-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7c3aed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .connection-note-title::before { content: "🔗 "; }
+        .connection-note p { margin: 0; font-size: 0.92rem; color: #3b0764; }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+        .difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .difficulty-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
     </style>
 </head>
 <body>
@@ -350,6 +454,23 @@
                 <li><a href="#exercises">Exercises</a></li>
             </ol>
         </nav>
+
+        <div class="learning-objectives">
+            <div class="learning-objectives-title">Learning Objectives</div>
+            <ul>
+                <li>Understand the dynamic programming paradigm: optimal substructure and overlapping subproblems</li>
+                <li>Implement DP solutions using both top-down (memoization) and bottom-up (tabulation) approaches</li>
+                <li>Solve classic 1D DP problems: climbing stairs, house robber, coin change, longest increasing subsequence</li>
+                <li>Solve 2D DP problems: unique paths, edit distance, longest common subsequence, 0/1 knapsack</li>
+                <li>Apply space optimization techniques to reduce DP memory usage from O(n²) to O(n)</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <div class="prerequisites-title">Prerequisites</div>
+            <p>Recursion and memoization (Week 2) — DP builds directly on these concepts. Arrays and 2D arrays (Week 3) for tabulation tables. Hash tables (Week 8) for memoization dictionaries. Solid comfort with Big O analysis (Week 1).</p>
+        </div>
+
 
         <!-- ============================================== -->
         <!-- SECTION 1: INTRODUCTION TO DYNAMIC PROGRAMMING -->
@@ -1941,13 +2062,31 @@ print("\nRule: (a + b) % MOD = ((a % MOD) + (b % MOD)) % MOD")</textarea>
 
         <!-- ============================================== -->
         <!-- SECTION 12: EXERCISES -->
+        
+        <div class="connection-note">
+            <div class="connection-note-title">Looking Ahead</div>
+            <p>DP is often contrasted with greedy algorithms (Week 13). Greedy makes locally optimal choices without considering all subproblems, while DP considers all possibilities. Some problems (like knapsack) have both DP and greedy variants — fractional knapsack is greedy (Week 13), but 0/1 knapsack requires DP. Understanding when each approach applies is a key skill for the final exam.</p>
+        </div>
+
+        <div class="week-takeaways">
+            <div class="week-takeaways-title">Key Takeaways — Week Summary</div>
+            <ul>
+                <li>DP = recursion + memoization (or equivalently, tabulation) — it eliminates redundant computation in overlapping subproblems</li>
+                <li>Top-down (memoize a recursive solution) is often easier to write; bottom-up (fill a table iteratively) is often more cache-friendly</li>
+                <li>The key insight in any DP problem is defining the state and the recurrence relation correctly</li>
+                <li>String DP problems (edit distance, LCS) typically use a 2D table where dp[i][j] represents the answer for prefixes of length i and j</li>
+                <li>Space optimization: if dp[i] only depends on dp[i-1], you only need two rows (or even one row with careful ordering)</li>
+                <li>Not every recursive problem is DP — DP requires overlapping subproblems. Pure divide-and-conquer (merge sort) doesn't benefit from memoization</li>
+            </ul>
+        </div>
+
         <!-- ============================================== -->
         <section id="exercises">
             <h2>12. Exercises</h2>
             
             <!-- Exercise 1 -->
             <div class="exercise" data-exercise="ex1">
-                <div class="exercise-title">Exercise 1: Min Cost Climbing Stairs</div>
+                <div class="exercise-title">Exercise 1: Min Cost Climbing Stairs <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Given an array cost where cost[i] is the cost of step i, find the minimum cost to reach the top. You can start from step 0 or 1, and can climb 1 or 2 steps at a time.</p>
                 <p class="answer">(Expected: [10,15,20] → 15)</p>
                 
@@ -1991,7 +2130,7 @@ def min_cost_climbing_stairs(cost):
             
             <!-- Exercise 2 -->
             <div class="exercise" data-exercise="ex2">
-                <div class="exercise-title">Exercise 2: House Robber II</div>
+                <div class="exercise-title">Exercise 2: House Robber II <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Houses are arranged in a circle (first and last are adjacent). You cannot rob adjacent houses. Find maximum amount you can rob.</p>
                 <p class="answer">(Expected: [2,3,2] → 3)</p>
                 
@@ -2035,7 +2174,7 @@ def rob_circular(nums):
             
             <!-- Exercise 3 -->
             <div class="exercise" data-exercise="ex3">
-                <div class="exercise-title">Exercise 3: Longest Increasing Path in Matrix</div>
+                <div class="exercise-title">Exercise 3: Longest Increasing Path in Matrix <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Find the longest increasing path in a matrix. You can move in 4 directions (up, down, left, right).</p>
                 <p class="answer">(Expected: Path 1→2→6→9 = length 4)</p>
                 
@@ -2079,7 +2218,7 @@ def longest_increasing_path(matrix):
             
             <!-- Exercise 4 -->
             <div class="exercise" data-exercise="ex4">
-                <div class="exercise-title">Exercise 4: Target Sum</div>
+                <div class="exercise-title">Exercise 4: Target Sum <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Given array nums and target S, find number of ways to assign + or - to each number to achieve target sum.</p>
                 <p class="answer">(Expected: [1,1,1,1,1], target=3 → 5 ways)</p>
                 
@@ -2122,7 +2261,7 @@ def find_target_sum_ways(nums, target):
             
             <!-- Exercise 5 -->
             <div class="exercise" data-exercise="ex5">
-                <div class="exercise-title">Exercise 5: Interleaving String</div>
+                <div class="exercise-title">Exercise 5: Interleaving String <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Given strings s1, s2, s3, check if s3 is formed by interleaving s1 and s2 (maintaining relative order).</p>
                 <p class="answer">(Expected: "aabcc" + "dbbca" → "aadbbcbcac" = True)</p>
                 

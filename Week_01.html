@@ -866,6 +866,110 @@
             .scroll-progress { bottom: 12px; right: 14px; }
             .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
+    
+        /* ========== SCAFFOLDING BOXES ========== */
+        .learning-objectives {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 0 0 30px;
+        }
+        .learning-objectives-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #2563eb;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .learning-objectives-title::before { content: "🎯 "; }
+        .learning-objectives ul { margin: 0; padding-left: 20px; }
+        .learning-objectives li { margin: 6px 0; font-size: 0.95rem; color: #1e3a5f; }
+
+        .prerequisites {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fde047;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 0 0 40px;
+        }
+        .prerequisites-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a16207;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .prerequisites-title::before { content: "📋 "; }
+        .prerequisites p { margin: 0; font-size: 0.92rem; color: #713f12; }
+
+        .week-takeaways {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 50px 0 20px;
+        }
+        .week-takeaways-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .week-takeaways-title::before { content: "✅ "; }
+        .week-takeaways ul { margin: 0; padding-left: 20px; }
+        .week-takeaways li { margin: 6px 0; font-size: 0.95rem; color: #14532d; }
+
+        .connection-note {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border: 1px solid #c084fc;
+            border-left: 4px solid #7c3aed;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 40px 0;
+        }
+        .connection-note-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7c3aed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .connection-note-title::before { content: "🔗 "; }
+        .connection-note p { margin: 0; font-size: 0.92rem; color: #3b0764; }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+        .difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .difficulty-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
     </style>
 </head>
 <body>
@@ -914,6 +1018,23 @@
                 <li><a href="#exercises">Exercises</a></li>
             </ol>
         </nav>
+
+        <div class="learning-objectives">
+            <div class="learning-objectives-title">Learning Objectives</div>
+            <ul>
+                <li>Understand what programming is and how computers execute instructions</li>
+                <li>Write basic Python programs using variables, data types, operators, and control flow</li>
+                <li>Create and manipulate lists and strings in Python</li>
+                <li>Define and call functions with parameters and return values</li>
+                <li>Analyze algorithm efficiency using Big O notation for time and space complexity</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <div class="prerequisites-title">Prerequisites</div>
+            <p>No prerequisites — this is the starting point of the course. Basic computer literacy (using a keyboard, navigating files) is assumed.</p>
+        </div>
+
 
         <!-- ============================================== -->
         <!-- SECTION 1: WHAT IS PROGRAMMING -->
@@ -2423,10 +2544,97 @@ print(f"Doubled (O(n) space): {double_values(nums)}")</textarea>
                     <li>Space complexity measures memory usage, not just time</li>
                 </ul>
             </div>
+        
+
+            <h3>Amortized Analysis</h3>
+
+            <p>Some operations have different costs each time they run. For example, appending to a Python list is usually O(1), but occasionally the list must resize its underlying array, which costs O(n). <strong>Amortized analysis</strong> gives the average cost per operation over a worst-case sequence of operations.</p>
+
+            <div class="definition">
+                <div class="definition-title">Definition</div>
+                <p><span class="term">Amortized analysis</span> determines the average performance of each operation in a worst-case sequence, ensuring that the total cost of n operations is bounded even though individual operations may occasionally be expensive.</p>
+            </div>
+
+            <div class="code-figure">
+                <div class="code-figure-header">
+                    <span class="code-figure-label">Listing 1.32 — Amortized Analysis: Dynamic Array</span>
+                    <button class="code-figure-run" onclick="runCode('code32')">▶ Run</button>
+                </div>
+                <textarea id="code32" spellcheck="false"># Amortized Analysis: Why list.append() is O(1) amortized
+
+class DynamicArray:
+    """
+    Simulates how Python lists grow internally.
+    When full, capacity doubles — the resize is O(n),
+    but it happens so rarely that append is O(1) amortized.
+    """
+    def __init__(self):
+        self.data = [None] * 1  # Start with capacity 1
+        self.size = 0
+        self.capacity = 1
+        self.resize_count = 0
+        self.total_copies = 0
+
+    def append(self, value):
+        if self.size == self.capacity:
+            # Resize: double the capacity (this is O(n))
+            self.resize_count += 1
+            self.total_copies += self.size
+            new_data = [None] * (self.capacity * 2)
+            for i in range(self.size):
+                new_data[i] = self.data[i]
+            self.data = new_data
+            self.capacity *= 2
+        self.data[self.size] = value
+        self.size += 1
+
+# Demonstrate: append 1000 elements
+arr = DynamicArray()
+for i in range(1000):
+    arr.append(i)
+
+print(f"After 1000 appends:")
+print(f"  Resizes needed:     {arr.resize_count}")
+print(f"  Total element copies: {arr.total_copies}")
+print(f"  Average copies per append: {arr.total_copies / 1000:.2f}")
+print(f"  Final capacity:     {arr.capacity}")
+print()
+print("Key insight: 1000 appends needed only ~10 resizes.")
+print("Total work = n + n/2 + n/4 + ... < 2n = O(n)")
+print("So each append costs O(n)/n = O(1) amortized!")</textarea>
+                <div class="code-figure-output" id="outputcode32"></div>
+                <div class="code-figure-caption">
+                    <strong>Figure 1.32:</strong> Dynamic array doubling strategy makes append O(1) amortized. Although occasional resizes are O(n), they happen exponentially less frequently.
+                </div>
+            </div>
+
+            <div class="margin-note">
+                The <strong>aggregate method</strong> of amortized analysis: if n operations take total time T(n), the amortized cost per operation is T(n)/n. For dynamic arrays: n appends trigger at most log₂(n) resizes copying a geometric series 1 + 2 + 4 + ... + n/2 &lt; 2n total elements. So T(n) &lt; 3n, giving O(1) amortized per append.
+            </div>
+
         </section>
+
+            <div class="connection-note">
+                <div class="connection-note-title">Looking Ahead</div>
+                <p>Big O notation is the language of this entire course. Every data structure and algorithm you learn from Week 2 onward will be analyzed using the complexity classes you just learned. Recursion (Week 2) introduces recurrence relations, and each subsequent data structure will be evaluated by the time complexity of its operations.</p>
+            </div>
+
 
         <!-- ============================================== -->
         <!-- SECTION 10: EXERCISES -->
+        
+        <div class="week-takeaways">
+            <div class="week-takeaways-title">Key Takeaways — Week Summary</div>
+            <ul>
+                <li>Programming is giving precise, unambiguous instructions to a computer</li>
+                <li>Python variables are dynamically typed — the type is determined by the value assigned</li>
+                <li>Lists are Python's versatile, mutable sequence type with O(1) append and O(1) index access</li>
+                <li>Functions encapsulate reusable logic and make programs modular and testable</li>
+                <li>Big O notation describes how performance scales: O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ)</li>
+                <li>Always consider both time and space complexity when choosing an algorithm</li>
+            </ul>
+        </div>
+
         <!-- ============================================== -->
         <section id="exercises">
             <h2>10. Exercises</h2>
@@ -2435,7 +2643,7 @@ print(f"Doubled (O(n) space): {double_values(nums)}")</textarea>
             
             <!-- EXERCISE 1 -->
             <div class="exercise" data-exercise="ex1">
-                <div class="exercise-title">Exercise 1: Temperature Conversion</div>
+                <div class="exercise-title">Exercise 1: Temperature Conversion <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Write a function <code>celsius_to_fahrenheit(celsius)</code> that converts a temperature from Celsius to Fahrenheit using the formula: F = C × 9/5 + 32. Test it with the values 0, 100, and 37.</p>
                 <p class="answer">(Expected: 0°C = 32.0°F, 100°C = 212.0°F, 37°C = 98.6°F)</p>
                 
@@ -2489,7 +2697,7 @@ def celsius_to_fahrenheit(celsius):
             
             <!-- EXERCISE 2 -->
             <div class="exercise" data-exercise="ex2">
-                <div class="exercise-title">Exercise 2: List Statistics</div>
+                <div class="exercise-title">Exercise 2: List Statistics <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Given the list <code>scores = [85, 92, 78, 90, 88, 76, 95, 89]</code>, write code to find and print: the number of scores, the sum, the average (mean), the minimum, and the maximum.</p>
                 <p class="answer">(Expected: Count=8, Sum=693, Average=86.625, Min=76, Max=95)</p>
                 
@@ -2546,7 +2754,7 @@ print(f"Max: {maximum}")</textarea>
             
             <!-- EXERCISE 3 -->
             <div class="exercise" data-exercise="ex3">
-                <div class="exercise-title">Exercise 3: FizzBuzz</div>
+                <div class="exercise-title">Exercise 3: FizzBuzz <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Write a program that prints numbers from 1 to 20, but: for multiples of 3, print "Fizz" instead; for multiples of 5, print "Buzz" instead; for multiples of both 3 and 5, print "FizzBuzz".</p>
                 <p class="answer">(Expected: 1, 2, Fizz, 4, Buzz, Fizz, 7, 8, Fizz, Buzz, 11, Fizz, 13, 14, FizzBuzz, 16, 17, Fizz, 19, Buzz)</p>
                 
@@ -2596,7 +2804,7 @@ for num in range(1, 21):
             
             <!-- EXERCISE 4 -->
             <div class="exercise" data-exercise="ex4">
-                <div class="exercise-title">Exercise 4: Count Vowels</div>
+                <div class="exercise-title">Exercise 4: Count Vowels <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Write a function <code>count_vowels(text)</code> that returns the number of vowels (a, e, i, o, u) in a string. Test it with "Hello World" and "Python Programming".</p>
                 <p class="answer">(Expected: "Hello World" has 3 vowels, "Python Programming" has 4 vowels)</p>
                 
@@ -2649,7 +2857,7 @@ def count_vowels(text):
             
             <!-- EXERCISE 5 -->
             <div class="exercise" data-exercise="ex5">
-                <div class="exercise-title">Exercise 5: Big O Analysis</div>
+                <div class="exercise-title">Exercise 5: Big O Analysis <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Analyze the time complexity of each function below. Fill in the Big O notation in the comments and explain why.</p>
                 <p class="answer">(Expected: func_a is O(1), func_b is O(n), func_c is O(n²), func_d is O(n))</p>
                 

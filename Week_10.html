@@ -307,6 +307,110 @@
             .scroll-progress { bottom: 12px; right: 14px; }
             .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
+    
+        /* ========== SCAFFOLDING BOXES ========== */
+        .learning-objectives {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 0 0 30px;
+        }
+        .learning-objectives-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #2563eb;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .learning-objectives-title::before { content: "🎯 "; }
+        .learning-objectives ul { margin: 0; padding-left: 20px; }
+        .learning-objectives li { margin: 6px 0; font-size: 0.95rem; color: #1e3a5f; }
+
+        .prerequisites {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fde047;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 0 0 40px;
+        }
+        .prerequisites-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a16207;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .prerequisites-title::before { content: "📋 "; }
+        .prerequisites p { margin: 0; font-size: 0.92rem; color: #713f12; }
+
+        .week-takeaways {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 50px 0 20px;
+        }
+        .week-takeaways-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .week-takeaways-title::before { content: "✅ "; }
+        .week-takeaways ul { margin: 0; padding-left: 20px; }
+        .week-takeaways li { margin: 6px 0; font-size: 0.95rem; color: #14532d; }
+
+        .connection-note {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border: 1px solid #c084fc;
+            border-left: 4px solid #7c3aed;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 40px 0;
+        }
+        .connection-note-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7c3aed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .connection-note-title::before { content: "🔗 "; }
+        .connection-note p { margin: 0; font-size: 0.92rem; color: #3b0764; }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+        .difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .difficulty-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
     </style>
 </head>
 <body>
@@ -350,6 +454,23 @@
                 <li><a href="#exercises">Exercises</a></li>
             </ol>
         </nav>
+
+        <div class="learning-objectives">
+            <div class="learning-objectives-title">Learning Objectives</div>
+            <ul>
+                <li>Understand the fundamental sorting problem and comparison-based sorting lower bound of Ω(n log n)</li>
+                <li>Implement elementary sorts (bubble, selection, insertion) and understand when they're appropriate</li>
+                <li>Implement efficient divide-and-conquer sorts: merge sort (stable, O(n log n)) and quick sort (in-place, average O(n log n))</li>
+                <li>Implement heap sort and understand non-comparison sorts (counting sort, radix sort) that break the Ω(n log n) barrier</li>
+                <li>Use Python's built-in sorting effectively with custom keys and understand Timsort's hybrid approach</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <div class="prerequisites-title">Prerequisites</div>
+            <p>Recursion (Week 2) for merge sort and quick sort. Heaps (Week 7) for heap sort. Arrays (Week 3) for in-place manipulation. Big O analysis (Week 1) for comparing algorithm complexities.</p>
+        </div>
+
 
         <!-- ============================================== -->
         <!-- SECTION 1: INTRODUCTION TO SORTING -->
@@ -1987,13 +2108,31 @@ print("  3. Reflexive equality: a == a")</textarea>
 
         <!-- ============================================== -->
         <!-- SECTION 12: EXERCISES -->
+        
+        <div class="connection-note">
+            <div class="connection-note-title">Looking Ahead</div>
+            <p>Sorting is a prerequisite for many efficient algorithms. Binary search (Week 11) requires sorted input. Many greedy algorithms (Week 13) begin by sorting. The divide-and-conquer approach in merge sort and quick sort is the same paradigm used in many algorithm design problems. Understanding sorting stability and custom comparators is essential for real-world programming.</p>
+        </div>
+
+        <div class="week-takeaways">
+            <div class="week-takeaways-title">Key Takeaways — Week Summary</div>
+            <ul>
+                <li>No comparison-based sort can do better than Ω(n log n) in the worst case — this is a proven lower bound</li>
+                <li>Merge sort guarantees O(n log n) but needs O(n) extra space; quick sort is O(n log n) average with O(1) extra space but O(n²) worst case</li>
+                <li>Insertion sort is O(n) on nearly-sorted data — Python's Timsort exploits this by detecting sorted runs</li>
+                <li>Counting and radix sort achieve O(n) but only work for integers in a bounded range</li>
+                <li>Python's sorted() returns a new list; list.sort() sorts in-place and returns None — a common bug source</li>
+                <li>Stability matters: stable sorts preserve the relative order of equal elements — critical for multi-key sorting</li>
+            </ul>
+        </div>
+
         <!-- ============================================== -->
         <section id="exercises">
             <h2>12. Exercises</h2>
             
             <!-- Exercise 1 -->
             <div class="exercise" data-exercise="ex1">
-                <div class="exercise-title">Exercise 1: Sort Colors (Dutch National Flag)</div>
+                <div class="exercise-title">Exercise 1: Sort Colors (Dutch National Flag) <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Given an array with n objects colored red, white, or blue (represented as 0, 1, 2), sort them in-place in one pass.</p>
                 <p class="answer">(Expected: [2,0,2,1,1,0] → [0,0,1,1,2,2])</p>
                 
@@ -2038,7 +2177,7 @@ def sort_colors(nums):
             
             <!-- Exercise 2 -->
             <div class="exercise" data-exercise="ex2">
-                <div class="exercise-title">Exercise 2: Sort Array by Parity</div>
+                <div class="exercise-title">Exercise 2: Sort Array by Parity <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Given an integer array, move all even integers to the beginning, followed by all odd integers. Any order within even/odd groups is acceptable.</p>
                 <p class="answer">(Expected: [3,1,2,4] → [2,4,3,1] or similar)</p>
                 
@@ -2083,7 +2222,7 @@ def sort_array_by_parity(nums):
             
             <!-- Exercise 3 -->
             <div class="exercise" data-exercise="ex3">
-                <div class="exercise-title">Exercise 3: Relative Sort Array</div>
+                <div class="exercise-title">Exercise 3: Relative Sort Array <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Sort arr1 such that elements in arr2 appear first (in arr2's order), followed by remaining elements in ascending order.</p>
                 <p class="answer">(Expected: Custom ordering based on arr2)</p>
                 
@@ -2128,7 +2267,7 @@ def relative_sort_array(arr1, arr2):
             
             <!-- Exercise 4 -->
             <div class="exercise" data-exercise="ex4">
-                <div class="exercise-title">Exercise 4: Wiggle Sort II</div>
+                <div class="exercise-title">Exercise 4: Wiggle Sort II <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Reorder array such that nums[0] < nums[1] > nums[2] < nums[3]... (strict inequality). Assume valid answer always exists.</p>
                 <p class="answer">(Expected: [1,5,1,1,6,4] → [1,6,1,5,1,4])</p>
                 
@@ -2173,7 +2312,7 @@ def wiggle_sort(nums):
             
             <!-- Exercise 5 -->
             <div class="exercise" data-exercise="ex5">
-                <div class="exercise-title">Exercise 5: Merge Sorted Arrays</div>
+                <div class="exercise-title">Exercise 5: Merge Sorted Arrays <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Given two sorted arrays nums1 (with extra space) and nums2, merge nums2 into nums1 in-place maintaining sorted order.</p>
                 <p class="answer">(Expected: [1,2,3,0,0,0] + [2,5,6] → [1,2,2,3,5,6])</p>
                 

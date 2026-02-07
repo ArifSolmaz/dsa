@@ -449,6 +449,110 @@
             .scroll-progress { bottom: 12px; right: 14px; }
             .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
+    
+        /* ========== SCAFFOLDING BOXES ========== */
+        .learning-objectives {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 0 0 30px;
+        }
+        .learning-objectives-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #2563eb;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .learning-objectives-title::before { content: "🎯 "; }
+        .learning-objectives ul { margin: 0; padding-left: 20px; }
+        .learning-objectives li { margin: 6px 0; font-size: 0.95rem; color: #1e3a5f; }
+
+        .prerequisites {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fde047;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 0 0 40px;
+        }
+        .prerequisites-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a16207;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .prerequisites-title::before { content: "📋 "; }
+        .prerequisites p { margin: 0; font-size: 0.92rem; color: #713f12; }
+
+        .week-takeaways {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 50px 0 20px;
+        }
+        .week-takeaways-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .week-takeaways-title::before { content: "✅ "; }
+        .week-takeaways ul { margin: 0; padding-left: 20px; }
+        .week-takeaways li { margin: 6px 0; font-size: 0.95rem; color: #14532d; }
+
+        .connection-note {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border: 1px solid #c084fc;
+            border-left: 4px solid #7c3aed;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 40px 0;
+        }
+        .connection-note-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7c3aed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .connection-note-title::before { content: "🔗 "; }
+        .connection-note p { margin: 0; font-size: 0.92rem; color: #3b0764; }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+        .difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .difficulty-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
     </style>
 </head>
 <body>
@@ -492,6 +596,23 @@
                 <li><a href="#exercises">Exercises</a></li>
             </ol>
         </nav>
+
+        <div class="learning-objectives">
+            <div class="learning-objectives-title">Learning Objectives</div>
+            <ul>
+                <li>Understand the concept of recursion and how the call stack works</li>
+                <li>Identify base cases and recursive cases in recursive functions</li>
+                <li>Implement classic recursive algorithms: factorial, Fibonacci, and binary search</li>
+                <li>Apply recursion to data structures (lists, strings) and understand its limitations</li>
+                <li>Analyze recursive time complexity using recurrence relations and the recursion tree method</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <div class="prerequisites-title">Prerequisites</div>
+            <p>You should be comfortable with Python functions, loops, and lists (Week 1). Understanding of Big O notation from Week 1 is essential for analyzing recursive complexity.</p>
+        </div>
+
 
         <!-- ============================================== -->
         <!-- SECTION 1: WHAT IS RECURSION -->
@@ -2291,13 +2412,30 @@ print("Python returns None by default → None * n → TypeError!")</textarea>
 
         <!-- ============================================== -->
         <!-- SECTION 11: EXERCISES -->
+        
+        <div class="connection-note">
+            <div class="connection-note-title">Looking Ahead</div>
+            <p>Recursion is the foundation for much of what follows. Tree traversals (Week 6), divide-and-conquer sorting (Week 10), graph DFS (Week 9), backtracking, and dynamic programming (Week 12) all build directly on recursive thinking. The memoization technique you learned here is exactly how top-down DP works.</p>
+        </div>
+
+        <div class="week-takeaways">
+            <div class="week-takeaways-title">Key Takeaways — Week Summary</div>
+            <ul>
+                <li>Every recursive function needs at least one base case (termination) and one recursive case (progress)</li>
+                <li>The call stack tracks function calls — too many recursive calls cause stack overflow</li>
+                <li>Naive recursion can be exponentially slow (e.g., Fibonacci) — memoization fixes overlapping subproblems</li>
+                <li>Many problems have both recursive and iterative solutions; choose based on clarity and efficiency</li>
+                <li>Recursive complexity is analyzed via recurrence relations: T(n) = T(n-1) + O(1) gives O(n), T(n) = 2T(n/2) + O(n) gives O(n log n)</li>
+            </ul>
+        </div>
+
         <!-- ============================================== -->
         <section id="exercises">
             <h2>11. Exercises</h2>
             
             <!-- Exercise 1 -->
             <div class="exercise" data-exercise="ex1">
-                <div class="exercise-title">Exercise 1: Power Function</div>
+                <div class="exercise-title">Exercise 1: Power Function <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Write <code>power(base, exp)</code> that calculates base<sup>exp</sup> recursively without using the <code>**</code> operator. Assume exp ≥ 0.</p>
                 <p class="answer">(Expected: power(2, 10) = 1024, power(3, 4) = 81, power(5, 0) = 1)</p>
                 
@@ -2345,7 +2483,7 @@ def power(base, exp):
             
             <!-- Exercise 2 -->
             <div class="exercise" data-exercise="ex2">
-                <div class="exercise-title">Exercise 2: Sum of Digits</div>
+                <div class="exercise-title">Exercise 2: Sum of Digits <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Write <code>digit_sum(n)</code> that returns the sum of all digits in a positive integer n.</p>
                 <p class="answer">(Expected: digit_sum(12345) = 15, digit_sum(9999) = 36, digit_sum(7) = 7)</p>
                 
@@ -2394,7 +2532,7 @@ def digit_sum(n):
             
             <!-- Exercise 3 -->
             <div class="exercise" data-exercise="ex3">
-                <div class="exercise-title">Exercise 3: GCD (Euclid's Algorithm)</div>
+                <div class="exercise-title">Exercise 3: GCD (Euclid's Algorithm) <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Write <code>gcd(a, b)</code> to find the greatest common divisor using Euclid's algorithm: gcd(a, b) = gcd(b, a % b), with base case gcd(a, 0) = a.</p>
                 <p class="answer">(Expected: gcd(48, 18) = 6, gcd(100, 25) = 25, gcd(17, 13) = 1)</p>
                 
@@ -2442,7 +2580,7 @@ def gcd(a, b):
             
             <!-- Exercise 4 -->
             <div class="exercise" data-exercise="ex4">
-                <div class="exercise-title">Exercise 4: Count Occurrences in List</div>
+                <div class="exercise-title">Exercise 4: Count Occurrences in List <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Write <code>count_occurrences(lst, target)</code> that counts how many times target appears in lst, recursively (without using <code>.count()</code>).</p>
                 <p class="answer">(Expected: count_occurrences([1,2,3,2,4,2], 2) = 3, count_occurrences([1,1,1,1], 1) = 4)</p>
                 
@@ -2491,7 +2629,7 @@ def count_occurrences(lst, target):
             
             <!-- Exercise 5 -->
             <div class="exercise" data-exercise="ex5">
-                <div class="exercise-title">Exercise 5: Tower of Hanoi</div>
+                <div class="exercise-title">Exercise 5: Tower of Hanoi <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Write <code>hanoi(n, source, target, auxiliary)</code> that prints the moves needed to solve the Tower of Hanoi puzzle with n disks.</p>
                 <p class="answer">(Expected: hanoi(3, 'A', 'C', 'B') prints 7 moves, hanoi(4, ...) prints 15 moves)</p>
                 

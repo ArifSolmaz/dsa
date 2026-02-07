@@ -307,6 +307,110 @@
             .scroll-progress { bottom: 12px; right: 14px; }
             .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
+    
+        /* ========== SCAFFOLDING BOXES ========== */
+        .learning-objectives {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 0 0 30px;
+        }
+        .learning-objectives-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #2563eb;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .learning-objectives-title::before { content: "🎯 "; }
+        .learning-objectives ul { margin: 0; padding-left: 20px; }
+        .learning-objectives li { margin: 6px 0; font-size: 0.95rem; color: #1e3a5f; }
+
+        .prerequisites {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fde047;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 0 0 40px;
+        }
+        .prerequisites-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a16207;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .prerequisites-title::before { content: "📋 "; }
+        .prerequisites p { margin: 0; font-size: 0.92rem; color: #713f12; }
+
+        .week-takeaways {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 50px 0 20px;
+        }
+        .week-takeaways-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .week-takeaways-title::before { content: "✅ "; }
+        .week-takeaways ul { margin: 0; padding-left: 20px; }
+        .week-takeaways li { margin: 6px 0; font-size: 0.95rem; color: #14532d; }
+
+        .connection-note {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border: 1px solid #c084fc;
+            border-left: 4px solid #7c3aed;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 40px 0;
+        }
+        .connection-note-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7c3aed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .connection-note-title::before { content: "🔗 "; }
+        .connection-note p { margin: 0; font-size: 0.92rem; color: #3b0764; }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+        .difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .difficulty-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
     </style>
 </head>
 <body>
@@ -349,6 +453,23 @@
                 <li><a href="#exercises">Exercises</a></li>
             </ol>
         </nav>
+
+        <div class="learning-objectives">
+            <div class="learning-objectives-title">Learning Objectives</div>
+            <ul>
+                <li>Understand the LIFO (stack) and FIFO (queue) abstract data types and their real-world analogies</li>
+                <li>Implement stacks and queues using both arrays and linked lists, understanding trade-offs</li>
+                <li>Apply stacks to solve parenthesis matching, expression evaluation, and next-greater-element problems</li>
+                <li>Implement queue variants: circular queue, deque, priority queue, and monotonic queue</li>
+                <li>Recognize when a problem requires stack-based or queue-based approaches</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <div class="prerequisites-title">Prerequisites</div>
+            <p>Linked list implementation (Week 4) for linked-list-based stacks/queues. Array fundamentals (Week 3) for array-based implementations. Recursion (Week 2) — the call stack is literally a stack!</p>
+        </div>
+
 
         <!-- ============================================== -->
         <!-- SECTION 1: INTRODUCTION -->
@@ -2440,13 +2561,30 @@ print(f"safe_pop on [1,2,3]: {safe_pop(stack)}")</textarea>
 
         <!-- ============================================== -->
         <!-- SECTION 11: EXERCISES -->
+        
+        <div class="connection-note">
+            <div class="connection-note-title">Looking Ahead</div>
+            <p>The stack you built here powers iterative tree traversals (Week 6) — DFS on trees and graphs (Week 9) uses an explicit stack. The queue is the backbone of BFS, which you'll use extensively for shortest-path problems in graphs. Priority queues get their own deep treatment with heaps in Week 7.</p>
+        </div>
+
+        <div class="week-takeaways">
+            <div class="week-takeaways-title">Key Takeaways — Week Summary</div>
+            <ul>
+                <li>Stacks (LIFO) are ideal for matching/nesting problems, undo operations, and DFS traversal</li>
+                <li>Queues (FIFO) are essential for BFS, scheduling, and buffering — order of processing matters</li>
+                <li>The monotonic stack/queue pattern solves 'next greater/smaller element' problems in O(n)</li>
+                <li>Python's collections.deque provides O(1) operations at both ends — prefer it over list for queues</li>
+                <li>If you need to process elements in a specific priority order, use a priority queue (covered in depth in Week 7)</li>
+            </ul>
+        </div>
+
         <!-- ============================================== -->
         <section id="exercises">
             <h2>11. Exercises</h2>
             
             <!-- Exercise 1 -->
             <div class="exercise" data-exercise="ex1">
-                <div class="exercise-title">Exercise 1: Min Stack</div>
+                <div class="exercise-title">Exercise 1: Min Stack <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Design a stack that supports push, pop, top, and retrieving the minimum element in O(1) time.</p>
                 <p class="answer">(Expected: All operations should work in constant time)</p>
                 
@@ -2513,7 +2651,7 @@ class MinStack:
             
             <!-- Exercise 2 -->
             <div class="exercise" data-exercise="ex2">
-                <div class="exercise-title">Exercise 2: Valid Parentheses with Multiple Types</div>
+                <div class="exercise-title">Exercise 2: Valid Parentheses with Multiple Types <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Extend the balanced parentheses checker to also verify that brackets are properly nested (e.g., <code>[{()}]</code> is valid but <code>[{(})]</code> is not).</p>
                 <p class="answer">(Expected: Proper nesting of (), [], {} brackets)</p>
                 
@@ -2559,7 +2697,7 @@ def is_valid_nesting(s):
             
             <!-- Exercise 3 -->
             <div class="exercise" data-exercise="ex3">
-                <div class="exercise-title">Exercise 3: Implement Circular Queue</div>
+                <div class="exercise-title">Exercise 3: Implement Circular Queue <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Implement a circular queue with operations: enqueue, dequeue, front, rear, isEmpty, isFull.</p>
                 <p class="answer">(Expected: Use modulo arithmetic for wrapping)</p>
                 
@@ -2627,7 +2765,7 @@ class MyCircularQueue:
             
             <!-- Exercise 4 -->
             <div class="exercise" data-exercise="ex4">
-                <div class="exercise-title">Exercise 4: Daily Temperatures</div>
+                <div class="exercise-title">Exercise 4: Daily Temperatures <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Given daily temperatures, return an array where <code>answer[i]</code> is the number of days until a warmer temperature. Use a monotonic stack.</p>
                 <p class="answer">(Expected: [73,74,75,71,69,72,76,73] → [1,1,4,2,1,1,0,0])</p>
                 
@@ -2673,7 +2811,7 @@ def daily_temperatures(temperatures):
             
             <!-- Exercise 5 -->
             <div class="exercise" data-exercise="ex5">
-                <div class="exercise-title">Exercise 5: Number of Recent Calls</div>
+                <div class="exercise-title">Exercise 5: Number of Recent Calls <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Implement a RecentCounter class that counts the number of calls made in the last 3000 milliseconds.</p>
                 <p class="answer">(Expected: Use a queue and remove old timestamps)</p>
                 

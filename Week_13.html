@@ -307,6 +307,110 @@
             .scroll-progress { bottom: 12px; right: 14px; }
             .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
+    
+        /* ========== SCAFFOLDING BOXES ========== */
+        .learning-objectives {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 0 0 30px;
+        }
+        .learning-objectives-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #2563eb;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .learning-objectives-title::before { content: "🎯 "; }
+        .learning-objectives ul { margin: 0; padding-left: 20px; }
+        .learning-objectives li { margin: 6px 0; font-size: 0.95rem; color: #1e3a5f; }
+
+        .prerequisites {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fde047;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 0 0 40px;
+        }
+        .prerequisites-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a16207;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .prerequisites-title::before { content: "📋 "; }
+        .prerequisites p { margin: 0; font-size: 0.92rem; color: #713f12; }
+
+        .week-takeaways {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 50px 0 20px;
+        }
+        .week-takeaways-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .week-takeaways-title::before { content: "✅ "; }
+        .week-takeaways ul { margin: 0; padding-left: 20px; }
+        .week-takeaways li { margin: 6px 0; font-size: 0.95rem; color: #14532d; }
+
+        .connection-note {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border: 1px solid #c084fc;
+            border-left: 4px solid #7c3aed;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 40px 0;
+        }
+        .connection-note-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7c3aed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .connection-note-title::before { content: "🔗 "; }
+        .connection-note p { margin: 0; font-size: 0.92rem; color: #3b0764; }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+        .difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .difficulty-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
     </style>
 </head>
 <body>
@@ -350,6 +454,23 @@
                 <li><a href="#exercises">Exercises</a></li>
             </ol>
         </nav>
+
+        <div class="learning-objectives">
+            <div class="learning-objectives-title">Learning Objectives</div>
+            <ul>
+                <li>Understand the greedy paradigm: making locally optimal choices that lead to globally optimal solutions</li>
+                <li>Distinguish when greedy works vs. when DP is needed, using the greedy choice property and optimal substructure</li>
+                <li>Solve interval scheduling and interval partitioning problems using greedy sorting strategies</li>
+                <li>Implement Huffman coding, Dijkstra's shortest path, and minimum spanning tree algorithms (Kruskal, Prim)</li>
+                <li>Recognize common greedy patterns and prove (or disprove) greedy correctness via exchange arguments</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <div class="prerequisites-title">Prerequisites</div>
+            <p>Dynamic programming (Week 12) to compare greedy vs. DP approaches. Heaps (Week 7) for Dijkstra's algorithm and Prim's MST. Graphs (Week 9) and Union-Find for Kruskal's MST. Sorting (Week 10) — most greedy algorithms start with a sorting step.</p>
+        </div>
+
 
         <!-- ============================================== -->
         <!-- SECTION 1: INTRODUCTION TO GREEDY ALGORITHMS -->
@@ -2197,13 +2318,31 @@ print("ALWAYS prove greedy works before using it!")</textarea>
 
         <!-- ============================================== -->
         <!-- SECTION 12: EXERCISES -->
+        
+        <div class="connection-note">
+            <div class="connection-note-title">Looking Ahead</div>
+            <p>This is the last new topic before the final review (Week 14). You now have a complete algorithmic toolkit: data structures (arrays, linked lists, stacks, queues, trees, heaps, hash tables, graphs), algorithm paradigms (divide and conquer, DP, greedy), and analysis tools (Big O, amortized analysis). Week 14 will help you synthesize everything and prepare for the final exam.</p>
+        </div>
+
+        <div class="week-takeaways">
+            <div class="week-takeaways-title">Key Takeaways — Week Summary</div>
+            <ul>
+                <li>Greedy algorithms make the locally best choice at each step — they work when local optimality implies global optimality</li>
+                <li>Unlike DP, greedy never reconsiders choices — this makes it faster (typically O(n log n)) but less general</li>
+                <li>The exchange argument is the standard proof technique: show that swapping a non-greedy choice for the greedy choice never worsens the solution</li>
+                <li>Dijkstra's algorithm is greedy: always expand the nearest unvisited vertex. It fails with negative edge weights — use Bellman-Ford instead</li>
+                <li>Kruskal's MST greedily adds the cheapest edge that doesn't create a cycle (using Union-Find); Prim's greedily expands the frontier (using a heap)</li>
+                <li>When in doubt whether greedy works, try to find a counterexample. If you can't, try to prove it with an exchange argument</li>
+            </ul>
+        </div>
+
         <!-- ============================================== -->
         <section id="exercises">
             <h2>12. Exercises</h2>
             
             <!-- Exercise 1 -->
             <div class="exercise" data-exercise="ex1">
-                <div class="exercise-title">Exercise 1: Maximum Units on a Truck</div>
+                <div class="exercise-title">Exercise 1: Maximum Units on a Truck <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">You can load boxes onto a truck with capacity truckSize. Given boxTypes where boxTypes[i] = [numberOfBoxes, unitsPerBox], return maximum units you can load.</p>
                 <p class="answer">(Expected: [[1,3],[2,2],[3,1]], truckSize=4 → 8)</p>
                 
@@ -2247,7 +2386,7 @@ def maximum_units(box_types, truck_size):
             
             <!-- Exercise 2 -->
             <div class="exercise" data-exercise="ex2">
-                <div class="exercise-title">Exercise 2: Boats to Save People</div>
+                <div class="exercise-title">Exercise 2: Boats to Save People <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Given people's weights and boat limit (max 2 people per boat), find minimum boats needed.</p>
                 <p class="answer">(Expected: [3,2,2,1], limit=3 → 3 boats)</p>
                 
@@ -2291,7 +2430,7 @@ def num_rescue_boats(people, limit):
             
             <!-- Exercise 3 -->
             <div class="exercise" data-exercise="ex3">
-                <div class="exercise-title">Exercise 3: Assign Cookies</div>
+                <div class="exercise-title">Exercise 3: Assign Cookies <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">Given greed factors g[i] and cookie sizes s[j], assign cookies to maximize content children. A child is content if cookie size >= greed factor.</p>
                 <p class="answer">(Expected: g=[1,2,3], s=[1,1] → 1 child content)</p>
                 
@@ -2335,7 +2474,7 @@ def find_content_children(g, s):
             
             <!-- Exercise 4 -->
             <div class="exercise" data-exercise="ex4">
-                <div class="exercise-title">Exercise 4: Queue Reconstruction by Height</div>
+                <div class="exercise-title">Exercise 4: Queue Reconstruction by Height <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">People described by [h, k] where h is height and k is number of taller people in front. Reconstruct the queue.</p>
                 <p class="answer">(Expected: Reconstruct based on height and k value)</p>
                 
@@ -2380,7 +2519,7 @@ def reconstruct_queue(people):
             
             <!-- Exercise 5 -->
             <div class="exercise" data-exercise="ex5">
-                <div class="exercise-title">Exercise 5: Minimum Number of Arrows</div>
+                <div class="exercise-title">Exercise 5: Minimum Number of Arrows <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Given balloons as [start, end] intervals on x-axis, find minimum arrows needed to burst all balloons. One arrow at x bursts all balloons where start ≤ x ≤ end.</p>
                 <p class="answer">(Expected: [[10,16],[2,8],[1,6],[7,12]] → 2 arrows)</p>
                 

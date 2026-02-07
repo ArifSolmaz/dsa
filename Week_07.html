@@ -307,6 +307,110 @@
             .scroll-progress { bottom: 12px; right: 14px; }
             .run-all-btn { font-size: 0.7rem; padding: 3px 10px; }
         }
+    
+        /* ========== SCAFFOLDING BOXES ========== */
+        .learning-objectives {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 0 0 30px;
+        }
+        .learning-objectives-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #2563eb;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .learning-objectives-title::before { content: "🎯 "; }
+        .learning-objectives ul { margin: 0; padding-left: 20px; }
+        .learning-objectives li { margin: 6px 0; font-size: 0.95rem; color: #1e3a5f; }
+
+        .prerequisites {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fde047;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 0 0 40px;
+        }
+        .prerequisites-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a16207;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .prerequisites-title::before { content: "📋 "; }
+        .prerequisites p { margin: 0; font-size: 0.92rem; color: #713f12; }
+
+        .week-takeaways {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 50px 0 20px;
+        }
+        .week-takeaways-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .week-takeaways-title::before { content: "✅ "; }
+        .week-takeaways ul { margin: 0; padding-left: 20px; }
+        .week-takeaways li { margin: 6px 0; font-size: 0.95rem; color: #14532d; }
+
+        .connection-note {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border: 1px solid #c084fc;
+            border-left: 4px solid #7c3aed;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 40px 0;
+        }
+        .connection-note-title {
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7c3aed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .connection-note-title::before { content: "🔗 "; }
+        .connection-note p { margin: 0; font-size: 0.92rem; color: #3b0764; }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+        .difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .difficulty-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
     </style>
 </head>
 <body>
@@ -350,6 +454,23 @@
                 <li><a href="#exercises">Exercises</a></li>
             </ol>
         </nav>
+
+        <div class="learning-objectives">
+            <div class="learning-objectives-title">Learning Objectives</div>
+            <ul>
+                <li>Understand the heap property (min-heap and max-heap) and how heaps are stored in arrays</li>
+                <li>Implement heap operations: insert (sift-up), extract-min/max (sift-down), and heapify</li>
+                <li>Build a heap from an array in O(n) time using bottom-up heapify</li>
+                <li>Use Python's heapq module effectively for priority queue operations</li>
+                <li>Apply heaps to solve top-K problems, running median, merge-K-sorted-lists, and scheduling problems</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <div class="prerequisites-title">Prerequisites</div>
+            <p>Binary tree concepts (Week 6) — heaps are complete binary trees. Array indexing (Week 3) — heaps use arrays with parent/child index formulas. Understanding of O(log n) from Big O analysis (Week 1).</p>
+        </div>
+
 
         <!-- ============================================== -->
         <!-- SECTION 1: INTRODUCTION TO HEAPS -->
@@ -2202,13 +2323,30 @@ print(f"After re-heapify: {heap}")
 
         <!-- ============================================== -->
         <!-- SECTION 12: EXERCISES -->
+        
+        <div class="connection-note">
+            <div class="connection-note-title">Looking Ahead</div>
+            <p>Heaps power several important algorithms. Heap sort (Week 10) uses the extract-max operation repeatedly. Dijkstra's shortest path (covered briefly here and in depth in Week 13) relies on a min-heap for efficient vertex selection. Priority queues appear in task scheduling (Week 13), Huffman coding (Week 13), and Prim's MST algorithm.</p>
+        </div>
+
+        <div class="week-takeaways">
+            <div class="week-takeaways-title">Key Takeaways — Week Summary</div>
+            <ul>
+                <li>A heap is a complete binary tree satisfying the heap property: parent ≤ children (min-heap) or parent ≥ children (max-heap)</li>
+                <li>Heaps are stored as arrays: for node at index i, left child = 2i+1, right child = 2i+2, parent = (i-1)//2</li>
+                <li>Insert and extract are both O(log n); building a heap from n elements is O(n) with bottom-up heapify</li>
+                <li>Python's heapq is a min-heap only — for max-heap, negate values or use a wrapper</li>
+                <li>When you need the K largest/smallest elements, a heap of size K gives O(n log K) — better than sorting</li>
+            </ul>
+        </div>
+
         <!-- ============================================== -->
         <section id="exercises">
             <h2>12. Exercises</h2>
             
             <!-- Exercise 1 -->
             <div class="exercise" data-exercise="ex1">
-                <div class="exercise-title">Exercise 1: Last Stone Weight</div>
+                <div class="exercise-title">Exercise 1: Last Stone Weight <span class="difficulty-badge difficulty-easy">⭐ Easy</span></div>
                 <p class="exercise-description">We have stones with weights. Each turn, smash two heaviest stones together. If weights are equal, both destroyed. If not, the lighter is destroyed and the heavier's weight becomes the difference. Return the weight of the last remaining stone (or 0 if none).</p>
                 <p class="answer">(Expected: [2,7,4,1,8,1] → 1)</p>
                 
@@ -2255,7 +2393,7 @@ def last_stone_weight(stones):
             
             <!-- Exercise 2 -->
             <div class="exercise" data-exercise="ex2">
-                <div class="exercise-title">Exercise 2: K Closest Points to Origin</div>
+                <div class="exercise-title">Exercise 2: K Closest Points to Origin <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Given an array of points where points[i] = [xi, yi], return the k closest points to the origin (0, 0). Distance is Euclidean.</p>
                 <p class="answer">(Expected: Return k points with smallest distance)</p>
                 
@@ -2303,7 +2441,7 @@ def k_closest(points, k):
             
             <!-- Exercise 3 -->
             <div class="exercise" data-exercise="ex3">
-                <div class="exercise-title">Exercise 3: Reorganize String</div>
+                <div class="exercise-title">Exercise 3: Reorganize String <span class="difficulty-badge difficulty-medium">⭐⭐ Medium</span></div>
                 <p class="exercise-description">Given a string s, rearrange so that no two adjacent characters are the same. Return any valid arrangement, or "" if impossible.</p>
                 <p class="answer">(Expected: "aab" → "aba", "aaab" → "")</p>
                 
@@ -2350,7 +2488,7 @@ def reorganize_string(s):
             
             <!-- Exercise 4 -->
             <div class="exercise" data-exercise="ex4">
-                <div class="exercise-title">Exercise 4: Find Median from Data Stream</div>
+                <div class="exercise-title">Exercise 4: Find Median from Data Stream <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">Implement MedianFinder class with addNum(int num) and findMedian() methods. findMedian should return the median of all elements added so far.</p>
                 <p class="answer">(Expected: Two heaps - max for lower half, min for upper half)</p>
                 
@@ -2407,7 +2545,7 @@ class MedianFinder:
             
             <!-- Exercise 5 -->
             <div class="exercise" data-exercise="ex5">
-                <div class="exercise-title">Exercise 5: Ugly Number II</div>
+                <div class="exercise-title">Exercise 5: Ugly Number II <span class="difficulty-badge difficulty-hard">⭐⭐⭐ Hard</span></div>
                 <p class="exercise-description">An ugly number is a positive integer whose prime factors are limited to 2, 3, and 5. Given n, return the nth ugly number. (1 is considered ugly.)</p>
                 <p class="answer">(Expected: n=10 → 12, n=15 → 24)</p>
                 
