@@ -252,6 +252,34 @@
             font-weight: bold;
         }
         
+        .week-card-actions {
+            display: flex;
+            gap: 8px;
+            padding-top: 10px;
+        }
+        
+        .week-card-actions a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: system-ui, sans-serif;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .btn-colab {
+            background: #f9ab00;
+            color: #1a1a1a;
+        }
+        
+        .btn-colab:hover {
+            background: #e09900;
+        }
+        
         .break-card {
             background: #fffbeb;
             border-color: rgba(245, 158, 11, 0.3);
@@ -422,9 +450,10 @@
                 `;
                 grid.appendChild(card);
             } else {
-                const card = document.createElement('a');
-                card.href = item.file;
+                const card = document.createElement('div');
                 card.className = 'week-card';
+                const weekNum = String(item.week).padStart(2, '0');
+                const colabUrl = `https://colab.research.google.com/github/ArifSolmaz/dsa/blob/main/notebooks/Week_${weekNum}.ipynb`;
                 card.innerHTML = `
                     <div class="week-card-header">
                         <span class="week-badge">Week ${item.week}</span>
@@ -434,7 +463,9 @@
                     <p>${item.desc}</p>
                     <div class="week-card-footer">
                         <span>${formatDate(item.start)} – ${formatDate(item.end)}</span>
-                        <span class="arrow">→</span>
+                    </div>
+                    <div class="week-card-actions">
+                        <a href="${colabUrl}" target="_blank" class="btn-colab">🟡 Open in Colab</a>
                     </div>
                 `;
                 grid.appendChild(card);
