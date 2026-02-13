@@ -1,0 +1,77 @@
+name: Publish Weekly Quiz
+
+on:
+  schedule:
+    # Every Wednesday at 05:50 UTC = 08:50 Istanbul time (10 min before quiz)
+    - cron: '50 5 * * 3'
+  workflow_dispatch:  # Manual trigger for testing
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine which quiz to publish
+        id: check
+        run: |
+          TODAY=$(TZ="Europe/Istanbul" date +%Y-%m-%d)
+          echo "Today (Istanbul): $TODAY"
+          
+          # Read schedule and find today's quiz
+          WEEK=$(python3 -c "
+          import json
+          schedule = json.load(open('quiz/schedule.json'))
+          today = '$TODAY'
+          for item in schedule['schedule']:
+              if item['publish_date'] == today:
+                  print(item['week'])
+                  break
+          else:
+              print('')
+          ")
+          
+          echo "week=$WEEK" >> $GITHUB_OUTPUT
+          
+          if [ -z "$WEEK" ]; then
+            echo "No quiz scheduled for today ($TODAY)"
+          else
+            echo "Publishing Quiz Week $WEEK"
+          fi
+
+      - name: Decrypt and publish quiz
+        if: steps.check.outputs.week != ''
+        env:
+          QUIZ_KEY: ${{ secrets.QUIZ_KEY }}
+        run: |
+          WEEK=$(printf "%02d" ${{ steps.check.outputs.week }})
+          ENC_FILE="quiz/encrypted/Quiz_Week_${WEEK}.ipynb.enc"
+          OUT_FILE="quiz/Quiz_Week_${WEEK}.ipynb"
+          
+          if [ ! -f "$ENC_FILE" ]; then
+            echo "Error: $ENC_FILE not found!"
+            exit 1
+          fi
+          
+          # Decrypt
+          openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 \
+            -in "$ENC_FILE" \
+            -out "$OUT_FILE" \
+            -pass pass:"$QUIZ_KEY"
+          
+          echo "Decrypted: $OUT_FILE ($(wc -c < "$OUT_FILE") bytes)"
+
+      - name: Commit and push
+        if: steps.check.outputs.week != ''
+        run: |
+          WEEK=$(printf "%02d" ${{ steps.check.outputs.week }})
+          
+          git config user.name "Quiz Bot"
+          git config user.email "quiz-bot@users.noreply.github.com"
+          git add "quiz/Quiz_Week_${WEEK}.ipynb"
+          git commit -m "📝 Publish Quiz Week ${WEEK}"
+          git push
