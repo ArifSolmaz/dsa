@@ -510,14 +510,43 @@
         if (current) {
             sessionStorage.setItem('dsa_visited', 'true');
             
+            // Create overlay backdrop
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;';
+            
+            // Create message popup
             const msg = document.createElement('div');
-            msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a2e;color:white;padding:30px 50px;border-radius:10px;font-family:system-ui;text-align:center;z-index:9999;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
-            msg.innerHTML = '<div style="font-size:1.2rem;margin-bottom:10px;">Opening this week\'s notebook in Colab...</div><div style="color:#10b981;">' + current.label + '</div>';
+            msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a2e;color:white;padding:30px 50px;border-radius:10px;font-family:system-ui;text-align:center;z-index:9999;box-shadow:0 10px 40px rgba(0,0,0,0.3);max-width:90vw;';
+            msg.innerHTML = '<div style="font-size:1.2rem;margin-bottom:10px;">Opening this week\'s notebook in Colab...</div>'
+                + '<div style="color:#10b981;margin-bottom:15px;">' + current.label + '</div>'
+                + '<div style="font-size:0.8rem;color:#888;">Press <kbd style="background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:4px;font-family:system-ui;">Esc</kbd> or click outside to stay on this page</div>';
+            document.body.appendChild(overlay);
             document.body.appendChild(msg);
             
-            setTimeout(() => {
+            // Set redirect timeout
+            const redirectTimer = setTimeout(function() {
                 window.location.href = current.url;
-            }, 1500);
+            }, 2000);
+            
+            // Cancel redirect and remove popup
+            function cancelRedirect() {
+                clearTimeout(redirectTimer);
+                if (msg.parentNode) msg.remove();
+                if (overlay.parentNode) overlay.remove();
+                document.removeEventListener('keydown', onKeyDown);
+            }
+            
+            // Esc key cancels
+            function onKeyDown(e) {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelRedirect();
+                }
+            }
+            document.addEventListener('keydown', onKeyDown);
+            
+            // Clicking overlay cancels
+            overlay.addEventListener('click', cancelRedirect);
         }
     }
     
