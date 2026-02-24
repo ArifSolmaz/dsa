@@ -6,234 +6,270 @@
   <title>Projects — DSA for Mechatronics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <style>
+    <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:      #0d1117;
-      --surface: #161b22;
-      --border:  #21262d;
-      --accent:  #f0883e;
-      --green:   #3fb950;
-      --blue:    #58a6ff;
-      --muted:   #8b949e;
-      --text:    #e6edf3;
-      --dim:     #c9d1d9;
-      --red:     #f85149;
-      --yellow:  #d29922;
-      --purple:  #bc8cff;
+      --bg:      #f5f7fa;
+      --surface: #ffffff;
+      --surface2: #f0f2f5;
+      --border:  #d1d5db;
+      --border2: #e5e7eb;
+      --accent:  #e07020;
+      --green:   #16a34a;
+      --green-bg:#f0fdf4;
+      --blue:    #2563eb;
+      --blue-bg: #eff6ff;
+      --muted:   #6b7280;
+      --text:    #111827;
+      --dim:     #374151;
+      --red:     #dc2626;
+      --red-bg:  #fef2f2;
+      --yellow:  #b45309;
+      --yellow-bg:#fffbeb;
+      --purple:  #7c3aed;
+      --purple-bg:#f5f3ff;
       --mono: 'JetBrains Mono', monospace;
       --sans: 'Syne', sans-serif;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md: 0 4px 6px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.04);
     }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.6; }
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background-image:
-        linear-gradient(rgba(240,136,62,.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(240,136,62,.025) 1px, transparent 1px);
-      background-size: 40px 40px; pointer-events: none; z-index: 0;
-    }
-    .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
-    /* ── nav ── */
-    nav { border-bottom: 1px solid var(--border); padding: 14px 0; }
-    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 860px; margin: 0 auto; padding: 0 24px; }
-    .nav-brand { font-family: var(--mono); font-size: 13px; color: var(--muted); text-decoration: none; letter-spacing:.04em; }
-    .nav-brand span { color: var(--accent); }
+    /* ── LAYOUT ── */
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── NAV ── */
+    nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 0; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+    .nav-brand { font-family: var(--mono); font-size: 14px; color: var(--muted); text-decoration: none; letter-spacing:.04em; }
+    .nav-brand span { color: var(--accent); font-weight: 700; }
     .nav-links { display: flex; gap: 24px; }
-    .nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; font-family: var(--mono); transition: color .2s; }
+    .nav-links a { font-size: 14px; color: var(--muted); text-decoration: none; font-family: var(--mono); transition: color .2s; }
     .nav-links a:hover { color: var(--text); }
-    .nav-links a.active { color: var(--accent); }
+    .nav-links a.active { color: var(--accent); font-weight: 700; }
 
-    /* ── hero ── */
-    header { padding: 52px 0 36px; border-bottom: 1px solid var(--border); }
-    .header-tag { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing:.12em; text-transform: uppercase; margin-bottom: 14px; }
-    header h1 { font-size: clamp(26px,5vw,40px); font-weight: 800; line-height: 1.1; letter-spacing:-.02em; margin-bottom: 14px; }
+    /* ── HERO ── */
+    header { padding: 56px 0 40px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+    .header-tag { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing:.12em; text-transform: uppercase; margin-bottom: 14px; font-weight: 700; }
+    header h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; line-height: 1.1; letter-spacing:-.02em; margin-bottom: 16px; color: var(--text); }
     header h1 em { font-style: normal; color: var(--accent); }
-    header p { color: var(--dim); max-width: 580px; font-size: 14px; line-height: 1.7; }
+    header p { color: var(--dim); max-width: 680px; font-size: 16px; line-height: 1.75; }
 
-    /* ── rhythm box ── */
-    .flow-box { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 20px 24px; margin: 32px 0 44px; }
-    .flow-box h3 { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing:.08em; text-transform: uppercase; margin-bottom: 16px; }
-    .flow-row { display: flex; gap: 0; align-items: stretch; flex-wrap: wrap; }
-    .flow-step {
-      flex: 1; min-width: 150px;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 8px; padding: 14px 16px;
-      position: relative;
-    }
-    .flow-step + .flow-step { margin-left: 8px; }
-    .flow-step-num { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-bottom: 6px; letter-spacing:.06em; }
-    .flow-step-label { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-    .flow-step-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
-    .flow-step.s1 { border-top: 2px solid var(--blue); }
-    .flow-step.s2 { border-top: 2px solid var(--accent); }
-    .flow-step.s3 { border-top: 2px solid var(--green); }
-    .flow-step.s4 { border-top: 2px solid var(--purple); }
+    /* ── RHYTHM BOX ── */
+    .flow-box { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: var(--radius); padding: 24px 28px; margin: 36px 0 48px; box-shadow: var(--shadow); }
+    .flow-box h3 { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing:.1em; text-transform: uppercase; margin-bottom: 18px; }
+    .flow-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .flow-step { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 16px 18px; }
+    .flow-step-num { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 8px; letter-spacing:.06em; font-weight: 600; }
+    .flow-step-label { font-size: 15px; font-weight: 700; margin-bottom: 5px; color: var(--text); }
+    .flow-step-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .flow-step.s1 { border-top: 3px solid var(--blue); }
+    .flow-step.s2 { border-top: 3px solid var(--accent); }
+    .flow-step.s3 { border-top: 3px solid var(--green); }
+    .flow-step.s4 { border-top: 3px solid var(--purple); }
     .flow-step-num.c1 { color: var(--blue); }
     .flow-step-num.c2 { color: var(--accent); }
     .flow-step-num.c3 { color: var(--green); }
     .flow-step-num.c4 { color: var(--purple); }
 
-    /* ── section label ── */
-    .section-label { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing:.1em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+    /* ── SECTION LABEL ── */
+    .section-label { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing:.1em; text-transform: uppercase; display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
     .section-label::after { content:''; flex:1; height:1px; background: var(--border); }
 
-    /* ── break banner ── */
-    .break-banner { display: flex; align-items: center; gap: 14px; background: rgba(210,153,34,.07); border: 1px solid rgba(210,153,34,.2); border-radius: 8px; padding: 14px 18px; margin: 12px 0; }
-    .break-banner p { font-family: var(--mono); font-size: 12px; color: var(--yellow); line-height: 1.5; }
-    .break-banner p strong { display: block; font-size: 13px; margin-bottom: 2px; }
+    /* ── BREAK BANNER ── */
+    .break-banner { display: flex; align-items: center; gap: 16px; background: var(--yellow-bg); border: 1px solid #fde68a; border-radius: var(--radius); padding: 16px 20px; margin: 16px 0; }
+    .break-banner p { font-family: var(--mono); font-size: 13px; color: var(--yellow); line-height: 1.6; }
+    .break-banner p strong { display: block; font-size: 14px; margin-bottom: 3px; color: var(--text); }
 
-    /* ── cards ── */
-    .projects { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: border-color .2s; position: relative; }
-    .card::before { content:''; position: absolute; left:0; top:0; bottom:0; width: 3px; }
+    /* ── PAST TOGGLE ── */
+    .past-toggle { font-family: var(--mono); font-size: 13px; color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; padding: 10px 0; margin-bottom: 12px; border: none; background: none; transition: color .2s; }
+    .past-toggle:hover { color: var(--accent); }
+
+    /* ── CARDS ── */
+    .projects { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow .2s, border-color .2s; position: relative; box-shadow: var(--shadow); }
+    .card::before { content:''; position: absolute; left:0; top:0; bottom:0; width: 4px; }
     .card.s-active::before   { background: var(--green); }
-    .card.s-upcoming::before { background: rgba(255,255,255,.06); }
-    .card.s-past::before     { background: var(--muted); opacity:.25; }
-    .card.s-active:hover     { border-color: #30363d; }
+    .card.s-upcoming::before { background: var(--border); }
+    .card.s-past::before     { background: var(--muted); opacity:.3; }
+    .card.s-active           { border-color: #bbf7d0; box-shadow: 0 0 0 1px #bbf7d0, var(--shadow-md); }
+    .card.s-active:hover     { box-shadow: 0 0 0 2px #86efac, var(--shadow-md); }
+    .card.s-upcoming:hover   { border-color: #9ca3af; box-shadow: var(--shadow-md); }
     .card.s-past .card-body  { display: none; }
-    .card.s-past             { opacity: .5; }
+    .card.s-past             { opacity: .55; }
 
-    .card-header { padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .card-left  { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
-    .card-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .week-num { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--muted); background: rgba(255,255,255,.05); padding: 3px 8px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
-    .card-title { font-size: 15px; font-weight: 700; letter-spacing:-.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-header { padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; gap: 14px; background: var(--surface); }
+    .card-left  { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+    .card-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+    .week-num { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--muted); background: var(--surface2); padding: 4px 10px; border-radius: 5px; white-space: nowrap; flex-shrink: 0; border: 1px solid var(--border2); }
+    .card-title { font-size: 17px; font-weight: 700; letter-spacing:-.01em; line-height: 1.3; color: var(--text); }
     .card-title .ico { margin-right: 6px; }
 
-    .status-pill { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing:.07em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
-    .status-pill.active   { background: rgba(63,185,80,.12);  color: var(--green); }
-    .status-pill.upcoming { background: rgba(139,148,158,.08); color: var(--muted); }
-    .status-pill.last     { background: rgba(248,81,73,.1);   color: var(--red); }
-    .status-pill.past     { background: transparent;           color: var(--muted); }
+    .status-pill { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing:.07em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+    .status-pill.active   { background: var(--green-bg); color: var(--green); border: 1px solid #86efac; }
+    .status-pill.upcoming { background: var(--surface2); color: var(--muted); border: 1px solid var(--border2); }
+    .status-pill.last     { background: var(--red-bg); color: var(--red); border: 1px solid #fca5a5; }
+    .status-pill.past     { background: transparent; color: var(--muted); }
 
-    .deadline { font-family: var(--mono); font-size: 11px; white-space: nowrap; }
+    .deadline { font-family: var(--mono); font-size: 12px; font-weight: 600; }
     .deadline.open   { color: var(--green); }
     .deadline.future { color: var(--muted); }
     .deadline.final  { color: var(--red); font-weight: 700; }
-    .deadline.closed { color: var(--muted); opacity:.4; }
+    .deadline.closed { color: var(--muted); opacity:.5; }
 
-    /* ── card body ── */
-    .card-body { padding: 0 20px 20px; border-top: 1px solid var(--border); }
-    .card-desc { font-size: 13px; color: var(--dim); line-height: 1.65; padding-top: 14px; margin-bottom: 14px; }
-    .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-    .tag { font-family: var(--mono); font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(88,166,255,.07); color: var(--blue); border: 1px solid rgba(88,166,255,.12); }
+    /* ── CARD BODY ── */
+    .card-body { padding: 0 22px 24px; border-top: 1px solid var(--border2); }
+    .card-desc { font-size: 15px; color: var(--dim); line-height: 1.7; padding-top: 18px; margin-bottom: 16px; }
+    .topics { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
+    .tag { font-family: var(--mono); font-size: 12px; padding: 3px 10px; border-radius: 5px; background: var(--blue-bg); color: var(--blue); border: 1px solid #bfdbfe; }
 
-    /* ── presentation notice ── */
+    /* ── PRESENTATION NOTICE ── */
     .present-note {
-      display: flex; align-items: center; gap: 10px;
-      background: rgba(188,140,255,.07); border: 1px solid rgba(188,140,255,.18);
-      border-radius: 6px; padding: 10px 14px; margin-bottom: 16px;
-      font-family: var(--mono); font-size: 12px; color: var(--purple);
+      display: flex; align-items: flex-start; gap: 12px;
+      background: var(--purple-bg); border: 1px solid #ddd6fe;
+      border-radius: 8px; padding: 12px 16px; margin-bottom: 18px;
+      font-size: 14px; color: var(--purple); line-height: 1.5;
+    }
+    .w14-note {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: var(--red-bg); border: 1px solid #fca5a5;
+      border-radius: 8px; padding: 12px 16px; margin-bottom: 18px;
+      font-size: 14px; color: var(--red); line-height: 1.5; font-family: var(--mono); font-weight: 600;
     }
 
-    /* ── sub-project grid ── */
-    .sub-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(185px,1fr)); gap: 8px; margin-bottom: 16px; }
-    .sub { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 11px 13px; }
-    .sub-num { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-bottom: 3px; }
-    .sub-name { font-size: 13px; font-weight: 600; margin-bottom: 5px; line-height: 1.3; }
-    .sub-concept { font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 1.4; }
-    .diff { font-family: var(--mono); font-size: 10px; margin-top: 5px; display: block; }
-    .diff.easy   { color: var(--green); }
-    .diff.medium { color: var(--accent); }
-    .diff.hard   { color: var(--red); }
+    /* ── SUB-PROJECT GRID ── */
+    .sub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-bottom: 18px; }
+    .sub { background: var(--surface2); border: 1px solid var(--border2); border-radius: 9px; padding: 14px 16px; }
+    .sub-num { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
+    .sub-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; color: var(--text); }
 
-    /* ── buttons ── */
-    .btns { display: flex; flex-wrap: wrap; gap: 7px; }
-    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; font-family: var(--mono); text-decoration: none; border: none; cursor: pointer; transition: opacity .15s, transform .1s; white-space: nowrap; }
-    .btn:hover { opacity:.82; transform: translateY(-1px); }
-    .btn-colab { background: #f9ab00; color: #000; }
-    .btn-ghost { background: rgba(255,255,255,.05); color: var(--dim);   border: 1px solid var(--border); }
-    .btn-off   { background: rgba(255,255,255,.03); color: var(--muted); border: 1px solid var(--border); opacity:.4; pointer-events:none; cursor:default; }
-
-    /* ── past toggle ── */
-    .past-toggle { font-family: var(--mono); font-size: 12px; color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 0; margin-bottom: 8px; border: none; background: none; transition: color .2s; }
-    .past-toggle:hover { color: var(--text); }
-
-    /* ── how to ── */
-    .howto { border: 1px solid var(--border); border-radius: 10px; padding: 26px; margin: 12px 0 56px; background: var(--surface); }
-    .howto h2 { font-size: 15px; font-weight: 700; margin-bottom: 20px; }
-    .steps { display: flex; flex-direction: column; gap: 0; }
-    .step { display: flex; gap: 0; position: relative; }
-    .step:not(:last-child) .step-line { position: absolute; left: 12px; top: 36px; bottom: 0; width: 1px; background: var(--border); }
-    .step-left { display: flex; flex-direction: column; align-items: center; padding-right: 18px; flex-shrink: 0; padding-top: 2px; }
-    .sn { width: 26px; height: 26px; flex-shrink: 0; background: rgba(240,136,62,.1); border: 1px solid rgba(240,136,62,.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--accent); z-index: 1; }
-    .step-body { padding-bottom: 22px; flex: 1; }
-    .step-body strong { font-size: 14px; display: block; margin-bottom: 3px; }
-    .step-body p { font-size: 13px; color: var(--muted); line-height: 1.55; }
-    code { font-family: var(--mono); font-size: 11px; background: rgba(255,255,255,.06); padding: 1px 5px; border-radius: 3px; color: var(--blue); }
-    .step-body .pill { display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-right: 4px; }
-    .pill.bb  { background: rgba(248,81,73,.12); color: var(--red); }
-    .pill.prs { background: rgba(188,140,255,.12); color: var(--purple); }
-    .pill.ai  { background: rgba(240,136,62,.12); color: var(--accent); }
-
-    /* ── footer ── */
-    footer { border-top: 1px solid var(--border); padding: 22px 0; }
-    .footer-inner { max-width: 860px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-    .footer-inner p { font-size: 12px; color: var(--muted); font-family: var(--mono); }
-    .footer-inner a { color: var(--muted); text-decoration: none; }
-    .footer-inner a:hover { color: var(--text); }
-
-    @media (max-width: 600px) {
-      .nav-links { display: none; }
-      .card-header { flex-wrap: wrap; }
-      .sub-grid { grid-template-columns: 1fr 1fr; }
-      .flow-row { flex-direction: column; }
-      .flow-step + .flow-step { margin-left: 0; margin-top: 8px; }
-    }
-
-    /* ── GAINS PILLS (replace diff badges) ── */
-    .gains-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
-    .gains-pill { font-family: var(--mono); font-size: 10px; padding: 2px 7px; border-radius: 12px;
-      background: rgba(63,185,80,.08); color: var(--green); border: 1px solid rgba(63,185,80,.18);
-      white-space: nowrap; }
+    /* ── GAINS PILLS ── */
+    .gains-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .gains-pill { font-family: var(--mono); font-size: 11px; padding: 3px 9px; border-radius: 12px;
+      background: var(--green-bg); color: var(--green); border: 1px solid #bbf7d0;
+      white-space: normal; word-break: break-word; line-height: 1.4; }
 
     /* ── EXPANDABLE SUB CARD ── */
-    .sub-clickable { cursor: pointer; transition: border-color .2s, background .2s; }
-    .sub-clickable:hover { border-color: rgba(63,185,80,.35); background: rgba(63,185,80,.03); }
-    .sub-header-row { display: flex; justify-content: space-between; align-items: flex-start; }
-    .sub-arrow { font-family: var(--mono); font-size: 12px; color: var(--muted); transition: transform .2s; flex-shrink:0; margin-top:2px; }
+    .sub-clickable { cursor: pointer; transition: border-color .2s, box-shadow .2s; }
+    .sub-clickable:hover { border-color: #86efac; box-shadow: 0 0 0 2px rgba(22,163,74,.1); }
+    .sub-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .sub-arrow { font-family: var(--mono); font-size: 14px; color: var(--muted); transition: transform .2s; flex-shrink:0; margin-top: 1px; line-height: 1; }
     .sub-arrow.open { transform: rotate(90deg); color: var(--green); }
-    .sub-scenario { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-    .scenario-text { font-size: 12px; color: var(--dim); line-height: 1.6; margin-bottom: 8px; }
-    .unique-box { background: rgba(240,136,62,.07); border: 1px solid rgba(240,136,62,.18);
-      border-radius: 5px; padding: 7px 10px; font-size: 11px; color: var(--dim); line-height: 1.5; margin-bottom:5px; }
+    .sub-scenario { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border2); }
+    .scenario-text { font-size: 14px; color: var(--dim); line-height: 1.65; margin-bottom: 10px; }
+    .unique-box { background: #fff7ed; border: 1px solid #fed7aa;
+      border-radius: 6px; padding: 10px 13px; font-size: 13px; color: var(--dim); line-height: 1.55; margin-bottom: 7px; }
     .unique-label { font-family: var(--mono); font-weight: 700; color: var(--accent); }
-    .complexity-line { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+    .complexity-line { font-family: var(--mono); font-size: 12px; color: var(--muted); }
 
-    /* ── COMPARE TABLE TOGGLE BUTTON ── */
-    .compare-btn { width: 100%; padding: 9px 14px; margin-bottom: 12px;
-      background: rgba(88,166,255,.06); border: 1px solid rgba(88,166,255,.18);
-      border-radius: 7px; color: var(--blue); font-family: var(--mono); font-size: 12px;
+    /* ── COMPARE BUTTON ── */
+    .compare-btn { width: 100%; padding: 12px 16px; margin-bottom: 14px;
+      background: var(--blue-bg); border: 1px solid #bfdbfe;
+      border-radius: 8px; color: var(--blue); font-family: var(--mono); font-size: 13px;
       font-weight: 700; cursor: pointer; text-align: left; transition: background .2s, border-color .2s; }
-    .compare-btn:hover { background: rgba(88,166,255,.1); border-color: rgba(88,166,255,.3); }
-    .compare-btn.open { background: rgba(88,166,255,.1); border-color: rgba(88,166,255,.35); color: var(--text); }
+    .compare-btn:hover { background: #dbeafe; border-color: #93c5fd; }
+    .compare-btn.open { background: #dbeafe; border-color: var(--blue); }
 
     /* ── COMPARE TABLE ── */
-    .compare-wrapper { margin-bottom: 14px; }
-    .compare-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
-    .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .compare-table thead th { background: rgba(88,166,255,.08); padding: 10px 12px;
-      text-align: left; border-bottom: 1px solid var(--border); }
-    .compare-table thead th:first-child { background: rgba(255,255,255,.02); color: var(--muted);
-      font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing:.06em; }
-    .ct-id { font-family: var(--mono); font-size: 11px; color: var(--blue); font-weight: 700; }
-    .ct-name { font-size: 12px; font-weight: 600; color: var(--text); }
-    .compare-table tbody td { padding: 9px 12px; vertical-align: top; border-bottom: 1px solid rgba(33,38,45,.8);
-      border-right: 1px solid rgba(33,38,45,.5); color: var(--dim); line-height: 1.5; }
+    .compare-wrapper { margin-bottom: 16px; }
+    .compare-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 9px; -webkit-overflow-scrolling: touch; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 640px; }
+    .compare-table thead th { background: var(--surface2); padding: 12px 14px;
+      text-align: left; border-bottom: 1px solid var(--border); font-weight: 700; color: var(--text); }
+    .compare-table thead th:first-child { background: var(--surface2); color: var(--muted);
+      font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing:.06em; }
+    .ct-id { font-family: var(--mono); font-size: 12px; color: var(--blue); font-weight: 700; }
+    .ct-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .compare-table tbody td { padding: 11px 14px; vertical-align: top; border-bottom: 1px solid var(--border2);
+      border-right: 1px solid var(--border2); color: var(--dim); line-height: 1.6; }
     .compare-table tbody td:last-child { border-right: none; }
-    .ct-label { background: rgba(255,255,255,.02); color: var(--muted); font-family: var(--mono);
-      font-size: 10px; font-weight: 700; letter-spacing:.04em; white-space: nowrap; }
-    .ct-icon { margin-right: 4px; }
-    .ct-list { margin: 0; padding-left: 14px; }
-    .ct-list li { margin-bottom: 3px; color: var(--dim); }
-    .ct-highlight td { background: rgba(240,136,62,.04); }
-    .ct-unique { font-size: 11px; color: var(--dim); font-style: italic; }
-    .ct-scenario { font-size: 11px; color: var(--muted); }
-    .ct-complexity { font-family: var(--mono); font-size: 10px; color: var(--green); }
-    .ct-corner { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing:.06em; }
-    .ct-note { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 8px; }
+    .compare-table tbody tr:last-child td { border-bottom: none; }
+    .ct-label { background: var(--surface2); color: var(--muted); font-family: var(--mono);
+      font-size: 11px; font-weight: 700; letter-spacing:.04em; width: 130px; min-width: 130px; }
+    .ct-icon { margin-right: 5px; }
+    .ct-list { margin: 0; padding-left: 16px; }
+    .ct-list li { margin-bottom: 4px; color: var(--dim); font-size: 13px; }
+    .ct-highlight td { background: #fffbeb; }
+    .ct-unique { font-size: 13px; color: var(--dim); }
+    .ct-scenario { font-size: 12px; color: var(--muted); }
+    .ct-complexity { font-family: var(--mono); font-size: 12px; color: var(--green); font-weight: 600; }
+    .ct-corner { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing:.06em; color: var(--muted); }
+    .ct-note { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 10px; }
+
+    /* ── BUTTONS ── */
+    .btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 7px; font-size: 13px; font-weight: 700; font-family: var(--mono); text-decoration: none; border: none; cursor: pointer; transition: opacity .15s, transform .1s; white-space: nowrap; }
+    .btn:hover { opacity:.85; transform: translateY(-1px); }
+    .btn-colab { background: #f9ab00; color: #000; }
+    .btn-ghost { background: var(--surface2); color: var(--dim); border: 1px solid var(--border); }
+    .btn-off   { background: var(--surface2); color: var(--muted); border: 1px solid var(--border2); opacity:.5; pointer-events:none; cursor:default; }
+
+    /* ── HOW IT WORKS ── */
+    .howto { border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin: 12px 0 56px; background: var(--surface); box-shadow: var(--shadow); }
+    .howto h2 { font-size: 18px; font-weight: 700; margin-bottom: 24px; color: var(--text); }
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step { display: flex; gap: 0; position: relative; }
+    .step:not(:last-child) .step-line { position: absolute; left: 13px; top: 40px; bottom: 0; width: 1px; background: var(--border); }
+    .step-left { display: flex; flex-direction: column; align-items: center; padding-right: 20px; flex-shrink: 0; padding-top: 2px; }
+    .sn { width: 28px; height: 28px; flex-shrink: 0; background: #fff7ed; border: 2px solid #fed7aa; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--accent); z-index: 1; }
+    .step-body { padding-bottom: 24px; flex: 1; }
+    .step-body strong { font-size: 15px; display: block; margin-bottom: 5px; color: var(--text); }
+    .step-body p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+    code { font-family: var(--mono); font-size: 12px; background: var(--surface2); padding: 2px 6px; border-radius: 4px; color: var(--blue); border: 1px solid var(--border2); }
+    .step-body .pill { display: inline-block; font-family: var(--mono); font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 5px; margin-right: 5px; }
+    .pill.bb  { background: var(--red-bg); color: var(--red); border: 1px solid #fca5a5; }
+    .pill.prs { background: var(--purple-bg); color: var(--purple); border: 1px solid #ddd6fe; }
+    .pill.ai  { background: #fff7ed; color: var(--accent); border: 1px solid #fed7aa; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 24px 0; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .footer-inner p { font-size: 13px; color: var(--muted); font-family: var(--mono); }
+    .footer-inner a { color: var(--muted); text-decoration: none; }
+    .footer-inner a:hover { color: var(--accent); }
+
+    /* ── SCHEDULE GRID INSIDE SECTION ── */
+    .sched-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-bottom: 32px; }
+    .sched-tile { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--border); border-radius: 8px; padding: 12px 14px; box-shadow: var(--shadow); }
+    .sched-tile.open  { background: var(--green-bg); border-color: #86efac; border-top-color: var(--green); }
+    .sched-tile.final { background: var(--red-bg); border-color: #fca5a5; border-top-color: var(--red); }
+    .sched-tile.break-tile { grid-column: 1 / -1; background: var(--yellow-bg); border-color: #fde68a; border-top-color: var(--yellow); display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
+    .sched-week { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing:.06em; margin-bottom: 4px; }
+    .sched-tile.open  .sched-week  { color: var(--green); }
+    .sched-tile.final .sched-week  { color: var(--red); }
+    .sched-topic { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .sched-status { font-family: var(--mono); font-size: 11px; font-weight: 700; }
+    .sched-tile.open  .sched-status { color: var(--green); }
+    .sched-tile.final .sched-status { color: var(--red); }
+    .sched-tile:not(.open):not(.final):not(.break-tile) .sched-status { color: var(--muted); }
+    .sched-due { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 3px; font-weight: 600; }
+    .sched-present { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .sched-tile.final .sched-present { color: var(--red); font-weight: 700; }
+    .break-text { font-family: var(--mono); font-size: 12px; color: var(--yellow); font-weight: 700; line-height: 1.5; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      .wrap, .nav-inner, .header-inner, .footer-inner { padding: 0 20px; }
+      .flow-row { grid-template-columns: 1fr 1fr; }
+      .sub-grid { grid-template-columns: 1fr 1fr; }
+      header { padding: 40px 0 28px; }
+    }
+    @media (max-width: 640px) {
+      .wrap, .nav-inner, .header-inner, .footer-inner { padding: 0 14px; }
+      .flow-row { grid-template-columns: 1fr; }
+      .sub-grid { grid-template-columns: 1fr; }
+      .card-header { flex-wrap: wrap; gap: 8px; }
+      .card-right { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .sched-grid { grid-template-columns: 1fr 1fr; }
+      .compare-table { font-size: 12px; }
+      header h1 { font-size: 28px; }
+      .howto { padding: 20px 18px; }
+      .nav-links { display: none; }
+      .flow-box { padding: 18px 16px; }
+    }
   </style>
 </head>
 <body>
@@ -249,17 +285,18 @@
   </div>
 </nav>
 
+<header>
+  <div class="header-inner">
+      <div class="header-tag">// DSA · Spring 2026</div>
+      <h1>Weekly <em>Projects</em></h1>
+      <p>One project per week — each grounded in that week's data structures topic and built around a real mechatronics engineering scenario. Open the notebook in Google Colab, enter your student ID, run all cells, and submit before the deadline. Every student gets a <strong>unique personalised dataset</strong> seeded from their own ID — your numbers are yours alone.</p>
+  </div>
+</header>
+
 <div class="wrap">
 
-  <!-- HERO -->
-  <header>
-    <div class="header-tag">// weekly engineering projects</div>
-    <h1>In-Class <em>Projects</em></h1>
-    <p>One project per week — each grounded in that week's data structures topic and framed as a real mechatronics engineering task. Open the notebook in Colab, enter your student ID, run all cells, and submit the final report. Every student gets a unique personalised dataset seeded from their ID.</p>
-  </header>
-
   <!-- RHYTHM BOX -->
-  <div class="flow-box" style="margin-top:32px; margin-bottom:44px;">
+  <div class="flow-box">
     <h3>Weekly rhythm</h3>
     <div class="flow-row">
       <div class="flow-step s1">
@@ -307,126 +344,99 @@
   </div>
 
   <!-- ═══ ACTIVE + UPCOMING ═══ -->
-  <div class="section-label" style="margin-top:20px;">Spring 2026 Schedule</div>
+  <div class="section-label" style="margin-top:32px;">Spring 2026 Schedule</div>
 
   <!-- DEADLINE SCHEDULE GRID -->
-  <div style="display:grid; grid-template-columns: repeat(6,1fr); gap:6px; margin-bottom:28px;">
-
-    <!-- W03 — OPEN -->
-    <div style="background:rgba(63,185,80,.08); border:1px solid rgba(63,185,80,.3); border-top:3px solid #3fb950; border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:#3fb950; letter-spacing:.06em;">WEEK 03</div>
-      <div style="font-size:12px; font-weight:600; color:var(--text); margin:3px 0 1px;">Arrays &amp; Strings</div>
-      <div style="font-family:var(--mono); font-size:10px; color:#3fb950; font-weight:700;">● OPEN NOW</div>
-      <div style="font-family:var(--mono); font-size:10px; color:#3fb950; margin-top:2px;">Due: 03.03.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 04.03.2026</div>
+  <div class="sched-grid">
+    <div class="sched-tile open">
+      <div class="sched-week">WEEK 03</div>
+      <div class="sched-topic">Arrays &amp; Strings</div>
+      <div class="sched-status">● OPEN NOW</div>
+      <div class="sched-due">Due: 03.03.2026</div>
+      <div class="sched-present">Present: 04.03.2026</div>
     </div>
-
-    <!-- W04 -->
-    <div style="background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--border); border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.06em;">WEEK 04</div>
-      <div style="font-size:12px; font-weight:600; color:var(--dim); margin:3px 0 1px;">Linked Lists</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">Upcoming</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px;">Due: 10.03.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 11.03.2026</div>
+    <div class="sched-tile">
+      <div class="sched-week">WEEK 04</div>
+      <div class="sched-topic">Linked Lists</div>
+      <div class="sched-status">Upcoming</div>
+      <div class="sched-due">Due: 10.03.2026</div>
+      <div class="sched-present">Present: 11.03.2026</div>
     </div>
-
-    <!-- W05 -->
-    <div style="background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--border); border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.06em;">WEEK 05</div>
-      <div style="font-size:12px; font-weight:600; color:var(--dim); margin:3px 0 1px;">Stacks &amp; Queues</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">Upcoming</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px;">Due: 17.03.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 18.03.2026</div>
+    <div class="sched-tile">
+      <div class="sched-week">WEEK 05</div>
+      <div class="sched-topic">Stacks &amp; Queues</div>
+      <div class="sched-status">Upcoming</div>
+      <div class="sched-due">Due: 17.03.2026</div>
+      <div class="sched-present">Present: 18.03.2026</div>
     </div>
-
-    <!-- W06 -->
-    <div style="background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--border); border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.06em;">WEEK 06</div>
-      <div style="font-size:12px; font-weight:600; color:var(--dim); margin:3px 0 1px;">Trees &amp; BSTs</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">Upcoming</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px;">Due: 24.03.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 25.03.2026</div>
+    <div class="sched-tile">
+      <div class="sched-week">WEEK 06</div>
+      <div class="sched-topic">Trees &amp; BSTs</div>
+      <div class="sched-status">Upcoming</div>
+      <div class="sched-due">Due: 24.03.2026</div>
+      <div class="sched-present">Present: 25.03.2026</div>
     </div>
-
-    <!-- W07 -->
-    <div style="background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--border); border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.06em;">WEEK 07</div>
-      <div style="font-size:12px; font-weight:600; color:var(--dim); margin:3px 0 1px;">Heaps &amp; Priority Q</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">Upcoming</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px;">Due: 31.03.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 01.04.2026</div>
+    <div class="sched-tile">
+      <div class="sched-week">WEEK 07</div>
+      <div class="sched-topic">Heaps &amp; Priority Queues</div>
+      <div class="sched-status">Upcoming</div>
+      <div class="sched-due">Due: 31.03.2026</div>
+      <div class="sched-present">Present: 01.04.2026</div>
     </div>
-
-    <!-- W08 -->
-    <div style="background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--border); border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.06em;">WEEK 08</div>
-      <div style="font-size:12px; font-weight:600; color:var(--dim); margin:3px 0 1px;">Hash Tables</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">Upcoming</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px;">Due: 03.04.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 07.04.2026</div>
+    <div class="sched-tile">
+      <div class="sched-week">WEEK 08</div>
+      <div class="sched-topic">Hash Tables</div>
+      <div class="sched-status">Upcoming</div>
+      <div class="sched-due">Due: 03.04.2026</div>
+      <div class="sched-present">Present: 07.04.2026</div>
     </div>
-
-    <!-- MIDTERM BREAK BANNER -->
-    <div style="grid-column:1/-1; background:rgba(210,153,34,.06); border:1px solid rgba(210,153,34,.2); border-radius:7px; padding:8px 16px; display:flex; align-items:center; gap:12px;">
-      <span style="font-size:16px;">🏖️</span>
-      <span style="font-family:var(--mono); font-size:11px; color:var(--yellow); font-weight:700;">MIDTERM BREAK &nbsp;·&nbsp; 07.04.2026 → 24.04.2026 &nbsp;·&nbsp; No submissions or presentations during break &nbsp;·&nbsp; Week 09 resumes 28.04.2026</span>
+    <div class="sched-tile break-tile">
+      <span style="font-size:20px;">🏖️</span>
+      <span class="break-text">MIDTERM BREAK &nbsp;·&nbsp; 07.04.2026 → 24.04.2026<br>No submissions or presentations · W09 resumes 28.04.2026</span>
     </div>
-
-    <!-- W09 -->
-    <div style="background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--border); border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.06em;">WEEK 09</div>
-      <div style="font-size:12px; font-weight:600; color:var(--dim); margin:3px 0 1px;">Graphs</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">Upcoming</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px;">Due: 28.04.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 29.04.2026</div>
+    <div class="sched-tile">
+      <div class="sched-week">WEEK 09</div>
+      <div class="sched-topic">Graphs</div>
+      <div class="sched-status">Upcoming</div>
+      <div class="sched-due">Due: 28.04.2026</div>
+      <div class="sched-present">Present: 29.04.2026</div>
     </div>
-
-    <!-- W10 -->
-    <div style="background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--border); border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.06em;">WEEK 10</div>
-      <div style="font-size:12px; font-weight:600; color:var(--dim); margin:3px 0 1px;">Sorting Algorithms</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">Upcoming</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px;">Due: 05.05.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 06.05.2026</div>
+    <div class="sched-tile">
+      <div class="sched-week">WEEK 10</div>
+      <div class="sched-topic">Sorting Algorithms</div>
+      <div class="sched-status">Upcoming</div>
+      <div class="sched-due">Due: 05.05.2026</div>
+      <div class="sched-present">Present: 06.05.2026</div>
     </div>
-
-    <!-- W11 -->
-    <div style="background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--border); border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.06em;">WEEK 11</div>
-      <div style="font-size:12px; font-weight:600; color:var(--dim); margin:3px 0 1px;">Searching Algorithms</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">Upcoming</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px;">Due: 12.05.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 13.05.2026</div>
+    <div class="sched-tile">
+      <div class="sched-week">WEEK 11</div>
+      <div class="sched-topic">Searching Algorithms</div>
+      <div class="sched-status">Upcoming</div>
+      <div class="sched-due">Due: 12.05.2026</div>
+      <div class="sched-present">Present: 13.05.2026</div>
     </div>
-
-    <!-- W12 -->
-    <div style="background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--border); border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.06em;">WEEK 12</div>
-      <div style="font-size:12px; font-weight:600; color:var(--dim); margin:3px 0 1px;">Dynamic Programming</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">Upcoming</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px;">Due: 19.05.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 20.05.2026</div>
+    <div class="sched-tile">
+      <div class="sched-week">WEEK 12</div>
+      <div class="sched-topic">Dynamic Programming</div>
+      <div class="sched-status">Upcoming</div>
+      <div class="sched-due">Due: 19.05.2026</div>
+      <div class="sched-present">Present: 20.05.2026</div>
     </div>
-
-    <!-- W13 -->
-    <div style="background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--border); border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.06em;">WEEK 13</div>
-      <div style="font-size:12px; font-weight:600; color:var(--dim); margin:3px 0 1px;">Greedy Algorithms</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">Upcoming</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px;">Due: 02.06.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 03.06.2026</div>
+    <div class="sched-tile">
+      <div class="sched-week">WEEK 13</div>
+      <div class="sched-topic">Greedy Algorithms</div>
+      <div class="sched-status">Upcoming</div>
+      <div class="sched-due">Due: 02.06.2026</div>
+      <div class="sched-present">Present: 03.06.2026</div>
     </div>
-
-    <!-- W14 -->
-    <div style="background:rgba(248,81,73,.05); border:1px solid rgba(248,81,73,.2); border-top:3px solid var(--red); border-radius:7px; padding:10px 12px;">
-      <div style="font-family:var(--mono); font-size:10px; font-weight:700; color:var(--red); letter-spacing:.06em;">WEEK 14</div>
-      <div style="font-size:12px; font-weight:600; color:var(--dim); margin:3px 0 1px;">Review &amp; Final</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--red); font-weight:700;">⚠ Hard deadline</div>
-      <div style="font-family:var(--mono); font-size:10px; color:var(--red); font-weight:700; margin-top:2px;">Due: 05.06.2026</div>
-      <div style="font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:3px;">Present: 09.06.2026</div>
+    <div class="sched-tile final">
+      <div class="sched-week">WEEK 14</div>
+      <div class="sched-topic">Review &amp; Final</div>
+      <div class="sched-status">⚠ Submission only</div>
+      <div class="sched-due">Due: 05.06.2026</div>
+      <div class="sched-present" style="color:var(--red);font-weight:700;">No presentation</div>
     </div>
-
-  </div><!-- /schedule grid -->
+    </div><!-- /schedule grid -->
 
   <div class="projects">
 
@@ -1772,7 +1782,7 @@
     <div class="card s-upcoming" data-deadline="05.06.2026">
       <div class="card-header">
         <div class="card-left"><span class="week-num">WEEK 14</span><span class="card-title"><span class="ico">🏁</span>Review &amp; Final Project</span></div>
-        <div class="card-right"><span class="status-pill last">⚠ Last week</span><span class="deadline final">Due: 05.06.2026</span></div>
+        <div class="card-right"><span class="status-pill last">⚠ Final submission</span><span class="deadline final">Due: 05.06.2026 · No presentation</span></div>
       </div>
       <div class="card-body">
         <p class="card-desc">
@@ -1780,6 +1790,9 @@
           Your ID seeds a <strong>unique personal dataset</strong>.
           Choose <strong>one</strong> project to submit. <strong style="color:var(--red);">Hard deadline — no extensions under any circumstances.</strong>
         </p>
+        <div class="w14-note">
+          ⚠&nbsp; <span>Week 14 exception: <strong>submit only</strong> — deadline is 05 June 2026 (last day of term). There is <strong>no live presentation</strong> for this project. Submit your completed notebook on Blackboard before midnight on 05.06.2026.</span>
+        </div>
         <div class="topics">
           <span class="tag">two pointers (sorted pair-sum)</span><span class="tag">three-sum (sort + fix + two ptr)</span>
           <span class="tag">sliding window max (monotonic deque)</span><span class="tag">longest no-dup window (hash map)</span>
@@ -1894,7 +1907,7 @@
   </div>
 
   <!-- HOW IT WORKS -->
-  <div class="section-label" style="margin-top:36px;">How it works</div>
+  <div class="section-label" style="margin-top:40px;">How it works</div>
   <div class="howto">
     <h2>📋 Instructions</h2>
     <div class="steps">
@@ -1980,8 +1993,9 @@
     return `${pd}.${pm}.${d.getFullYear()}`;
   }
 
-  // Only inject presentation note into open (active) cards
+  // Only inject presentation note into open (active) cards — skip W14
   document.querySelectorAll('.card.s-active[data-deadline]').forEach(card => {
+    if (card.querySelector('.w14-note')) return; // W14 has no presentation
     const body = card.querySelector('.card-body');
     if (!body) return;
     const deadline = card.dataset.deadline;
