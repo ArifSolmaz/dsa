@@ -270,6 +270,9 @@
       .nav-links { display: none; }
       .flow-box { padding: 18px 16px; }
     }
+
+    .sched-tile.past-tile { opacity: .45; filter: grayscale(40%); }
+    .sched-tile.past-tile .sched-status { color: var(--muted); }
   </style>
 </head>
 <body>
@@ -347,42 +350,42 @@
 
   <!-- DEADLINE SCHEDULE GRID -->
   <div class="sched-grid">
-    <div class="sched-tile open">
+    <div class="sched-tile open" data-deadline="03.03.2026">
       <div class="sched-week">WEEK 03</div>
       <div class="sched-topic">Arrays &amp; Strings</div>
       <div class="sched-status">● OPEN NOW</div>
       <div class="sched-due">Due: 03.03.2026</div>
       <div class="sched-present">Present: 04.03.2026</div>
     </div>
-    <div class="sched-tile">
+    <div class="sched-tile" data-deadline="10.03.2026">
       <div class="sched-week">WEEK 04</div>
       <div class="sched-topic">Linked Lists</div>
       <div class="sched-status">Upcoming</div>
       <div class="sched-due">Due: 10.03.2026</div>
       <div class="sched-present">Present: 11.03.2026</div>
     </div>
-    <div class="sched-tile">
+    <div class="sched-tile" data-deadline="17.03.2026">
       <div class="sched-week">WEEK 05</div>
       <div class="sched-topic">Stacks &amp; Queues</div>
       <div class="sched-status">Upcoming</div>
       <div class="sched-due">Due: 17.03.2026</div>
       <div class="sched-present">Present: 18.03.2026</div>
     </div>
-    <div class="sched-tile">
+    <div class="sched-tile" data-deadline="24.03.2026">
       <div class="sched-week">WEEK 06</div>
       <div class="sched-topic">Trees &amp; BSTs</div>
       <div class="sched-status">Upcoming</div>
       <div class="sched-due">Due: 24.03.2026</div>
       <div class="sched-present">Present: 25.03.2026</div>
     </div>
-    <div class="sched-tile">
+    <div class="sched-tile" data-deadline="31.03.2026">
       <div class="sched-week">WEEK 07</div>
       <div class="sched-topic">Heaps &amp; Priority Queues</div>
       <div class="sched-status">Upcoming</div>
       <div class="sched-due">Due: 31.03.2026</div>
       <div class="sched-present">Present: 01.04.2026</div>
     </div>
-    <div class="sched-tile">
+    <div class="sched-tile" data-deadline="03.04.2026">
       <div class="sched-week">WEEK 08</div>
       <div class="sched-topic">Hash Tables</div>
       <div class="sched-status">Upcoming</div>
@@ -393,42 +396,42 @@
       <span style="font-size:20px;">🏖️</span>
       <span class="break-text">MIDTERM BREAK &nbsp;·&nbsp; 07.04.2026 → 24.04.2026<br>No submissions or presentations · W09 resumes 28.04.2026</span>
     </div>
-    <div class="sched-tile">
+    <div class="sched-tile" data-deadline="28.04.2026">
       <div class="sched-week">WEEK 09</div>
       <div class="sched-topic">Graphs</div>
       <div class="sched-status">Upcoming</div>
       <div class="sched-due">Due: 28.04.2026</div>
       <div class="sched-present">Present: 29.04.2026</div>
     </div>
-    <div class="sched-tile">
+    <div class="sched-tile" data-deadline="05.05.2026">
       <div class="sched-week">WEEK 10</div>
       <div class="sched-topic">Sorting Algorithms</div>
       <div class="sched-status">Upcoming</div>
       <div class="sched-due">Due: 05.05.2026</div>
       <div class="sched-present">Present: 06.05.2026</div>
     </div>
-    <div class="sched-tile">
+    <div class="sched-tile" data-deadline="12.05.2026">
       <div class="sched-week">WEEK 11</div>
       <div class="sched-topic">Searching Algorithms</div>
       <div class="sched-status">Upcoming</div>
       <div class="sched-due">Due: 12.05.2026</div>
       <div class="sched-present">Present: 13.05.2026</div>
     </div>
-    <div class="sched-tile">
+    <div class="sched-tile" data-deadline="19.05.2026">
       <div class="sched-week">WEEK 12</div>
       <div class="sched-topic">Dynamic Programming</div>
       <div class="sched-status">Upcoming</div>
       <div class="sched-due">Due: 19.05.2026</div>
       <div class="sched-present">Present: 20.05.2026</div>
     </div>
-    <div class="sched-tile">
+    <div class="sched-tile" data-deadline="02.06.2026">
       <div class="sched-week">WEEK 13</div>
       <div class="sched-topic">Greedy Algorithms</div>
       <div class="sched-status">Upcoming</div>
       <div class="sched-due">Due: 02.06.2026</div>
       <div class="sched-present">Present: 03.06.2026</div>
     </div>
-    <div class="sched-tile final">
+    <div class="sched-tile final" data-deadline="05.06.2026">
       <div class="sched-week">WEEK 14</div>
       <div class="sched-topic">Review &amp; Final</div>
       <div class="sched-status">⚠ Submission only</div>
@@ -1038,7 +1041,7 @@
     </div>
 
     <!-- W08 — UPCOMING -->
-    <div class="card s-upcoming" data-deadline="03.04.2026">
+    <div class="card s-upcoming" data-deadline="03.04.2026" data-present="22.04.2026">
       <div class="card-header">
         <div class="card-left"><span class="week-num">WEEK 08</span><span class="card-title"><span class="ico">🗄️</span>Hash Tables &amp; Dictionaries</span></div>
         <div class="card-right"><span class="status-pill upcoming">Upcoming</span><span class="deadline future">Due: 03.04.2026</span></div>
@@ -1778,7 +1781,7 @@
     </div>
 
     <!-- W14 -->
-    <div class="card s-upcoming" data-deadline="05.06.2026">
+    <div class="card s-upcoming" data-deadline="05.06.2026" data-present="none">
       <div class="card-header">
         <div class="card-left"><span class="week-num">WEEK 14</span><span class="card-title"><span class="ico">🏁</span>Review &amp; Final Project</span></div>
         <div class="card-right"><span class="status-pill last">⚠ Final submission</span><span class="deadline final">Due: 05.06.2026 · No presentation</span></div>
@@ -1972,42 +1975,166 @@
 </footer>
 
 <script>
+  // ── Date helpers ────────────────────────────────────────────────────────
+  function parseDate(ddmmyyyy) {
+    const [dd, mm, yyyy] = ddmmyyyy.split('.').map(Number);
+    return new Date(yyyy, mm - 1, dd, 0, 0, 0, 0);
+  }
+  function todayMidnight() {
+    const d = new Date(); d.setHours(0,0,0,0); return d;
+  }
+  function nextDay(ddmmyyyy) {
+    const d = parseDate(ddmmyyyy);
+    d.setDate(d.getDate() + 1);
+    return String(d.getDate()).padStart(2,'0') + '.' +
+           String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear();
+  }
+
+  // ── Core: update all card + schedule-tile states based on today ──────────
+  function updateStates() {
+    const now = todayMidnight();
+
+    // --- CARDS (W03–W14) ---
+    const cards = [...document.querySelectorAll('.card[data-deadline]')];
+    cards.sort((a,b) => parseDate(a.dataset.deadline) - parseDate(b.dataset.deadline));
+
+    // activeIdx = first card whose deadline is today or in the future
+    const activeIdx = cards.findIndex(c => parseDate(c.dataset.deadline) >= now);
+    // -1 means all deadlines passed (end of semester)
+
+    let activeDeadline = activeIdx >= 0 ? parseDate(cards[activeIdx].dataset.deadline) : null;
+
+    cards.forEach((card, i) => {
+      const isPast     = activeIdx === -1 || i < activeIdx;
+      const isActive   = i === activeIdx;
+      const isUpcoming = !isPast && !isActive;
+      const isW14      = card.dataset.deadline === '05.06.2026';
+      const state      = isPast ? 'past' : isActive ? 'active' : 'upcoming';
+
+      // Apply card class
+      card.classList.remove('s-active', 's-upcoming', 's-past');
+      card.classList.add('s-' + state);
+
+      // Status pill
+      const pill = card.querySelector('.status-pill');
+      if (pill) {
+        if (isW14) {
+          pill.className = 'status-pill last';
+          pill.textContent = isPast ? 'Closed' : '⚠ Final submission';
+        } else if (isPast) {
+          pill.className = 'status-pill past';
+          pill.textContent = 'Closed';
+        } else if (isActive) {
+          pill.className = 'status-pill active';
+          pill.textContent = '● Open';
+        } else {
+          pill.className = 'status-pill upcoming';
+          pill.textContent = 'Upcoming';
+        }
+      }
+
+      // Deadline badge
+      const dl = card.querySelector('.deadline');
+      if (dl) {
+        if (isW14) {
+          dl.className = 'deadline ' + (isPast ? 'closed' : 'final');
+        } else {
+          dl.className = 'deadline ' + (isPast ? 'closed' : isActive ? 'open' : 'future');
+        }
+      }
+
+      // Inject presentation note for the active card
+      if (isActive && !card.querySelector('.present-note')) {
+        const presentOverride = card.dataset.present; // "22.04.2026" or "none"
+        if (presentOverride !== 'none') {
+          const presentDate = presentOverride || nextDay(card.dataset.deadline);
+          const body = card.querySelector('.card-body');
+          if (body) {
+            const note = document.createElement('div');
+            note.className = 'present-note';
+            note.innerHTML = `📅 &nbsp;Presentations: <strong style="margin-left:4px;">${presentDate} · in class</strong> &nbsp;—&nbsp; be ready to walk through your code and answer questions.`;
+            const topics = body.querySelector('.topics');
+            if (topics) body.insertBefore(note, topics);
+          }
+        }
+      }
+    });
+
+    // Move past cards into the collapsible "earlier weeks" section
+    movePastCards();
+
+    // --- SCHEDULE GRID TILES ---
+    document.querySelectorAll('.sched-tile[data-deadline]').forEach(tile => {
+      const d        = parseDate(tile.dataset.deadline);
+      const isW14    = tile.dataset.deadline === '05.06.2026';
+      const tilePast = d < now;
+      const tileOpen = activeDeadline && d.getTime() === activeDeadline.getTime();
+
+      tile.classList.remove('open', 'past-tile');
+      if (tileOpen)     tile.classList.add('open');
+      else if (tilePast) tile.classList.add('past-tile');
+
+      const statusEl = tile.querySelector('.sched-status');
+      if (statusEl) {
+        if (tileOpen)      statusEl.textContent = isW14 ? '⚠ Submission only' : '● OPEN NOW';
+        else if (tilePast) statusEl.textContent = 'Closed';
+        else               statusEl.textContent = isW14 ? '⚠ Submission only' : 'Upcoming';
+      }
+    });
+  }
+
+  // ── Move newly-past cards into the collapsible earlier-weeks section ──────
+  function movePastCards() {
+    const pastSection = document.getElementById('pastSection');
+    if (!pastSection) return;
+    const pastList = pastSection.querySelector('.projects');
+    if (!pastList) return;
+
+    // Find all s-past cards that are NOT already inside pastSection
+    document.querySelectorAll('.card.s-past[data-deadline]').forEach(card => {
+      if (!pastSection.contains(card)) {
+        pastList.appendChild(card);
+        // Make it fully collapsed (no body shown) — CSS handles .s-past already
+      }
+    });
+
+    // Update the toggle button label to reflect the actual range
+    updatePastToggleLabel();
+  }
+
+  function updatePastToggleLabel() {
+    const btn = document.getElementById('pastToggle');
+    if (!btn) return;
+    const pastSection = document.getElementById('pastSection');
+    const weeks = pastSection
+      ? [...pastSection.querySelectorAll('.week-num')].map(el => el.textContent.trim())
+      : [];
+    if (weeks.length === 0) {
+      btn.style.display = 'none';
+      return;
+    }
+    btn.style.display = '';
+    const first = weeks[0];
+    const last  = weeks[weeks.length - 1];
+    const label = first === last ? first : `${first} – ${last}`;
+    const isOpen = pastSection.style.display !== 'none';
+    btn.textContent = isOpen
+      ? `▼   Hide earlier weeks (${label})`
+      : `▶   Show earlier weeks (${label})`;
+  }
+
+  // ── Past section toggle ──────────────────────────────────────────────────
   function togglePast() {
     const sec = document.getElementById('pastSection');
-    const btn = document.getElementById('pastToggle');
+    if (!sec) return;
     const open = sec.style.display === 'none';
     sec.style.display = open ? 'block' : 'none';
-    btn.textContent = open
-      ? '▼   Hide earlier weeks (W01 – W02)'
-      : '▶   Show earlier weeks (W01 – W02)';
+    updatePastToggleLabel();
   }
 
-  // Auto-inject presentation date (deadline + 1 day) into every card that has one
-  function nextDay(ddmmyyyy) {
-    const [dd, mm, yyyy] = ddmmyyyy.split('.').map(Number);
-    const d = new Date(yyyy, mm - 1, dd);
-    d.setDate(d.getDate() + 1);
-    const pd = String(d.getDate()).padStart(2, '0');
-    const pm = String(d.getMonth() + 1).padStart(2, '0');
-    return `${pd}.${pm}.${d.getFullYear()}`;
-  }
-
-  // Only inject presentation note into open (active) cards — skip W14
-  document.querySelectorAll('.card.s-active[data-deadline]').forEach(card => {
-    if (card.querySelector('.w14-note')) return; // W14 has no presentation
-    const body = card.querySelector('.card-body');
-    if (!body) return;
-    const deadline = card.dataset.deadline;
-    const presentDate = nextDay(deadline);
-    const note = document.createElement('div');
-    note.className = 'present-note';
-    note.innerHTML = `📅 &nbsp;Presentations: <strong style="margin-left:4px;">${presentDate} · in class</strong> &nbsp;—&nbsp; be ready to walk through your code and answer questions.`;
-    const topics = body.querySelector('.topics');
-    body.insertBefore(note, topics);
-  });
-
+  // ── Scenario expand / collapse ───────────────────────────────────────────
   function toggleScenario(id) {
-    const el = document.getElementById(id);
+    const el  = document.getElementById(id);
     const arr = document.getElementById('arr-' + id);
     if (!el) return;
     const open = el.style.display === 'block';
@@ -2015,6 +2142,7 @@
     if (arr) arr.classList.toggle('open', !open);
   }
 
+  // ── Compare table toggle ─────────────────────────────────────────────────
   function toggleCompare(tableId, btnId) {
     const tbl = document.getElementById(tableId);
     const btn = document.getElementById(btnId);
@@ -2028,6 +2156,9 @@
         : '✕ Close comparison table';
     }
   }
+
+  // ── Run on load ──────────────────────────────────────────────────────────
+  updateStates();
 </script>
 </body>
 </html>
